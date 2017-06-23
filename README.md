@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/amatalai/mockery.svg?branch=master)](https://travis-ci.org/amatalai/mockery)
+[![Hex.pm](https://img.shields.io/hexpm/v/mockery.svg?style=flat)](https://hex.pm/packages/mockery)
+
 # Mockery
 
 It's still under development.
@@ -28,7 +31,7 @@ end
   defmodule MyApp.UserController do
     @service Application.get_env(:my_app, :user_service, MyApp.UserService)
 
-    def show do
+    def index do
       @service.users()
     end
   end
@@ -45,15 +48,15 @@ end
     alias MyApp.UserController, as: Controller
     alias MyApp.UserService, as: Service
 
-    describe "show" do
+    describe "index" do
       test "not mocked" do
-        assert Controller.show() == []
+        assert Controller.index() == []
       end
 
       test "mocked" do
         Mockery.return(Service, :users, [:john, :donald])
 
-        assert Controller.show() == [:john, :donald]
+        assert Controller.index() == [:john, :donald]
       end
     end
   end
@@ -62,7 +65,7 @@ end
 ## TODOS
 
 - [x] basic functionality
-- [ ] setup CI
+- [x] setup CI
 - [ ] recompile when mocked module is changed
 - [ ] way to override default function outputs
 - [ ] docs

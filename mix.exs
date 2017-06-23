@@ -9,7 +9,7 @@ defmodule Mockery.Mixfile do
       deps: deps(),
       description: description(),
       docs: docs(),
-      elixir: "~> 1.2",
+      elixir: "~> 1.3",
       elixirc_paths: elixirc_paths(Mix.env),
       package: package(),
       version: @version

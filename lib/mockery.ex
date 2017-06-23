@@ -1,0 +1,3 @@
+defmodule Mockery do
+  
+end

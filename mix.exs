@@ -1,7 +1,7 @@
 defmodule Mockery.Mixfile do
   use Mix.Project
 
-  @version "0.1.0"
+  @version "0.1.1"
 
   def project do
     [
@@ -38,7 +38,7 @@ defmodule Mockery.Mixfile do
   end
 
   defp elixirc_paths(:test), do: ["lib", "test/support"]
-  defp elixirc_paths(_),     do: ["lib"]
+  defp elixirc_paths(_),     do: ["lib", "test/support"]
 
   defp package do
     [

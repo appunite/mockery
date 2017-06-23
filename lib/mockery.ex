@@ -10,14 +10,13 @@ defmodule Mockery do
   end
 
   defp generate_funs(mod) do
-    dod = mod
     mod = Macro.expand(mod, __ENV__)
 
     mod.__info__(:functions)
     |> Enum.map(fn {name, arity} ->
       args = mkargs(__ENV__.module, arity)
 
-      key1 = dict_key(dod, [{name, arity}])
+      key1 = dict_key(mod, [{name, arity}])
       key2 = dict_key(mod, name)
 
       quote do

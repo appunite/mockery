@@ -1,11 +1,9 @@
 # Mockery
 
-**TODO: Add description**
+It's still under development.
+Everything is subject to change.
 
 ## Installation
-
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `mockery` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
@@ -13,7 +11,74 @@ def deps do
 end
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/mockery](https://hexdocs.pm/mockery).
+## Usage
 
+```elixir
+  defmodule MyApp.UserService do
+    def users, do: []
+  end
+```
+```elixir
+  defmodule MyApp.TestUserService do
+    use Mockery,
+      module: MyApp.UserService
+  end
+```
+```elixir
+  defmodule MyApp.UserController do
+    @service Application.get_env(:my_app, :user_service, MyApp.UserService)
+
+    def show do
+      @service.users()
+    end
+  end
+```
+```elixir
+  # config/test.exs
+  config :my_app,
+    user_service: MyApp.TestUserService
+```
+```elixir
+  defmodule MyApp.UserControllerTest do
+    use ExUnit.Case, async: true
+
+    alias MyApp.UserController, as: Controller
+    alias MyApp.UserService, as: Service
+
+    describe "show" do
+      test "not mocked" do
+        assert Controller.show() == []
+      end
+
+      test "mocked" do
+        Mockery.return(Service, :users, [:john, :donald])
+
+        assert Controller.show() == [:john, :donald]
+      end
+    end
+  end
+```
+
+## TODOS
+
+- [x] basic functionality
+- [ ] setup CI
+- [ ] recompile when mocked module is changed
+- [ ] way to override default function outputs
+- [ ] docs
+
+## License
+
+Copyright 2017 Tobiasz Małecki <tobiasz.malecki@appunite.com>
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.

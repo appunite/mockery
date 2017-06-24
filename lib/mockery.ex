@@ -28,7 +28,7 @@ defmodule Mockery do
     quote do
       require unquote(mod)
 
-      import Mockery
+      import Mockery, only: :macros
 
       unquote(generate_funs(mod))
       unquote(make_overridable(mod))

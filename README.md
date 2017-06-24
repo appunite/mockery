@@ -69,7 +69,7 @@ end
 
 - [x] basic functionality
 - [x] setup CI
-- [ ] recompile when mocked module is changed
+- [x] recompile when mocked module is changed
 - [x] way to override default function outputs
 - [ ] check if function was called
 - [ ] docs

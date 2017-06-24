@@ -26,6 +26,8 @@ defmodule Mockery do
     mod = opts |> Keyword.fetch!(:module)
 
     quote do
+      require unquote(mod)
+
       import Mockery
 
       unquote(generate_funs(mod))

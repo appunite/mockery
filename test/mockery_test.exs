@@ -9,7 +9,7 @@ defmodule MockeryTest do
   defmodule TestDummy2 do
     use Mockery, module: Dummy
 
-    global_mock Dummy, [fun2: 0], do: 3
+    global_mock Dummy, [fun2: 0], do: 50
   end
 
   describe "defaults" do
@@ -60,7 +60,7 @@ defmodule MockeryTest do
 
     test "overriden function" do
       assert TestDummy1.fun2() == 2
-      assert TestDummy2.fun2() == 3
+      assert TestDummy2.fun2() == 50
     end
 
     test "overriden function respects mock" do

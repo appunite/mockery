@@ -46,6 +46,7 @@ end
 ```elixir
   defmodule MyApp.UserControllerTest do
     use ExUnit.Case, async: true
+    import Mockery
 
     alias MyApp.UserController, as: Controller
     alias MyApp.UserService, as: Service
@@ -56,7 +57,7 @@ end
       end
 
       test "mocked" do
-        Mockery.return(Service, :users, [:john, :donald])
+        mock(Service, :users, [:john, :donald])
 
         assert Controller.index() == [:john, :donald]
       end
@@ -69,7 +70,7 @@ end
 - [x] basic functionality
 - [x] setup CI
 - [ ] recompile when mocked module is changed
-- [ ] way to override default function outputs
+- [x] way to override default function outputs
 - [ ] check if function was called
 - [ ] docs
 

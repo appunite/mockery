@@ -1,12 +1,36 @@
 defmodule Mockery do
-  def return(mod, fun, value) do
-    Process.put(dict_result_key(mod, fun), value)
+  def mock(mod, fun, value) do
+    Process.put(dict_mock_key(mod, fun), value)
+  end
+
+  defmacro global_mock(mod, [{name, arity}], do: new_default) do
+    mod = Macro.expand(mod, __ENV__)
+    args = mkargs(mod, arity)
+
+    key1 = dict_mock_key(mod, [{name, arity}])
+    key2 = dict_mock_key(mod, name)
+
+    quote do
+      def unquote(name)(unquote_splicing(args)) do
+        case Process.get(unquote(key1)) || Process.get(unquote(key2)) do
+          nil ->
+            unquote(new_default)
+          value ->
+            value
+        end
+      end
+    end
   end
 
   defmacro __using__(opts) do
     mod = opts |> Keyword.fetch!(:module)
 
-    generate_funs(mod) ++ [make_overridable(mod)]
+    quote do
+      import Mockery
+
+      unquote(generate_funs(mod))
+      unquote(make_overridable(mod))
+    end
   end
 
   defp generate_funs(mod) do
@@ -14,10 +38,10 @@ defmodule Mockery do
 
     mod.__info__(:functions)
     |> Enum.map(fn {name, arity} ->
-      args = mkargs(__ENV__.module, arity)
+      args = mkargs(mod, arity)
 
-      key1 = dict_result_key(mod, [{name, arity}])
-      key2 = dict_result_key(mod, name)
+      key1 = dict_mock_key(mod, [{name, arity}])
+      key2 = dict_mock_key(mod, name)
 
       quote do
         def unquote(name)(unquote_splicing(args)) do
@@ -42,8 +66,8 @@ defmodule Mockery do
   end
 
   # note to myself: dont use three element tuples
-  defp dict_result_key(mod, [{funn, arity}]), do: {mod, {funn, arity}}
-  defp dict_result_key(mod, funn), do: {mod, funn}
+  defp dict_mock_key(mod, [{funn, arity}]), do: {:mockery, {mod, {funn, arity}}}
+  defp dict_mock_key(mod, funn), do: {:mockery, {mod, funn}}
 
   # shamelessly stolen from
   # https://gist.github.com/teamon/f759a4ced0e21b02a51dda759de5da03

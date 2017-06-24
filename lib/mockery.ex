@@ -1,4 +1,8 @@
 defmodule Mockery do
+  defmodule Error do
+    defexception message: ""
+  end
+
   def mock(mod, fun, value) do
     Process.put(dict_mock_key(mod, fun), value)
   end
@@ -15,6 +19,10 @@ defmodule Mockery do
         case Process.get(unquote(key1)) || Process.get(unquote(key2)) do
           nil ->
             unquote(new_default)
+          fun when is_function(fun, unquote(arity)) ->
+            fun.(unquote_splicing(args))
+          fun when is_function(fun) ->
+            raise Error, "function used for mock should have same arity as original"
           value ->
             value
         end
@@ -50,6 +58,10 @@ defmodule Mockery do
           case Process.get(unquote(key1)) || Process.get(unquote(key2)) do
             nil ->
               apply(unquote(mod), unquote(name), [unquote_splicing(args)])
+            fun when is_function(fun, unquote(arity)) ->
+              fun.(unquote_splicing(args))
+            fun when is_function(fun) ->
+              raise Error, "function used for mock should have same arity as original"
             value ->
               value
           end

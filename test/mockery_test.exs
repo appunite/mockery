@@ -50,6 +50,22 @@ defmodule MockeryTest do
       assert TestDummy1.ar(1) == "value4"
       refute TestDummy1.ar(1, 2) == "value4"
     end
+
+    test "allows using function of same arity" do
+      mock(Dummy, :ar, &to_string/1)
+
+      assert TestDummy1.ar(200) == "200"
+    end
+
+    test "test raise on function with bad arity" do
+      mock(Dummy, :ar, &to_string/1)
+
+      assert_raise(
+        Mockery.Error,
+        "function used for mock should have same arity as original",
+        fn -> TestDummy1.ar(1, 2) end
+      )
+    end
   end
 
   describe "global mock" do
@@ -63,11 +79,28 @@ defmodule MockeryTest do
       assert TestDummy2.fun2() == 50
     end
 
-    test "overriden function respects mock" do
+    test "respects nonglobal mock" do
       mock(Dummy, :fun2, 100)
 
       assert TestDummy1.fun2() == 100
       assert TestDummy2.fun2() == 100
+    end
+
+    test "respects nonglobal mock with function of same arity" do
+      mock(Dummy, :fun2, fn-> "x" end)
+
+      assert TestDummy1.fun2() == "x"
+      assert TestDummy2.fun2() == "x"
+    end
+
+    test "test raise on function with bad arity" do
+      mock(Dummy, :fun2, &to_string/1)
+
+      assert_raise(
+        Mockery.Error,
+        "function used for mock should have same arity as original",
+        fn -> TestDummy2.fun2() end
+      )
     end
   end
 end

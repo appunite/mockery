@@ -1,12 +1,12 @@
 defmodule Mockery do
   def return(mod, fun, value) do
-    Process.put(dict_key(mod, fun), value)
+    Process.put(dict_result_key(mod, fun), value)
   end
 
   defmacro __using__(opts) do
     mod = opts |> Keyword.fetch!(:module)
 
-    generate_funs(mod)
+    generate_funs(mod) ++ [make_overridable(mod)]
   end
 
   defp generate_funs(mod) do
@@ -16,8 +16,8 @@ defmodule Mockery do
     |> Enum.map(fn {name, arity} ->
       args = mkargs(__ENV__.module, arity)
 
-      key1 = dict_key(mod, [{name, arity}])
-      key2 = dict_key(mod, name)
+      key1 = dict_result_key(mod, [{name, arity}])
+      key2 = dict_result_key(mod, name)
 
       quote do
         def unquote(name)(unquote_splicing(args)) do
@@ -32,9 +32,18 @@ defmodule Mockery do
     end)
   end
 
+  defp make_overridable(mod) do
+    mod = Macro.expand(mod, __ENV__)
+    funs = mod.__info__(:functions)
+
+    quote do
+      defoverridable unquote(funs)
+    end
+  end
+
   # note to myself: dont use three element tuples
-  defp dict_key(mod, [{funn, arity}]), do: {mod, {funn, arity}}
-  defp dict_key(mod, funn), do: {mod, funn}
+  defp dict_result_key(mod, [{funn, arity}]), do: {mod, {funn, arity}}
+  defp dict_result_key(mod, funn), do: {mod, funn}
 
   # shamelessly stolen from
   # https://gist.github.com/teamon/f759a4ced0e21b02a51dda759de5da03

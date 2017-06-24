@@ -70,6 +70,7 @@ end
 - [x] setup CI
 - [ ] recompile when mocked module is changed
 - [ ] way to override default function outputs
+- [ ] check if function was called
 - [ ] docs
 
 ## License

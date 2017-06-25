@@ -29,48 +29,31 @@ defmodule Mockery.Heritage do
     mod = opts |> Keyword.fetch!(:module)
 
     quote do
-      require unquote(mod)
-
       import Mockery.Heritage, only: :macros
 
-      unquote(generate_funs(mod))
-      unquote(make_overridable(mod))
-    end
-  end
+      def unquote(:"$handle_undefined_function")(name, args) do
+        arity = Enum.count(args)
+        fun_tuple = {name, arity}
+        key1 = Utils.dict_mock_key(unquote(mod), [{name, arity}])
+        key2 = Utils.dict_mock_key(unquote(mod), name)
 
-  defp generate_funs(mod) do
-    mod = Macro.expand(mod, __ENV__)
-
-    mod.__info__(:functions)
-    |> Enum.map(fn {name, arity} ->
-      args = mkargs(mod, arity)
-
-      key1 = Utils.dict_mock_key(mod, [{name, arity}])
-      key2 = Utils.dict_mock_key(mod, name)
-
-      quote do
-        def unquote(name)(unquote_splicing(args)) do
-          case Process.get(unquote(key1)) || Process.get(unquote(key2)) do
+        if fun_tuple in unquote(mod).__info__(:functions) do
+          case Process.get(key1) || Process.get(key2) do
             nil ->
-              apply(unquote(mod), unquote(name), [unquote_splicing(args)])
-            fun when is_function(fun, unquote(arity)) ->
-              fun.(unquote_splicing(args))
+              apply(unquote(mod), name, args)
+            fun when is_function(fun, arity) ->
+              apply(fun, args)
             fun when is_function(fun) ->
               raise Error, "function used for mock should have same arity as original"
             value ->
               value
           end
+        else
+          md = __MODULE__ |> Module.split() |> Enum.join(".")
+
+          raise Error, "function #{md}.#{name}/#{arity} is undefined or private"
         end
       end
-    end)
-  end
-
-  defp make_overridable(mod) do
-    mod = Macro.expand(mod, __ENV__)
-    funs = mod.__info__(:functions)
-
-    quote do
-      defoverridable unquote(funs)
     end
   end
 

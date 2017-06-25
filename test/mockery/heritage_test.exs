@@ -30,6 +30,14 @@ defmodule Mockery.HeritageTest do
       assert Dummy.ar(1) == TestDummy1.ar(1)
       assert Dummy.ar(1, "a") == TestDummy1.ar(1, "a")
     end
+
+    test "when function doesn't exist" do
+      assert_raise(
+        Mockery.Error,
+        "function Mockery.HeritageTest.TestDummy1.undefined/0 is undefined or private",
+        fn -> TestDummy1.undefined() end
+      )
+    end
   end
 
   describe "global mock" do

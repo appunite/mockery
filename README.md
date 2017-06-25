@@ -69,6 +69,19 @@ Use mock in your tests:
   end
 ```
 
+## Global mock
+
+```elixir
+  defmodule MyApp.TestUserService do
+    use Mockery.Heritage,
+      module: MyApp.UserService
+
+    mock [users: 0] do
+      [:user1, :user2, :user3]
+    end
+  end
+```
+
 ## TODOS
 
 - [x] basic functionality

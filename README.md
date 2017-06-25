@@ -89,6 +89,7 @@ Use mock in your tests:
 - [x] global mock (through Mockery.Heritage)
 - [x] let it work without recompiling additional module after each change
 - [ ] let Mockery.of/2 work without :by option
+- [ ] let global mock work with only function name (without arity)
 - [ ] way to check if function was called
 - [ ] docs
 

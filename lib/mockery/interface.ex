@@ -2,7 +2,9 @@ defmodule Mockery.Interface do
   alias Mockery.Utils
 
   def of(mod, opts) do
-    if Mix.env == :test do
+    env = opts[:env] || Mix.env
+
+    if env == :test do
       Keyword.fetch!(opts, :through)
     else
       mod

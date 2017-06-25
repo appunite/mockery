@@ -20,6 +20,32 @@ defmodule Mockery.InterfaceTest do
     global_mock Dummy, [fun2: 0], do: 50
   end
 
+  defmodule TestEnv do
+    @dummy Mockery.of(Dummy, through: TestDummy2)
+
+    def fun1, do: @dummy.fun1()
+    def fun2, do: @dummy.fun2()
+  end
+
+  defmodule DevEnv do
+    @dummy Mockery.of(Dummy, through: TestDummy2, env: :dev)
+
+    def fun1, do: @dummy.fun1()
+    def fun2, do: @dummy.fun2()
+  end
+
+  describe "of/2" do
+    test "test env" do
+      assert TestEnv.fun1() == Dummy.fun1()
+      assert TestEnv.fun2() == TestDummy2.fun2()
+    end
+
+    test "dev env" do
+      assert DevEnv.fun1() == Dummy.fun1()
+      assert DevEnv.fun2() == Dummy.fun2()
+    end
+  end
+
   describe "mock/3" do
     test "with name (arity == 0)" do
       mock(Dummy, :fun1, "value1")

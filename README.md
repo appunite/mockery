@@ -16,33 +16,37 @@ def deps do
 end
 ```
 
-## Usage
+## Basic usage
 
 ```elixir
   defmodule MyApp.UserService do
     def users, do: []
   end
 ```
+
+Create test helper:
+
 ```elixir
   defmodule MyApp.TestUserService do
-    use Mockery,
+    use Mockery.Heritage,
       module: MyApp.UserService
   end
 ```
+
+Prepare tested module:
+
 ```elixir
   defmodule MyApp.UserController do
-    @service Application.get_env(:my_app, :user_service, MyApp.UserService)
+    @service Mockery.of(MyApp.UserService, by: MyApp.TestUserService)
 
     def index do
       @service.users()
     end
   end
 ```
-```elixir
-  # config/test.exs
-  config :my_app,
-    user_service: MyApp.TestUserService
-```
+
+Use mock in your tests:
+
 ```elixir
   defmodule MyApp.UserControllerTest do
     use ExUnit.Case, async: true
@@ -69,9 +73,10 @@ end
 
 - [x] basic functionality
 - [x] setup CI
-- [x] recompile when mocked module is changed
-- [x] way to override default function outputs
-- [ ] check if function was called
+- [x] global mock (through Mockery.Heritage)
+- [x] let it work without recompiling additional module after each change
+- [ ] let Mockery.of/2 work without :by option
+- [ ] way to check if function was called
 - [ ] docs
 
 ## License

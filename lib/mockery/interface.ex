@@ -5,7 +5,7 @@ defmodule Mockery.Interface do
     env = opts[:env] || Mix.env
 
     if env == :test do
-      Keyword.fetch!(opts, :through)
+      Keyword.fetch!(opts, :by)
     else
       mod
     end

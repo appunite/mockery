@@ -21,14 +21,14 @@ defmodule Mockery.InterfaceTest do
   end
 
   defmodule TestEnv do
-    @dummy Mockery.of(Dummy, through: TestDummy2)
+    @dummy Mockery.of(Dummy, by: TestDummy2)
 
     def fun1, do: @dummy.fun1()
     def fun2, do: @dummy.fun2()
   end
 
   defmodule DevEnv do
-    @dummy Mockery.of(Dummy, through: TestDummy2, env: :dev)
+    @dummy Mockery.of(Dummy, by: TestDummy2, env: :dev)
 
     def fun1, do: @dummy.fun1()
     def fun2, do: @dummy.fun2()

@@ -17,7 +17,7 @@ defmodule Mockery.InterfaceTest do
   defmodule TestDummy2 do
     use Mockery.Heritage, module: Dummy
 
-    global_mock Dummy, [fun2: 0], do: 50
+    mock [fun2: 0], do: 50
   end
 
   defmodule TestEnv do

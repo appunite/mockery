@@ -2,10 +2,10 @@ defmodule Mockery.Heritage do
   alias Mockery.Utils
   alias Mockery.Error
 
-  defmacro global_mock(mod, [{name, arity}], do: new_default) do
-    mod = Macro.expand(mod, __ENV__)
-    args = mkargs(mod, arity)
+  defmacro mock([{name, arity}], do: new_default) do
+    mod = __CALLER__.module |> Agent.get(&(&1)) |> Macro.expand(__ENV__)
 
+    args = mkargs(mod, arity)
     key1 = Utils.dict_mock_key(mod, [{name, arity}])
     key2 = Utils.dict_mock_key(mod, name)
 
@@ -27,6 +27,8 @@ defmodule Mockery.Heritage do
 
   defmacro __using__(opts) do
     mod = opts |> Keyword.fetch!(:module)
+
+    Agent.start_link(fn-> mod end, name: __CALLER__.module)
 
     quote do
       import Mockery.Heritage, only: :macros

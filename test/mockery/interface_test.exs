@@ -1,6 +1,6 @@
-defmodule MockeryTest do
+defmodule Mockery.InterfaceTest do
   use ExUnit.Case, async: true
-  import Mockery
+  import Mockery.Interface
 
   # dummy.ex
   # defmodule Dummy do
@@ -11,11 +11,11 @@ defmodule MockeryTest do
   # end
 
   defmodule TestDummy1 do
-    use Mockery.Helper, module: Dummy
+    use Mockery.Heritage, module: Dummy
   end
 
   defmodule TestDummy2 do
-    use Mockery.Helper, module: Dummy
+    use Mockery.Heritage, module: Dummy
 
     global_mock Dummy, [fun2: 0], do: 50
   end

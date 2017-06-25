@@ -1,4 +1,4 @@
-defmodule Mockery.Helper do
+defmodule Mockery.Heritage do
   alias Mockery.Utils
   alias Mockery.Error
 
@@ -31,7 +31,7 @@ defmodule Mockery.Helper do
     quote do
       require unquote(mod)
 
-      import Mockery.Helper, only: :macros
+      import Mockery.Heritage, only: :macros
 
       unquote(generate_funs(mod))
       unquote(make_overridable(mod))

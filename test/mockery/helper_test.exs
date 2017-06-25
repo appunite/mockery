@@ -2,6 +2,14 @@ defmodule Mockery.HelperTest do
   use ExUnit.Case, async: true
   import Mockery
 
+  # dummy.ex
+  # defmodule Dummy do
+  #   def fun1(), do: 1
+  #   def fun2(), do: 2
+  #   def ar(x), do: x
+  #   def ar(x, y), do: [x,y]
+  # end
+
   defmodule TestDummy1 do
     use Mockery.Helper, module: Dummy
   end

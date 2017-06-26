@@ -11,7 +11,7 @@ Everything is subject to change.
 ```elixir
 def deps do
   [
-    {:mockery, "~> 0.2.0", only: :test}
+    {:mockery, "~> 0.3.0", only: :test}
   ]
 end
 ```

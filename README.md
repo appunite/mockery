@@ -24,20 +24,11 @@ end
   end
 ```
 
-Create test helper:
-
-```elixir
-  defmodule MyApp.TestUserService do
-    use Mockery.Heritage,
-      module: MyApp.UserService
-  end
-```
-
 Prepare tested module:
 
 ```elixir
   defmodule MyApp.UserController do
-    @service Mockery.of(MyApp.UserService, by: MyApp.TestUserService)
+    @service Mockery.of(MyApp.UserService)
 
     def index do
       @service.users()
@@ -71,6 +62,8 @@ Use mock in your tests:
 
 ## Global mock
 
+Create helper module:
+
 ```elixir
   defmodule MyApp.TestUserService do
     use Mockery.Heritage,
@@ -82,13 +75,25 @@ Use mock in your tests:
   end
 ```
 
+Prepare tested module:
+
+```elixir
+  defmodule MyApp.UserController do
+    @service Mockery.of(MyApp.UserService, by: MyApp.TestUserService)
+
+    def index do
+      @service.users()
+    end
+  end
+```
+
 ## TODOS
 
 - [x] basic functionality
 - [x] setup CI
 - [x] global mock (through Mockery.Heritage)
 - [x] let it work without recompiling additional module after each change
-- [ ] let Mockery.of/2 work without :by option
+- [x] let Mockery.of/2 work without :by option
 - [ ] let global mock work with only function name (without arity)
 - [ ] way to check if function was called
 - [ ] docs

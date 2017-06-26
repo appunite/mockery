@@ -20,29 +20,63 @@ defmodule Mockery.InterfaceTest do
     mock [fun2: 0], do: 50
   end
 
-  defmodule TestEnv do
-    @dummy Mockery.of(Dummy, by: TestDummy2)
-
-    def fun1, do: @dummy.fun1()
-    def fun2, do: @dummy.fun2()
-  end
-
-  defmodule DevEnv do
-    @dummy Mockery.of(Dummy, by: TestDummy2, env: :dev)
-
-    def fun1, do: @dummy.fun1()
-    def fun2, do: @dummy.fun2()
-  end
-
   describe "of/2" do
+    defmodule TestEnv1 do
+      @dummy Mockery.of(Dummy)
+
+      def fun1, do: @dummy.fun1()
+      def fun2, do: @dummy.fun2()
+      def ar(a, b), do: @dummy.ar(a, b)
+    end
+
+    defmodule DevEnv1 do
+      @dummy Mockery.of(Dummy, env: :dev)
+
+      def fun1, do: @dummy.fun1()
+      def fun2, do: @dummy.fun2()
+      def ar(a, b), do: @dummy.ar(a, b)
+    end
+
     test "test env" do
-      assert TestEnv.fun1() == Dummy.fun1()
-      assert TestEnv.fun2() == TestDummy2.fun2()
+      assert TestEnv1.fun1() == Dummy.fun1()
+      assert TestEnv1.ar(1, 2) == Dummy.ar(1, 2)
+
+      mock(Dummy, :fun2, "mocked")
+      assert TestEnv1.fun2() == "mocked"
     end
 
     test "dev env" do
-      assert DevEnv.fun1() == Dummy.fun1()
-      assert DevEnv.fun2() == Dummy.fun2()
+      assert DevEnv1.fun1() == Dummy.fun1()
+      assert DevEnv1.ar(1, 2) == Dummy.ar(1, 2)
+
+      mock(Dummy, :fun2, "mocked")
+      assert DevEnv1.fun2() == Dummy.fun2()
+    end
+  end
+
+  describe "of/2 :by option" do
+    defmodule TestEnv2 do
+      @dummy Mockery.of(Dummy, by: TestDummy2)
+
+      def fun1, do: @dummy.fun1()
+      def fun2, do: @dummy.fun2()
+    end
+
+    defmodule DevEnv2 do
+      @dummy Mockery.of(Dummy, by: TestDummy2, env: :dev)
+
+      def fun1, do: @dummy.fun1()
+      def fun2, do: @dummy.fun2()
+    end
+
+    test "test env" do
+      assert TestEnv2.fun1() == Dummy.fun1()
+      assert TestEnv2.fun2() == TestDummy2.fun2()
+    end
+
+    test "dev env" do
+      assert DevEnv2.fun1() == Dummy.fun1()
+      assert DevEnv2.fun2() == Dummy.fun2()
     end
   end
 

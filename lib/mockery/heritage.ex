@@ -2,26 +2,30 @@ defmodule Mockery.Heritage do
   alias Mockery.Utils
   alias Mockery.Error
 
-  defmacro mock([{name, arity}], do: new_default) do
-    mod = __CALLER__.module |> Agent.get(&(&1)) |> Macro.expand(__ENV__)
+  def unquote(:"$handle_undefined_function")(name, args) do
+    [{_h, mod} | rest] = Enum.reverse(args)
+    args = Enum.reverse(rest)
 
-    args = mkargs(mod, arity)
+    arity = Enum.count(args)
+    fun_tuple = {name, arity}
     key1 = Utils.dict_mock_key(mod, [{name, arity}])
     key2 = Utils.dict_mock_key(mod, name)
 
-    quote do
-      def unquote(name)(unquote_splicing(args)) do
-        case Process.get(unquote(key1)) || Process.get(unquote(key2)) do
-          nil ->
-            unquote(new_default)
-          fun when is_function(fun, unquote(arity)) ->
-            fun.(unquote_splicing(args))
-          fun when is_function(fun) ->
-            raise Error, "function used for mock should have same arity as original"
-          value ->
-            value
-        end
+    if fun_tuple in mod.__info__(:functions) do
+      case Process.get(key1) || Process.get(key2) do
+        nil ->
+          apply(mod, name, args)
+        fun when is_function(fun, arity) ->
+          apply(fun, args)
+        fun when is_function(fun) ->
+          raise Error, "function used for mock should have same arity as original"
+        value ->
+          value
       end
+    else
+      md = mod |> Module.split() |> Enum.join(".")
+
+      raise Error, "function #{md}.#{name}/#{arity} is undefined or private"
     end
   end
 
@@ -54,6 +58,29 @@ defmodule Mockery.Heritage do
           md = __MODULE__ |> Module.split() |> Enum.join(".")
 
           raise Error, "function #{md}.#{name}/#{arity} is undefined or private"
+        end
+      end
+    end
+  end
+
+  defmacro mock([{name, arity}], do: new_default) do
+    mod = __CALLER__.module |> Agent.get(&(&1)) |> Macro.expand(__ENV__)
+
+    args = mkargs(mod, arity)
+    key1 = Utils.dict_mock_key(mod, [{name, arity}])
+    key2 = Utils.dict_mock_key(mod, name)
+
+    quote do
+      def unquote(name)(unquote_splicing(args)) do
+        case Process.get(unquote(key1)) || Process.get(unquote(key2)) do
+          nil ->
+            unquote(new_default)
+          fun when is_function(fun, unquote(arity)) ->
+            fun.(unquote_splicing(args))
+          fun when is_function(fun) ->
+            raise Error, "function used for mock should have same arity as original"
+          value ->
+            value
         end
       end
     end

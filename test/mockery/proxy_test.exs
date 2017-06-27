@@ -1,4 +1,4 @@
-defmodule Mockery.HeritageTest do
+defmodule Mockery.ProxyTest do
   use ExUnit.Case, async: true
   import Mockery
 
@@ -10,19 +10,10 @@ defmodule Mockery.HeritageTest do
   #   def ar(x, y), do: [x,y]
   # end
 
-  defmodule TestDummy do
-    use Mockery.Heritage, module: Dummy
-
-    mock [fun2: 0] do
-      "global mock"
-    end
-  end
-
   defmodule Tested do
-    @dummy Mockery.of(Dummy, by: TestDummy)
+    @dummy Mockery.of(Dummy)
 
     def fun1, do: @dummy.fun1()
-    def fun2, do: @dummy.fun2()
     def ar(a), do: @dummy.ar(a)
     def ar(a, b), do: @dummy.ar(a, b)
     def undefined(), do: @dummy.undefined()
@@ -57,20 +48,10 @@ defmodule Mockery.HeritageTest do
     )
   end
 
-  test "allows global mocks" do
-    assert Tested.fun2() == "global mock"
-  end
-
-  test "respects local mocks overriding global mocks" do
-    mock(Dummy, :fun2, "local mock")
-
-    assert Tested.fun2() == "local mock"
-  end
-
   test "raise when function doesn't exist" do
     assert_raise(
       Mockery.Error,
-      "function Mockery.HeritageTest.TestDummy.undefined/0 is undefined or private",
+      "function Dummy.undefined/0 is undefined or private",
       fn -> Tested.undefined() end
     )
   end

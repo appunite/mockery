@@ -5,7 +5,7 @@ defmodule Mockery.Interface do
     env = opts[:env] || Mix.env
 
     if env == :test do
-      Keyword.get(opts, :by, {Mockery.Heritage, mod})
+      Keyword.get(opts, :by, {Mockery.Proxy, mod})
     else
       mod
     end

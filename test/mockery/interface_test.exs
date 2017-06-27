@@ -10,7 +10,7 @@ defmodule Mockery.InterfaceTest do
 
     test "test env" do
       assert Interface.of(A) == {Mockery.Proxy, A}
-      assert Interface.of(A, by: Z) == Z
+      assert Interface.of(A, by: Z) == {Z, :ok}
     end
   end
 

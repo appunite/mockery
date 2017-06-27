@@ -11,6 +11,9 @@ defmodule Mockery.Heritage do
       import Mockery.Heritage, only: :macros
 
       def unquote(:"$handle_undefined_function")(name, args) do
+        [{_m, :ok} | rest] = Enum.reverse(args)
+        args = Enum.reverse(rest)
+
         arity = Enum.count(args)
         fun_tuple = {name, arity}
         key1 = Utils.dict_mock_key(unquote(mod), [{name, arity}])
@@ -39,7 +42,7 @@ defmodule Mockery.Heritage do
   defmacro mock([{name, arity}], do: new_default) do
     mod = __CALLER__.module |> Agent.get(&(&1)) |> Macro.expand(__ENV__)
 
-    args = mkargs(mod, arity)
+    args = mkargs(mod, arity + 1)
     key1 = Utils.dict_mock_key(mod, [{name, arity}])
     key2 = Utils.dict_mock_key(mod, name)
 
@@ -49,7 +52,7 @@ defmodule Mockery.Heritage do
           nil ->
             unquote(new_default)
           fun when is_function(fun, unquote(arity)) ->
-            fun.(unquote_splicing(args))
+            fun.(unquote_splicing(Enum.take(args, arity)))
           fun when is_function(fun) ->
             raise Error, "function used for mock should have same arity as original"
           value ->

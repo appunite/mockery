@@ -8,7 +8,7 @@ defmodule Mockery.Interface do
       env != :test ->
         mod
       by = Keyword.get(opts, :by) ->
-        by
+        {by, :ok}
       :else ->
         {Mockery.Proxy, mod}
     end

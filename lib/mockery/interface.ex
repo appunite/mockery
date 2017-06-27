@@ -4,10 +4,13 @@ defmodule Mockery.Interface do
   def of(mod, opts \\ []) do
     env = opts[:env] || Mix.env
 
-    if env == :test do
-      Keyword.get(opts, :by, {Mockery.Proxy, mod})
-    else
-      mod
+    cond do
+      env != :test ->
+        mod
+      by = Keyword.get(opts, :by) ->
+        by
+      :else ->
+        {Mockery.Proxy, mod}
     end
   end
 

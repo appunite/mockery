@@ -6,6 +6,8 @@ defmodule Mockery.HeritageTest do
   # defmodule Dummy do
   #   def fun1(), do: 1
   #   def fun2(), do: 2
+  #   def fun3(), do: 3
+  #   def fun4(), do: 4
   #   def ar(x), do: x
   #   def ar(x, y), do: [x,y]
   # end
@@ -16,6 +18,14 @@ defmodule Mockery.HeritageTest do
     mock [fun2: 0] do
       "global mock"
     end
+
+    mock [fun3: 0] do
+      fn-> "global mock as function" end
+    end
+
+    mock [fun4: 0] do
+      &to_string/1
+    end
   end
 
   defmodule Tested do
@@ -23,6 +33,8 @@ defmodule Mockery.HeritageTest do
 
     def fun1, do: @dummy.fun1()
     def fun2, do: @dummy.fun2()
+    def fun3, do: @dummy.fun3()
+    def fun4, do: @dummy.fun4()
     def ar(a), do: @dummy.ar(a)
     def ar(a, b), do: @dummy.ar(a, b)
     def undefined(), do: @dummy.undefined()
@@ -61,13 +73,25 @@ defmodule Mockery.HeritageTest do
     assert Tested.fun2() == "global mock"
   end
 
+  test "allows global mocks as function of same arity" do
+    assert Tested.fun3() == "global mock as function"
+  end
+
+  test "raises on global mock as function with dirrerent arity" do
+    assert_raise(
+      Mockery.Error,
+      "function used for mock should have same arity as original",
+      fn -> Tested.fun4() end
+    )
+  end
+
   test "respects local mocks overriding global mocks" do
     mock(Dummy, :fun2, "local mock")
 
     assert Tested.fun2() == "local mock"
   end
 
-  test "raise when function doesn't exist" do
+  test "raises when function doesn't exist" do
     assert_raise(
       Mockery.Error,
       "function Mockery.HeritageTest.TestDummy.undefined/0 is undefined or private",

@@ -41,6 +41,7 @@ defmodule Mockery.Heritage do
 
   defmacro mock([{name, arity}], do: new_default) do
     mod = __CALLER__.module |> Agent.get(&(&1)) |> Macro.expand(__ENV__)
+    new_default = new_default
 
     args = mkargs(mod, arity + 1)
     key1 = Utils.dict_mock_key(mod, [{name, arity}])
@@ -50,7 +51,7 @@ defmodule Mockery.Heritage do
       def unquote(name)(unquote_splicing(args)) do
         case Process.get(unquote(key1)) || Process.get(unquote(key2)) do
           nil ->
-            unquote(new_default)
+            Mockery.Heritage.handle_nd(unquote_splicing([new_default, args, arity]))
           fun when is_function(fun, unquote(arity)) ->
             fun.(unquote_splicing(Enum.take(args, arity)))
           fun when is_function(fun) ->
@@ -61,6 +62,14 @@ defmodule Mockery.Heritage do
       end
     end
   end
+
+  @doc false #this function is private to Mockery
+  def handle_nd(nd, args, arity) when is_function(nd, arity),
+    do: apply(nd, Enum.take(args, arity))
+  def handle_nd(nd, _args, _arity) when is_function(nd),
+    do: raise Error, "function used for mock should have same arity as original"
+  def handle_nd(nd, _args, _arity),
+    do: nd
 
   # shamelessly stolen from
   # https://gist.github.com/teamon/f759a4ced0e21b02a51dda759de5da03

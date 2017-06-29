@@ -13,6 +13,8 @@ defmodule Mockery.Proxy do
     key1 = Utils.dict_mock_key(mod, [{name, arity}])
     key2 = Utils.dict_mock_key(mod, name)
 
+    Utils.store_call(mod, name, arity, args)
+
     if fun_tuple in mod.__info__(:functions) do
       case Process.get(key1) || Process.get(key2) do
         nil ->

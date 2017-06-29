@@ -19,6 +19,8 @@ defmodule Mockery.Heritage do
         key1 = Utils.dict_mock_key(unquote(mod), [{name, arity}])
         key2 = Utils.dict_mock_key(unquote(mod), name)
 
+        Utils.store_call(unquote(mod), name, arity, args)
+
         if fun_tuple in unquote(mod).__info__(:functions) do
           case Process.get(key1) || Process.get(key2) do
             nil ->

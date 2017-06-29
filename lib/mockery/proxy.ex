@@ -1,4 +1,6 @@
 defmodule Mockery.Proxy do
+  @moduledoc false #this module is private to Mockery
+
   alias Mockery.Utils
   alias Mockery.Error
 

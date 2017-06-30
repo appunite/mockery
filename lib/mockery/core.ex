@@ -1,6 +1,4 @@
 defmodule Mockery.Core do
-  @moduledoc false #this module is private to Mockery
-
   alias Mockery.Utils
 
   def of(mod, opts \\ []) do

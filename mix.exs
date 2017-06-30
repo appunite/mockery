@@ -35,7 +35,7 @@ defmodule Mockery.Mixfile do
 
   defp docs do
     [
-      extras: ["README.md"],
+      extras: ["README.md", "EXAMPLES.md"],
       main: "readme"
     ]
   end

@@ -30,7 +30,7 @@ defmodule Mockery.Mixfile do
   end
 
   defp description do
-    "Simple mocking library"
+    "Simple mocking library for asynchronous testing."
   end
 
   defp docs do

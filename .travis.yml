@@ -5,3 +5,6 @@ elixir:
 otp_release:
   - 18.3
   - 19.2
+
+after_success:
+  - mix coveralls.travis

@@ -11,7 +11,7 @@ Simple mocking library for asynchronous testing in Elixir.
 ```elixir
 def deps do
   [
-    {:mockery, "~> 0.3.2"}
+    {:mockery, "~> 0.4.0"}
   ]
 end
 ```

@@ -31,3 +31,16 @@
     end
   end
 ```
+
+```elixir
+  defmodule MyApp.ControllerTest do
+    use ExUnit.Case, async: true
+    import Mockery.Assertions
+
+    test "something is called" do
+      MyApp.Controller.action()
+
+      assert_called MyApp.Service, :something
+    end
+  end
+```

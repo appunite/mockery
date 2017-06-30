@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/amatalai/mockery.svg?branch=master)](https://travis-ci.org/amatalai/mockery)
+[![Coverage Status](https://coveralls.io/repos/github/amatalai/mockery/badge.svg?branch=master)](https://coveralls.io/github/amatalai/mockery?branch=master)
 [![Hex.pm](https://img.shields.io/hexpm/v/mockery.svg?style=flat)](https://hex.pm/packages/mockery)
 
 # Mockery

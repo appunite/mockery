@@ -49,7 +49,7 @@ defmodule Mockery.Mixfile do
       files: ~w(lib mix.exs README.md CHANGELOG.md LICENSE),
       maintainers: ["Tobiasz Małecki"],
       licenses: ["Apache 2.0"],
-      links: %{"GitHub" => "https://github.com/amatalai/mockery"}
+      links: %{"GitHub" => "https://github.com/appunite/mockery"}
     ]
   end
 

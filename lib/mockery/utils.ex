@@ -7,7 +7,7 @@ defmodule Mockery.Utils do
     Process.get(key, [])
   end
 
-  def store_call(mod, fun, arity, args) do
+  def push_call(mod, fun, arity, args) do
     key = dict_called_key(mod, fun)
 
     Process.put(key, [{arity, args} | get_calls(mod, fun)])
@@ -23,6 +23,6 @@ defmodule Mockery.Utils do
     do: {{Mockery, :mock}, {mod, fun}}
 
   # function calls are stored under this key
-  def dict_called_key(mod, fun),
+  defp dict_called_key(mod, fun),
     do: {{Mockery, :call}, {mod, fun}}
 end

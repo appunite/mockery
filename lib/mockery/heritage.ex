@@ -1,4 +1,34 @@
 defmodule Mockery.Heritage do
+  @moduledoc """
+  This module contains macros useful for mocking given function with same value
+  in multiple tests.
+
+  ## Usage
+
+  Create helper module.
+
+      defmodule FakeService do
+        use Mockery.Heritage,
+          module: MyApp.Service
+      end
+
+  This module can be passed to `Mockery.of/2` :by option.
+  By default it creates proxy to original module.
+
+  Let's add global mock.
+
+      defmodule FakeService do
+        use Mockery.Heritage,
+          module MyApp.Service
+
+        mock [fun: 2], do: "mocked value"
+      end
+
+  Now you don't have to call `Mockery.mock/3` in multiple tests.
+
+  For more information about global mock macro see `mock/2`
+  """
+
   alias Mockery.Utils
   alias Mockery.Error
 
@@ -41,6 +71,30 @@ defmodule Mockery.Heritage do
     end
   end
 
+  @doc """
+  Macro used to create global mocks inside Heritage helper.
+
+  Mocks can be created with value:
+
+      mock [fun: 2], do: "mocked_value"
+
+  or function:
+
+      mock [fun: 2] do
+        fn(_, arg2) -> arg2 end
+      end
+
+  Keep in mind that function inside mock must have same arity as
+  original one.
+
+  This:
+
+      mock [fun: 2] do
+        &to_string/1
+      end
+
+  will raise an error.
+  """
   defmacro mock([{name, arity}], do: new_default) do
     mod = __CALLER__.module |> Agent.get(&(&1)) |> Macro.expand(__ENV__)
     new_default = new_default

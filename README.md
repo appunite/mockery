@@ -87,6 +87,39 @@ Prepare tested module:
   end
 ```
 
+## Check if function was called
+
+Prepare tested module:
+
+```elixir
+  defmodule MyApp.UserController do
+    @service Mockery.of(MyApp.UserService)
+
+    def index(conn, %{"token" => token, "count" => count}) do
+      users = @service.users(token, count)
+
+      # ...
+    end
+  end
+```
+
+Test:
+
+```elixir
+  defmodule MyApp.UserControllerTest do
+    use ExUnit.Case, async: true
+    import Mockery.Assertions
+
+    #...
+
+    test "service called with proper token", %{conn: conn} do
+      _result = MyApp.UserController.index(conn, %{"token" => "t", "count" => "20"})
+
+      assert_called MyApp.UserService, :users, ["t", _]
+    end
+  end
+```
+
 ## License
 
 Copyright 2017 Tobiasz Małecki <tobiasz.malecki@appunite.com>

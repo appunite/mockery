@@ -35,7 +35,7 @@ defmodule Mockery.Mixfile do
 
   defp docs do
     [
-      extras: ["README.md", "EXAMPLES.md"],
+      extras: ["README.md", "EXAMPLES.md", "CHANGELOG.md"],
       main: "readme"
     ]
   end
@@ -46,7 +46,7 @@ defmodule Mockery.Mixfile do
   defp package do
     [
       name: :mockery,
-      files: ~w(lib mix.exs README.md LICENSE),
+      files: ~w(lib mix.exs README.md CHANGELOG.md LICENSE),
       maintainers: ["Tobiasz Małecki"],
       licenses: ["Apache 2.0"],
       links: %{"GitHub" => "https://github.com/amatalai/mockery"}

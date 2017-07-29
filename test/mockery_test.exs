@@ -17,13 +17,13 @@ defmodule MockeryTest do
     test "with name" do
       Mockery.mock(Dummy, :fun1, "value1")
 
-      assert Process.get({{Mockery, :mock}, {Dummy, :fun1}}) == "value1"
+      assert Process.get({Mockery, {Dummy, :fun1}}) == "value1"
     end
 
     test "with name and arity" do
       Mockery.mock(Dummy, [fun1: 0], "value2")
 
-      assert Process.get({{Mockery, :mock}, {Dummy, {:fun1, 0}}}) == "value2"
+      assert Process.get({Mockery, {Dummy, {:fun1, 0}}}) == "value2"
     end
   end
 end

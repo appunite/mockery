@@ -2,4 +2,5 @@
 
 ## 1.0.0
 * Added `use Mockery` for importing both `Mockery` and `Mockery.Assertions`
-* Loosen elixir version requirement to `~> 1.1`
+* Added `refute_called/2` and `refute_called/3`
+* Loosen elixir version requirement from `~> 1.3` to `~> 1.1`

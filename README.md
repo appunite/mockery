@@ -6,119 +6,129 @@
 
 Simple mocking library for asynchronous testing in Elixir.
 
+In test environment it replaces prepared modules by mockable proxy. In other environments your modules remain unchanged.
+
 ## Installation
 
 ```elixir
 def deps do
   [
-    {:mockery, "~> 0.4.0"}
+    {:mockery, "~> 1.0.0"}
   ]
 end
 ```
 
 ## Basic usage
 
+Mock
+
 ```elixir
-  defmodule MyApp.UserService do
-    def users, do: []
-  end
+# prepare tested module
+@service Mockery.of(MyApp.UserService)
+
+def all do
+  @service.users()
+end
+
+def filtered do
+  @service.users("filter")
+end
+
+# tests
+import Mockery
+
+# mock any function :users from MyApp.UserService
+mock MyApp.UserService, :users, "mock"
+assert all() == "mock"
+assert filtered() == "mock"
+
+# mock MyApp.UserService.users/0
+mock MyApp.UserService, [users: 0], "mock"
+assert all() == "mock"
+refute filtered() == "mock"
 ```
 
-Prepare tested module:
+Dynamic mock
 
 ```elixir
-  defmodule MyApp.UserController do
-    @service Mockery.of(MyApp.UserService)
+defmodule Foo do
+  def bar(value), do: value
+end
 
-    def index do
-      @service.users()
-    end
-  end
-```
+# prepare tested module
+@foo Mockery.of(Foo)
 
-Use mock in your tests:
+def parse(value) do
+  @foo.bar(value)
+end
 
-```elixir
-  defmodule MyApp.UserControllerTest do
-    use ExUnit.Case, async: true
-    import Mockery
+# tests
+import Mockery
 
-    alias MyApp.UserController, as: Controller
-    alias MyApp.UserService, as: Service
-
-    describe "index" do
-      test "not mocked" do
-        assert Controller.index() == []
-      end
-
-      test "mocked" do
-        mock(Service, :users, [:john, :donald])
-
-        assert Controller.index() == [:john, :donald]
-      end
-    end
-  end
-```
-
-## Global mock
-
-Create helper module:
-
-```elixir
-  defmodule MyApp.TestUserService do
-    use Mockery.Heritage,
-      module: MyApp.UserService
-
-    mock [users: 0] do
-      [:user1, :user2, :user3]
-    end
-  end
-```
-
-Prepare tested module:
-
-```elixir
-  defmodule MyApp.UserController do
-    @service Mockery.of(MyApp.UserService, by: MyApp.TestUserService)
-
-    def index do
-      @service.users()
-    end
-  end
+mock Foo, [bar: 1], fn(value)-> String.upcase(value) end
+assert parse("test") == "TEST"
 ```
 
 ## Check if function was called
 
-Prepare tested module:
-
 ```elixir
-  defmodule MyApp.UserController do
-    @service Mockery.of(MyApp.UserService)
+# prepare tested module
+@foo Mockery.of(Foo)
 
-    def index(conn, %{"token" => token, "count" => count}) do
-      users = @service.users(token, count)
+def call(value, opts) do
+  @foo.bar(value)
+end
 
-      # ...
-    end
-  end
+# tests
+import Mockery.Assertions
+# use Mockery # when need to import both Mockery and Mockery.Assertions
+
+# assert any function bar from module Foo was called
+call(1, %{})
+assert_called Foo, :bar
+
+# assert Foo.bar/2 was called
+call(1, %{})
+assert_called Foo, bar: 2
+
+# assert Foo.bar/2 was called with given args
+call(1, %{})
+assert_called Foo, :bar, [1, %{}]
+
+# assert Foo.bar/2 was called with 1 as first arg
+call(1, %{})
+assert_called Foo, :bar, [1, _]
 ```
 
-Test:
+## Global mock
 
 ```elixir
-  defmodule MyApp.UserControllerTest do
-    use ExUnit.Case, async: true
-    import Mockery.Assertions
+# create helper module
+defmodule MyApp.TestUserService do
+  use Mockery.Heritage,
+    module: MyApp.UserService
 
-    #...
-
-    test "service called with proper token", %{conn: conn} do
-      _result = MyApp.UserController.index(conn, %{"token" => "t", "count" => "20"})
-
-      assert_called MyApp.UserService, :users, ["t", _]
-    end
+  mock [users: 0] do
+    [:user1, :user2, :user3]
   end
+end
+
+# prepare tested module
+defmodule MyApp.UserController do
+  @service Mockery.of(MyApp.UserService, by: MyApp.TestUserService)
+
+  def index do
+    @service.users()
+  end
+end
+
+# tests
+assert index() == [:user1, :user2, :user3]
 ```
+
+## Advanced examples
+
+For advanced usage examples see [EXAMPLES.md](EXAMPLES.md)
 
 ## License
 

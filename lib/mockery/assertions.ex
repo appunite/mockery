@@ -20,7 +20,7 @@ defmodule Mockery.Assertions do
 
   Assert any function named :fun from module Mod was called
 
-      assert_called Mod, :fum
+      assert_called Mod, :fun
 
   """
   def assert_called(mod, [{fun, arity}]),

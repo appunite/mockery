@@ -9,7 +9,7 @@ defmodule Mockery.Mixfile do
       deps: deps(),
       description: description(),
       docs: docs(),
-      elixir: "~> 1.3",
+      elixir: "~> 1.1",
       elixirc_paths: elixirc_paths(Mix.env),
       package: package(),
       preferred_cli_env: preferred_cli_env(),
@@ -19,7 +19,7 @@ defmodule Mockery.Mixfile do
   end
 
   def application do
-    [extra_applications: [:logger]]
+    []
   end
 
   defp deps do

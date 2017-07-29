@@ -75,6 +75,30 @@ defmodule Mockery.Assertions do
     end
   end
 
+  @doc """
+  Asserts that function from given module with given name was NOT called
+  with arguments matching given pattern.
+
+  **NOTE**: Mockery doesn't keep track of function calls on modules that
+  weren't prepared by `Mockery.of/2` and for MIX_ENV other than :test
+
+  ## Examples
+
+  Assert Mod.fun/2 wasn't called with given args list
+
+      refute_called Mod, :fun, ["a", "b"]
+
+  You can also use unbound variables inside args pattern
+
+      refute_called Mod, :fun, ["a", _second]
+
+  """
+  defmacro refute_called(mod, fun, args) do
+    quote do
+      ExUnit.Assertions.refute unquote(called_with?(mod, fun, args)), unquote(refute_message(mod, fun))
+    end
+  end
+
   defp called?(mod, fun), do: Utils.get_calls(mod, fun) != []
   defp called?(mod, fun, arity) do
     mod
@@ -93,6 +117,12 @@ defmodule Mockery.Assertions do
   defp message(mod, fun) do
     quote do
       "#{unquote(mod)}.#{unquote(fun)} was not called with given arguments"
+    end
+  end
+
+  defp refute_message(mod, fun) do
+    quote do
+      "#{unquote(mod)}.#{unquote(fun)} was called with given arguments at least once"
     end
   end
 end

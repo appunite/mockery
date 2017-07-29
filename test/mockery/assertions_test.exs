@@ -2,182 +2,182 @@ defmodule Mockery.AssertionsTest do
   use ExUnit.Case
   import ExUnit.CaptureIO
 
-  describe "assert_called/2 (fun name)" do
-    test "success" do
-      defmodule FunSuccess do
-        use ExUnit.Case
-
-        alias Mockery.Assertions
-        alias Mockery.Utils
-
-        test "function was called once (zero arity)" do
-          Utils.push_call(A, :fun, 0, [])
-
-          Assertions.assert_called A, :fun
-        end
-
-        test "function was called once (positive arity)" do
-          Utils.push_call(A, :fun, 2, ["a", "b"])
-
-          Assertions.assert_called A, :fun
-        end
-
-        test "function was called multiple times" do
-          Utils.push_call(A, :fun, 0, [])
-          Utils.push_call(A, :fun, 2, ["a", "b"])
-
-          Assertions.assert_called A, :fun
-        end
-      end
-
+  defp load_cases do
+    if {:cases_loaded, 0} in ExUnit.Server.__info__(:functions) do
       ExUnit.Server.cases_loaded()
-      output = capture_io(fn -> ExUnit.run end)
-
-      assert output =~ "3 tests, 0 failures"
-    end
-
-    test "failure" do
-      defmodule FunFailure do
-        use ExUnit.Case
-
-        test "when function was not called" do
-          Mockery.Assertions.assert_called A, :fun
-        end
-      end
-
-      ExUnit.Server.cases_loaded()
-      output = capture_io(fn -> ExUnit.run end)
-
-      assert output =~ "1 test, 1 failure"
-      assert output =~ "A.fun was not called"
     end
   end
 
-  describe "assert_called/2 (fun and arity)" do
-    test "success" do
-      defmodule FunAritySuccess do
-        use ExUnit.Case
+  test "assert_called/2 (fun name) success" do
+    defmodule FunSuccess do
+      use ExUnit.Case
 
-        alias Mockery.Assertions
-        alias Mockery.Utils
+      alias Mockery.Assertions
+      alias Mockery.Utils
 
-        test "function was called once (zero arity)" do
-          Utils.push_call(A, :fun, 0, [])
+      test "function was called once (zero arity)" do
+        Utils.push_call(A, :fun, 0, [])
 
-          Assertions.assert_called A, fun: 0
-        end
-
-        test "function was called once (positive arity)" do
-          Utils.push_call(A, :fun, 2, ["a", "b"])
-
-          Assertions.assert_called A, fun: 2
-        end
-
-        test "function was called multiple times" do
-          Utils.push_call(A, :fun, 0, [])
-          Utils.push_call(A, :fun, 0, [])
-
-          Assertions.assert_called A, fun: 0
-        end
-
-        test "function was called multiple times with different arities" do
-          Utils.push_call(A, :fun, 0, [])
-          Utils.push_call(A, :fun, 2, ["a", "b"])
-
-          Assertions.assert_called A, fun: 0
-        end
+        Assertions.assert_called A, :fun
       end
 
-      ExUnit.Server.cases_loaded()
-      output = capture_io(fn -> ExUnit.run end)
+      test "function was called once (positive arity)" do
+        Utils.push_call(A, :fun, 2, ["a", "b"])
 
-      assert output =~ "4 tests, 0 failure"
-    end
-
-    test "failure" do
-      defmodule FunArityFailure do
-        use ExUnit.Case
-
-        alias Mockery.Assertions
-        alias Mockery.Utils
-
-        test "when function was not called" do
-          Assertions.assert_called A, fun: 0
-        end
-
-        test "when function was called but with different_arity" do
-          Utils.push_call(A, :fun, 0, [])
-
-          Assertions.assert_called A, fun: 2
-        end
+        Assertions.assert_called A, :fun
       end
 
-      ExUnit.Server.cases_loaded()
-      output = capture_io(fn -> ExUnit.run end)
+      test "function was called multiple times" do
+        Utils.push_call(A, :fun, 0, [])
+        Utils.push_call(A, :fun, 2, ["a", "b"])
 
-      assert output =~ "2 tests, 2 failures"
-      assert output =~ "A.fun/0 was not called"
-      assert output =~ "A.fun/2 was not called"
+        Assertions.assert_called A, :fun
+      end
     end
+
+    load_cases()
+    output = capture_io(fn -> ExUnit.run end)
+
+    assert output =~ "3 tests, 0 failures"
   end
 
-  describe "assert_called/3" do
-    test "success" do
-      defmodule ArgsPatternSuccess do
-        use ExUnit.Case
-        require Mockery.Assertions
+  test "assert_called/2 (fun name) failure" do
+    defmodule FunFailure do
+      use ExUnit.Case
 
-        alias Mockery.Assertions
-        alias Mockery.Utils
-
-        test "zero arity" do
-          Utils.push_call(A, :fun, 0, [])
-          Utils.push_call(A, :fun, 2, ["a", "b"])
-
-          Assertions.assert_called A, :fun, []
-        end
-
-        test "positive arity" do
-          Utils.push_call(A, :fun, 0, [])
-          Utils.push_call(A, :fun, 2, ["a", "b"])
-
-          Assertions.assert_called A, :fun, ["a", "b"]
-        end
-
-        test "positive arity, pattern with unbound var" do
-          Utils.push_call(A, :fun, 0, [])
-          Utils.push_call(A, :fun, 2, ["a", "b"])
-
-          Assertions.assert_called A, :fun, ["a", _]
-        end
+      test "when function was not called" do
+        Mockery.Assertions.assert_called A, :fun
       end
-
-      ExUnit.Server.cases_loaded()
-      output = capture_io(fn -> ExUnit.run end)
-
-      assert output =~ "3 tests, 0 failures"
     end
 
-    test "failure" do
-      defmodule ArgsPatternFailure do
-        use ExUnit.Case
-        require Mockery.Assertions
+    load_cases()
+    output = capture_io(fn -> ExUnit.run end)
 
-        alias Mockery.Assertions
-        alias Mockery.Utils
+    assert output =~ "1 test, 1 failure"
+    assert output =~ "A.fun was not called"
+  end
 
-        test "when function was not called with given args pattern" do
-          Utils.push_call(A, :fun, 2, ["a", "b"])
+  test "assert_called/2 (fun and arity) success" do
+    defmodule FunAritySuccess do
+      use ExUnit.Case
 
-          Assertions.assert_called A, :fun, ["a", "c"]
-        end
+      alias Mockery.Assertions
+      alias Mockery.Utils
+
+      test "function was called once (zero arity)" do
+        Utils.push_call(A, :fun, 0, [])
+
+        Assertions.assert_called A, fun: 0
       end
 
-      ExUnit.Server.cases_loaded()
-      output = capture_io(fn -> ExUnit.run end)
+      test "function was called once (positive arity)" do
+        Utils.push_call(A, :fun, 2, ["a", "b"])
 
-      assert output =~ "1 test, 1 failure"
-      assert output =~ "A.fun was not called with given arguments"
+        Assertions.assert_called A, fun: 2
+      end
+
+      test "function was called multiple times" do
+        Utils.push_call(A, :fun, 0, [])
+        Utils.push_call(A, :fun, 0, [])
+
+        Assertions.assert_called A, fun: 0
+      end
+
+      test "function was called multiple times with different arities" do
+        Utils.push_call(A, :fun, 0, [])
+        Utils.push_call(A, :fun, 2, ["a", "b"])
+
+        Assertions.assert_called A, fun: 0
+      end
     end
+
+    load_cases()
+    output = capture_io(fn -> ExUnit.run end)
+
+    assert output =~ "4 tests, 0 failure"
+  end
+
+  test "assert_called/2 (fun and arity) failure" do
+    defmodule FunArityFailure do
+      use ExUnit.Case
+
+      alias Mockery.Assertions
+      alias Mockery.Utils
+
+      test "when function was not called" do
+        Assertions.assert_called A, fun: 0
+      end
+
+      test "when function was called but with different_arity" do
+        Utils.push_call(A, :fun, 0, [])
+
+        Assertions.assert_called A, fun: 2
+      end
+    end
+
+    load_cases()
+    output = capture_io(fn -> ExUnit.run end)
+
+    assert output =~ "2 tests, 2 failures"
+    assert output =~ "A.fun/0 was not called"
+    assert output =~ "A.fun/2 was not called"
+  end
+
+  test "assert_called/3 success" do
+    defmodule ArgsPatternSuccess do
+      use ExUnit.Case
+      require Mockery.Assertions
+
+      alias Mockery.Assertions
+      alias Mockery.Utils
+
+      test "zero arity" do
+        Utils.push_call(A, :fun, 0, [])
+        Utils.push_call(A, :fun, 2, ["a", "b"])
+
+        Assertions.assert_called A, :fun, []
+      end
+
+      test "positive arity" do
+        Utils.push_call(A, :fun, 0, [])
+        Utils.push_call(A, :fun, 2, ["a", "b"])
+
+        Assertions.assert_called A, :fun, ["a", "b"]
+      end
+
+      test "positive arity, pattern with unbound var" do
+        Utils.push_call(A, :fun, 0, [])
+        Utils.push_call(A, :fun, 2, ["a", "b"])
+
+        Assertions.assert_called A, :fun, ["a", _]
+      end
+    end
+
+    load_cases()
+    output = capture_io(fn -> ExUnit.run end)
+
+    assert output =~ "3 tests, 0 failures"
+  end
+
+  test "assert_called/3 failure" do
+    defmodule ArgsPatternFailure do
+      use ExUnit.Case
+      require Mockery.Assertions
+
+      alias Mockery.Assertions
+      alias Mockery.Utils
+
+      test "when function was not called with given args pattern" do
+        Utils.push_call(A, :fun, 2, ["a", "b"])
+
+        Assertions.assert_called A, :fun, ["a", "c"]
+      end
+    end
+
+    load_cases()
+    output = capture_io(fn -> ExUnit.run end)
+
+    assert output =~ "1 test, 1 failure"
+    assert output =~ "A.fun was not called with given arguments"
   end
 end

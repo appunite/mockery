@@ -18,11 +18,11 @@ defmodule Mockery.Utils do
 
   # key used to assign mocked value to given function
   def dict_mock_key(mod, [{fun, arity}]),
-    do: {{Mockery, :mock}, {mod, {fun, arity}}}
+    do: {Mockery, {mod, {fun, arity}}}
   def dict_mock_key(mod, fun),
-    do: {{Mockery, :mock}, {mod, fun}}
+    do: {Mockery, {mod, fun}}
 
   # function calls are stored under this key
   defp dict_called_key(mod, fun),
-    do: {{Mockery, :call}, {mod, fun}}
+    do: {Mockery.Assertions, {mod, fun}}
 end

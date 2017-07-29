@@ -4,6 +4,13 @@ defmodule Mockery do
   """
   alias Mockery.Utils
 
+  defmacro __using__(_opts) do
+    quote do
+      import Mockery
+      import Mockery.Assertions
+    end
+  end
+
   @doc """
   Function used to prepare module for mocking.
 

@@ -29,6 +29,29 @@ defmodule Mockery.Assertions do
     do: ExUnit.Assertions.assert called?(mod, fun), "#{mod}.#{fun} was not called"
 
   @doc """
+  Asserts that function from given module with given name or name and arity
+  was NOT called.
+
+  **NOTE**: Mockery doesn't keep track of function calls on modules that
+  weren't prepared by `Mockery.of/2` and for MIX_ENV other than :test
+
+  ## Examples
+
+  Assert Mod.fun/2 wasn't called
+
+      refute_called Mod, fun: 2
+
+  Assert any function named :fun from module Mod wasn't called
+
+      refute_called Mod, :fun
+
+  """
+  def refute_called(mod, [{fun, arity}]),
+    do: ExUnit.Assertions.refute called?(mod, fun, arity), "#{mod}.#{fun}/#{arity} was called at least once"
+  def refute_called(mod, fun),
+    do: ExUnit.Assertions.refute called?(mod, fun), "#{mod}.#{fun} was called at least once"
+
+  @doc """
   Asserts that function from given module with given name was called
   at least once with arguments matching given pattern.
 

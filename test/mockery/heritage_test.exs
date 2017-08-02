@@ -10,6 +10,8 @@ defmodule Mockery.HeritageTest do
   #   def fun2(), do: 2
   #   def fun3(), do: 3
   #   def fun4(), do: 4
+  #   def fun5(), do: 5
+  #   def fun6(), do: 6
   #   def ar(x), do: x
   #   def ar(x, y), do: [x,y]
   # end
@@ -28,6 +30,14 @@ defmodule Mockery.HeritageTest do
     mock [fun4: 0] do
       &to_string/1
     end
+
+    mock [fun5: 0] do
+      nil
+    end
+
+    mock [fun6: 0] do
+      false
+    end
   end
 
   defmodule Tested do
@@ -37,6 +47,8 @@ defmodule Mockery.HeritageTest do
     def fun2, do: @dummy.fun2()
     def fun3, do: @dummy.fun3()
     def fun4, do: @dummy.fun4()
+    def fun5, do: @dummy.fun5()
+    def fun6, do: @dummy.fun6()
     def ar(a), do: @dummy.ar(a)
     def ar(a, b), do: @dummy.ar(a, b)
     def undefined(), do: @dummy.undefined()
@@ -112,6 +124,14 @@ defmodule Mockery.HeritageTest do
     mock(Dummy, [ar: 2], false)
 
     assert Tested.ar(1, 2) == false
+  end
+
+  test "allow global mocking with nil" do
+    assert is_nil Tested.fun5()
+  end
+
+  test "allow global mocking with false" do
+    assert Tested.fun6() == false
   end
 
   # STORING CALLS

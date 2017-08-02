@@ -16,7 +16,7 @@ In test environment it replaces prepared modules by mockable proxy. In other env
 ```elixir
 def deps do
   [
-    {:mockery, "~> 1.0.0"}
+    {:mockery, "~> 1.0"}
   ]
 end
 ```

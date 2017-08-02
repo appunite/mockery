@@ -102,6 +102,18 @@ defmodule Mockery.HeritageTest do
     )
   end
 
+  test "allow mocking with nil" do
+    mock(Dummy, [ar: 2], nil)
+
+    assert is_nil Tested.ar(1, 2)
+  end
+
+  test "allow mocking with false" do
+    mock(Dummy, [ar: 2], false)
+
+    assert Tested.ar(1, 2) == false
+  end
+
   # STORING CALLS
   test "function was not called" do
     assert Utils.get_calls(Dummy, :fun1) == []

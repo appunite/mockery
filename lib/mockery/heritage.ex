@@ -55,6 +55,10 @@ defmodule Mockery.Heritage do
           case Process.get(key1) || Process.get(key2) do
             nil ->
               apply(unquote(mod), name, args)
+            Mockery.Nil ->
+              nil
+            Mockery.False ->
+              false
             fun when is_function(fun, arity) ->
               apply(fun, args)
             fun when is_function(fun) ->

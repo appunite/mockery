@@ -109,9 +109,9 @@ defmodule Mockery.AssertionsTest do
       end
 
       test "when function was called but with different_arity" do
-        Utils.push_call(A, :fun, 0, [])
+        Utils.push_call(B, :fun, 0, [])
 
-        Assertions.assert_called A, fun: 2
+        Assertions.assert_called B, fun: 2
       end
     end
 
@@ -120,7 +120,7 @@ defmodule Mockery.AssertionsTest do
 
     assert output =~ "2 tests, 2 failures"
     assert output =~ "A.fun/0 was not called"
-    assert output =~ "A.fun/2 was not called"
+    assert output =~ "B.fun/2 was not called"
   end
 
   test "refute_called/2 (fun name) success" do
@@ -152,16 +152,16 @@ defmodule Mockery.AssertionsTest do
       end
 
       test "function was called once (positive arity)" do
-        Utils.push_call(A, :fun, 2, ["a", "b"])
+        Utils.push_call(B, :fun, 2, ["a", "b"])
 
-        Assertions.refute_called A, :fun
+        Assertions.refute_called B, :fun
       end
 
       test "function was called multiple times" do
-        Utils.push_call(A, :fun, 0, [])
-        Utils.push_call(A, :fun, 2, ["a", "b"])
+        Utils.push_call(C, :fun, 0, [])
+        Utils.push_call(C, :fun, 2, ["a", "b"])
 
-        Assertions.refute_called A, :fun
+        Assertions.refute_called C, :fun
       end
     end
 
@@ -170,6 +170,8 @@ defmodule Mockery.AssertionsTest do
 
     assert output =~ "3 tests, 3 failures"
     assert output =~ "A.fun was called at least once"
+    assert output =~ "B.fun was called at least once"
+    assert output =~ "C.fun was called at least once"
   end
 
   test "refute_called/2 (fun and arity) success" do
@@ -210,32 +212,34 @@ defmodule Mockery.AssertionsTest do
       end
 
       test "function was called once (positive arity)" do
-        Utils.push_call(A, :fun, 2, ["a", "b"])
+        Utils.push_call(B, :fun, 2, ["a", "b"])
 
-        Assertions.refute_called A, fun: 2
+        Assertions.refute_called B, fun: 2
       end
 
       test "function was called multiple times" do
-        Utils.push_call(A, :fun, 0, [])
-        Utils.push_call(A, :fun, 0, [])
+        Utils.push_call(C, :fun, 0, [])
+        Utils.push_call(C, :fun, 0, [])
 
-        Assertions.refute_called A, fun: 0
+        Assertions.refute_called C, fun: 0
       end
 
       test "function was called multiple times with different arities" do
-        Utils.push_call(A, :fun, 0, [])
-        Utils.push_call(A, :fun, 2, ["a", "b"])
+        Utils.push_call(D, :fun, 0, [])
+        Utils.push_call(D, :fun, 2, ["a", "b"])
 
-        Assertions.refute_called A, fun: 0
+        Assertions.refute_called D, fun: 0
       end
     end
 
     load_cases()
     output = capture_io(fn -> ExUnit.run end)
 
-    assert output =~ "4 tests, 4 failure"
+    assert output =~ "4 tests, 4 failures"
     assert output =~ "A.fun/0 was called at least once"
-    assert output =~ "A.fun/2 was called at least once"
+    assert output =~ "B.fun/2 was called at least once"
+    assert output =~ "C.fun/0 was called at least once"
+    assert output =~ "D.fun/0 was called at least once"
   end
 
   test "assert_called/3 success" do
@@ -287,9 +291,9 @@ defmodule Mockery.AssertionsTest do
       end
 
       test "when function was not called with given args pattern" do
-        Utils.push_call(A, :fun, 2, ["a", "b"])
+        Utils.push_call(B, :fun, 2, ["a", "b"])
 
-        Assertions.assert_called A, :fun, ["a", "c"]
+        Assertions.assert_called B, :fun, ["a", "c"]
       end
     end
 
@@ -298,6 +302,7 @@ defmodule Mockery.AssertionsTest do
 
     assert output =~ "2 tests, 2 failures"
     assert output =~ "A.fun was not called with given arguments"
+    assert output =~ "B.fun was not called with given arguments"
   end
 
   test "refute_called/3 success" do
@@ -341,17 +346,17 @@ defmodule Mockery.AssertionsTest do
       end
 
       test "positive arity" do
-        Utils.push_call(A, :fun, 0, [])
-        Utils.push_call(A, :fun, 2, ["a", "b"])
+        Utils.push_call(B, :fun, 0, [])
+        Utils.push_call(B, :fun, 2, ["a", "b"])
 
-        Assertions.refute_called A, :fun, ["a", "b"]
+        Assertions.refute_called B, :fun, ["a", "b"]
       end
 
       test "positive arity, pattern with unbound var" do
-        Utils.push_call(A, :fun, 0, [])
-        Utils.push_call(A, :fun, 2, ["a", "b"])
+        Utils.push_call(C, :fun, 0, [])
+        Utils.push_call(C, :fun, 2, ["a", "b"])
 
-        Assertions.refute_called A, :fun, ["a", _]
+        Assertions.refute_called C, :fun, ["a", _]
       end
     end
 
@@ -360,6 +365,100 @@ defmodule Mockery.AssertionsTest do
 
     assert output =~ "3 tests, 3 failures"
     assert output =~ "A.fun was called with given arguments at least once"
+    assert output =~ "B.fun was called with given arguments at least once"
+    assert output =~ "C.fun was called with given arguments at least once"
+  end
 
+  test "assert_called/4 success" do
+    defmodule TimesArgsPatternSuccess do
+      use ExUnit.Case
+      require Mockery.Assertions
+
+      alias Mockery.Assertions
+      alias Mockery.Utils
+
+      test "integer times" do
+        Utils.push_call(A, :fun, 2, ["a", "b"])
+        Utils.push_call(A, :fun, 2, ["a", "c"])
+        Utils.push_call(A, :fun, 2, ["a", "d"])
+        Utils.push_call(A, :fun, 2, ["x", "z"])
+
+        Assertions.assert_called A, :fun, ["a", _], 3
+      end
+
+      test "array times" do
+        Utils.push_call(A, :fun, 2, ["a", "b"])
+        Utils.push_call(A, :fun, 2, ["a", "c"])
+        Utils.push_call(A, :fun, 2, ["a", "d"])
+        Utils.push_call(A, :fun, 2, ["x", "z"])
+
+        Assertions.assert_called A, :fun, ["a", _], [1, 3, 5]
+      end
+
+      test "range times" do
+        Utils.push_call(A, :fun, 2, ["a", "b"])
+        Utils.push_call(A, :fun, 2, ["a", "c"])
+        Utils.push_call(A, :fun, 2, ["a", "d"])
+        Utils.push_call(A, :fun, 2, ["x", "z"])
+
+        Assertions.assert_called A, :fun, ["a", _], 1..3
+      end
+    end
+
+    load_cases()
+    output = capture_io(fn -> ExUnit.run end)
+
+    assert output =~ "3 tests, 0 failures"
+  end
+
+  test "assert_called/4 failure" do
+    defmodule TimesArgsPatternFailure do
+      use ExUnit.Case
+      require Mockery.Assertions
+
+      alias Mockery.Assertions
+      alias Mockery.Utils
+
+      test "when function was not called" do
+        Assertions.assert_called A, :fun, ["a", "c"], 1
+      end
+
+      test "when function was not called with given args pattern" do
+        Utils.push_call(B, :fun, 2, ["a", "b"])
+
+        Assertions.assert_called B, :fun, ["a", "c"], 1
+      end
+
+      test "calls count not equal to times int" do
+        Utils.push_call(C, :fun, 2, ["a", "b"])
+        Utils.push_call(C, :fun, 2, ["a", "b"])
+
+        Assertions.assert_called C, :fun, ["a", "c"], 1
+      end
+
+      test "calls count not in times array" do
+        Utils.push_call(D, :fun, 2, ["a", "b"])
+        Utils.push_call(D, :fun, 2, ["a", "b"])
+
+        Assertions.assert_called D, :fun, ["a", "c"], [1, 3]
+      end
+
+      test "calls count not in times range" do
+        Utils.push_call(E, :fun, 2, ["a", "b"])
+        Utils.push_call(E, :fun, 2, ["a", "b"])
+
+        Assertions.assert_called E, :fun, ["a", "c"], 3..5
+      end
+    end
+
+    load_cases()
+    output = capture_io(fn -> ExUnit.run end)
+
+    assert output =~ "5 tests, 5 failures"
+    assert output =~ "A.fun was not called with given arguments expected number of times"
+    assert output =~ "B.fun was not called with given arguments expected number of times"
+    assert output =~ "C.fun was not called with given arguments expected number of times"
+    assert output =~ "D.fun was not called with given arguments expected number of times"
+    assert output =~ "E.fun was not called with given arguments expected number of times"
   end
 end

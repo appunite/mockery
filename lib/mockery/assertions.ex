@@ -99,6 +99,34 @@ defmodule Mockery.Assertions do
     end
   end
 
+  @doc """
+  Similar to `assert_called/3` but instead of checking if function was called
+  at least once, it checks if function was called specific number of times.
+
+  **NOTE**: Mockery doesn't keep track of function calls on modules that
+  weren't prepared by `Mockery.of/2` and for MIX_ENV other than :test
+
+  ## Examples
+
+  Assert Mod.fun/2 was called with given args 5 times
+
+      assert_called Mod, :fun, ["a", "b"], 5
+
+  Assert Mod.fun/2 was called with given args from 3 to 5 times
+
+      assert_called Mod, :fun, ["a", "b"], 3..5
+
+  Assert Mod.fun/2 was called with given args 3 or 5 times
+
+      assert_called Mod, :fun, ["a", "b"], [3, 5]
+
+  """
+  defmacro assert_called(mod, fun, args, times) do
+    quote do
+      ExUnit.Assertions.assert unquote(ncalled_with?(mod, fun, args, times)), unquote(nmessage(mod, fun))
+    end
+  end
+
   defp called?(mod, fun), do: Utils.get_calls(mod, fun) != []
   defp called?(mod, fun, arity) do
     mod
@@ -114,9 +142,34 @@ defmodule Mockery.Assertions do
     end
   end
 
+  defp ncalled_with?(mod, fun, args, times) when is_integer(times) do
+    quote do
+      unquote(mod)
+      |> Utils.get_calls(unquote(fun))
+      |> Enum.filter(&match?({_, unquote(args)}, &1))
+      |> Enum.count()
+      |> (& (&1 == unquote(times))).()
+    end
+  end
+  defp ncalled_with?(mod, fun, args, times) do
+    quote do
+      unquote(mod)
+      |> Utils.get_calls(unquote(fun))
+      |> Enum.filter(&match?({_, unquote(args)}, &1))
+      |> Enum.count()
+      |> (& (&1 in unquote(times))).()
+    end
+  end
+
   defp message(mod, fun) do
     quote do
       "#{unquote(mod)}.#{unquote(fun)} was not called with given arguments"
+    end
+  end
+
+  defp nmessage(mod, fun) do
+    quote do
+      "#{unquote(mod)}.#{unquote(fun)} was not called with given arguments expected number of times"
     end
   end
 

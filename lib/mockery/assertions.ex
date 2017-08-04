@@ -100,6 +100,9 @@ defmodule Mockery.Assertions do
   end
 
   @doc """
+  Asserts that function from given module with given name was called
+  given number of times with arguments matching given pattern.
+
   Similar to `assert_called/3` but instead of checking if function was called
   at least once, it checks if function was called specific number of times.
 

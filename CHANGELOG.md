@@ -2,6 +2,7 @@
 
 ## 1.1.0
 * Added `Mockery.mock/2` (`Mockery.mock/3` value defaults to `:mocked`)
+* Added `Mockery.Assertions.assert_called/4` macro
 
 ## 1.0.1
 * Fixed issue when mocking with `nil` or `false`

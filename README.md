@@ -23,7 +23,7 @@ end
 
 ## Basic usage
 
-Mock
+#### Static value mock
 
 ```elixir
 # prepare tested module
@@ -49,9 +49,14 @@ assert filtered() == "mock"
 mock MyApp.UserService, [users: 0], "mock"
 assert all() == "mock"
 refute filtered() == "mock"
+
+# mock MyApp.UserService.users/0 with implicit value
+mock MyApp.UserService, users: 0
+assert all() == :mocked
+refute filtered() == :mocked
 ```
 
-Dynamic mock
+#### Dynamic mock
 
 ```elixir
 defmodule Foo do
@@ -101,7 +106,24 @@ assert_called Foo, :bar, [1, %{}]
 # assert Foo.bar/2 was called with 1 as first arg
 call(1, %{})
 assert_called Foo, :bar, [1, _]
+
+# assert Foo.bar/2 was called with 1 as first arg 5 times
+...
+assert_called Foo, :bar, [1, _], 5
+
+# assert Foo.bar/2 was called with 1 as first arg from 3 to 5 times
+...
+assert_called Foo, :bar, [1, _], 3..5
+
+# assert Foo.bar/2 was called with 1 as first arg 3 or 5 times
+...
+assert_called Foo, :bar, [1, _], [3, 5]
 ```
+
+#### Refute
+
+Every assert_called/x function/macro has its refute_called/x counterpart.<br>
+For more information see [docs](https://hexdocs.pm/mockery/Mockery.Assertions.html)
 
 ## Global mock
 

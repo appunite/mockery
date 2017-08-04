@@ -74,6 +74,8 @@ defmodule Mockery do
 
   doesn't make any sense, because it will only work for Mod.fun/1.
   """
+  def mock(mod, fun, value \\ :mocked)
+
   def mock(mod, fun, nil),
     do: Process.put(Utils.dict_mock_key(mod, fun), Mockery.Nil)
   def mock(mod, fun, false),

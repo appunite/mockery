@@ -1,8 +1,5 @@
 defmodule Mockery.HeritageTest do
   use ExUnit.Case, async: true
-  import Mockery
-
-  alias Mockery.Utils
 
   # dummy.ex
   # defmodule Dummy do
@@ -53,6 +50,9 @@ defmodule Mockery.HeritageTest do
     def ar(a, b), do: @dummy.ar(a, b)
     def undefined(), do: @dummy.undefined()
   end
+
+  import Mockery
+  alias Mockery.Utils
 
   # MAIN
   test "proxies to original functions" do

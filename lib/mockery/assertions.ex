@@ -71,7 +71,7 @@ defmodule Mockery.Assertions do
   """
   defmacro assert_called(mod, fun, args) do
     quote do
-      ExUnit.Assertions.assert unquote(called_with?(mod, fun, args)), unquote(message(mod, fun))
+      ExUnit.Assertions.assert unquote(called_with?(mod, fun, args)), unquote(failure(mod, fun))
     end
   end
 
@@ -95,7 +95,7 @@ defmodule Mockery.Assertions do
   """
   defmacro refute_called(mod, fun, args) do
     quote do
-      ExUnit.Assertions.refute unquote(called_with?(mod, fun, args)), unquote(refute_message(mod, fun))
+      ExUnit.Assertions.refute unquote(called_with?(mod, fun, args)), unquote(refute_failure(mod, fun))
     end
   end
 
@@ -126,7 +126,38 @@ defmodule Mockery.Assertions do
   """
   defmacro assert_called(mod, fun, args, times) do
     quote do
-      ExUnit.Assertions.assert unquote(ncalled_with?(mod, fun, args, times)), unquote(nmessage(mod, fun))
+      ExUnit.Assertions.assert unquote(ncalled_with?(mod, fun, args, times)), unquote(nfailure(mod, fun))
+    end
+  end
+
+  @doc """
+  Asserts that function from given module with given name was NOT called
+  given number of times with arguments matching given pattern.
+
+  Similar to `refute_called/3` but instead of checking if function was called
+  at least once, it checks if function was called specific number of times.
+
+  **NOTE**: Mockery doesn't keep track of function calls on modules that
+  weren't prepared by `Mockery.of/2` and for MIX_ENV other than :test
+
+  ## Examples
+
+  Assert Mod.fun/2 was not called with given args 5 times
+
+      refute_called Mod, :fun, ["a", "b"], 5
+
+  Assert Mod.fun/2 was not called with given args from 3 to 5 times
+
+      refute_called Mod, :fun, ["a", "b"], 3..5
+
+  Assert Mod.fun/2 was not called with given args 3 or 5 times
+
+      refute_called Mod, :fun, ["a", "b"], [3, 5]
+
+  """
+  defmacro refute_called(mod, fun, args, times) do
+    quote do
+      ExUnit.Assertions.refute unquote(ncalled_with?(mod, fun, args, times)), unquote(nrefute_failure(mod, fun))
     end
   end
 
@@ -164,21 +195,27 @@ defmodule Mockery.Assertions do
     end
   end
 
-  defp message(mod, fun) do
+  defp failure(mod, fun) do
     quote do
       "#{unquote(mod)}.#{unquote(fun)} was not called with given arguments"
     end
   end
 
-  defp nmessage(mod, fun) do
+  defp nfailure(mod, fun) do
     quote do
       "#{unquote(mod)}.#{unquote(fun)} was not called with given arguments expected number of times"
     end
   end
 
-  defp refute_message(mod, fun) do
+  defp refute_failure(mod, fun) do
     quote do
       "#{unquote(mod)}.#{unquote(fun)} was called with given arguments at least once"
+    end
+  end
+
+  defp nrefute_failure(mod, fun) do
+    quote do
+      "#{unquote(mod)}.#{unquote(fun)} was called with given arguments unexpected number of times"
     end
   end
 end

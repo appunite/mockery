@@ -461,4 +461,95 @@ defmodule Mockery.AssertionsTest do
     assert output =~ "D.fun was not called with given arguments expected number of times"
     assert output =~ "E.fun was not called with given arguments expected number of times"
   end
+
+  test "refute_called/4 success" do
+    defmodule TimesArgsPatternRefuteSuccess do
+      use ExUnit.Case
+      require Mockery.Assertions
+
+      alias Mockery.Assertions
+      alias Mockery.Utils
+
+      test "when function was not called" do
+        Assertions.refute_called A, :fun, ["a", "c"], 1
+      end
+
+      test "when function was not called with given args pattern" do
+        Utils.push_call(B, :fun, 2, ["a", "b"])
+
+        Assertions.refute_called B, :fun, ["a", "c"], 1
+      end
+
+      test "calls count not equal to times int" do
+        Utils.push_call(C, :fun, 2, ["a", "b"])
+        Utils.push_call(C, :fun, 2, ["a", "b"])
+
+        Assertions.refute_called C, :fun, ["a", "c"], 1
+      end
+
+      test "calls count not in times array" do
+        Utils.push_call(D, :fun, 2, ["a", "b"])
+        Utils.push_call(D, :fun, 2, ["a", "b"])
+
+        Assertions.refute_called D, :fun, ["a", "c"], [1, 3]
+      end
+
+      test "calls count not in times range" do
+        Utils.push_call(E, :fun, 2, ["a", "b"])
+        Utils.push_call(E, :fun, 2, ["a", "b"])
+
+        Assertions.refute_called E, :fun, ["a", "c"], 3..5
+      end
+    end
+
+    load_cases()
+    output = capture_io(fn -> ExUnit.run end)
+
+    assert output =~ "5 tests, 0 failures"
+  end
+
+  test "refute_called/4 failure" do
+    defmodule TimesArgsPatternRefuteFailure do
+      use ExUnit.Case
+      require Mockery.Assertions
+
+      alias Mockery.Assertions
+      alias Mockery.Utils
+
+      test "integer times" do
+        Utils.push_call(A, :fun, 2, ["a", "b"])
+        Utils.push_call(A, :fun, 2, ["a", "c"])
+        Utils.push_call(A, :fun, 2, ["a", "d"])
+        Utils.push_call(A, :fun, 2, ["x", "z"])
+
+        Assertions.refute_called A, :fun, ["a", _], 3
+      end
+
+      test "array times" do
+        Utils.push_call(B, :fun, 2, ["a", "b"])
+        Utils.push_call(B, :fun, 2, ["a", "c"])
+        Utils.push_call(B, :fun, 2, ["a", "d"])
+        Utils.push_call(B, :fun, 2, ["x", "z"])
+
+        Assertions.refute_called B, :fun, ["a", _], [1, 3, 5]
+      end
+
+      test "range times" do
+        Utils.push_call(C, :fun, 2, ["a", "b"])
+        Utils.push_call(C, :fun, 2, ["a", "c"])
+        Utils.push_call(C, :fun, 2, ["a", "d"])
+        Utils.push_call(C, :fun, 2, ["x", "z"])
+
+        Assertions.refute_called C, :fun, ["a", _], 1..3
+      end
+    end
+
+    load_cases()
+    output = capture_io(fn -> ExUnit.run end)
+
+    assert output =~ "3 tests, 3 failures"
+    assert output =~ "A.fun was called with given arguments unexpected number of times"
+    assert output =~ "B.fun was called with given arguments unexpected number of times"
+    assert output =~ "C.fun was called with given arguments unexpected number of times"
+  end
 end

@@ -159,7 +159,7 @@ For advanced usage examples see [EXAMPLES.md](EXAMPLES.md)
 
 #### Nothing is shared
 
-Mocks and functions call history are stored separately for every test in
+Mocks and function call history are stored separately for every test in
 its own process dictionary.
 
 #### Don't use modules as additional function argument
@@ -175,8 +175,7 @@ When you use functions like this:
 You loose some compilation warnings. It was always unacceptable for me.
 After changing function name I expect that project recompilation will show me
 if old name is still used somewhere in my code by throwing `function Foo.bar/0 is
-undefined or private` straight into my face.<br>
-With `Mockery` it's no longer an issue.
+undefined or private` straight into my face. With `Mockery` it's no longer an issue.
 
 #### Don't create custom macros when it's not necessary
 

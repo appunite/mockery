@@ -108,15 +108,15 @@ call(1, %{})
 assert_called Foo, :bar, [1, _]
 
 # assert Foo.bar/2 was called with 1 as first arg 5 times
-...
+# ...
 assert_called Foo, :bar, [1, _], 5
 
 # assert Foo.bar/2 was called with 1 as first arg from 3 to 5 times
-...
+# ...
 assert_called Foo, :bar, [1, _], 3..5
 
 # assert Foo.bar/2 was called with 1 as first arg 3 or 5 times
-...
+# ...
 assert_called Foo, :bar, [1, _], [3, 5]
 ```
 
@@ -154,6 +154,36 @@ assert index() == [:user1, :user2, :user3]
 ## Advanced examples
 
 For advanced usage examples see [EXAMPLES.md](EXAMPLES.md)
+
+## Philosophy behind this project
+
+#### Nothing is shared
+
+Mocks and functions call history are stored separately for every test in
+its own process dictionary.
+
+#### Don't use modules as additional function argument
+
+When you use functions like this:
+
+```elixir
+  def something(foo \\ Foo) do
+    foo.bar()
+  end
+```
+
+You loose some compilation warnings. It was always unacceptable for me.
+After changing function name I expect that project recompilation will show me
+if old name is still used somewhere in my code by throwing `function Foo.bar/0 is
+undefined or private` straight into my face.<br>
+With `Mockery` it's no longer an issue.
+
+#### Don't create custom macros when it's not necessary
+
+To prepare module for mocking we decided to use module attributes instead of
+any magic macros that changes code behind the scene.<br>
+In our company we believe that any new person joining project should be able
+to understand existing code immediately.
 
 ## License
 

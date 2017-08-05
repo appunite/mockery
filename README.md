@@ -180,7 +180,7 @@ undefined or private` straight into my face. With `Mockery` it's no longer an is
 #### Don't create custom macros when it's not necessary
 
 To prepare module for mocking we decided to use module attributes instead of
-any magic macros that changes code behind the scene.<br>
+any magic macros that changes code behind the scene.
 In our company we believe that any new person joining project should be able
 to understand existing code immediately.
 

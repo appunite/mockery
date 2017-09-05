@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.1
+* More descriptive errors (when args are not list) for:
+  * `Mockery.Assertions.assert_called/3`
+  * `Mockery.Assertions.refute_called/3`
+  * `Mockery.Assertions.assert_called/4`
+  * `Mockery.Assertions.refute_called/4`
+
 ## 1.1.0
 * Added `Mockery.mock/2` (`Mockery.mock/3` value defaults to `:mocked`)
 * Added `Mockery.Assertions.assert_called/4` macro

@@ -295,14 +295,19 @@ defmodule Mockery.AssertionsTest do
 
         Assertions.assert_called B, :fun, ["a", "c"]
       end
+
+      test "when args are not list" do
+        Assertions.assert_called C, :fun, "invalid"
+      end
     end
 
     load_cases()
     output = capture_io(fn -> ExUnit.run end)
 
-    assert output =~ "2 tests, 2 failures"
+    assert output =~ "3 tests, 3 failures"
     assert output =~ "A.fun was not called with given arguments"
     assert output =~ "B.fun was not called with given arguments"
+    assert output =~ "args for Elixir.C.fun should be a list"
   end
 
   test "refute_called/3 success" do
@@ -358,15 +363,20 @@ defmodule Mockery.AssertionsTest do
 
         Assertions.refute_called C, :fun, ["a", _]
       end
+
+      test "when args are not list" do
+        Assertions.refute_called D, :fun, "invalid"
+      end
     end
 
     load_cases()
     output = capture_io(fn -> ExUnit.run end)
 
-    assert output =~ "3 tests, 3 failures"
+    assert output =~ "4 tests, 4 failures"
     assert output =~ "A.fun was called with given arguments at least once"
     assert output =~ "B.fun was called with given arguments at least once"
     assert output =~ "C.fun was called with given arguments at least once"
+    assert output =~ "args for Elixir.D.fun should be a list"
   end
 
   test "assert_called/4 success" do
@@ -449,17 +459,22 @@ defmodule Mockery.AssertionsTest do
 
         Assertions.assert_called E, :fun, ["a", "c"], 3..5
       end
+
+      test "when args are not list" do
+        Assertions.assert_called F, :fun, "invalid", 5
+      end
     end
 
     load_cases()
     output = capture_io(fn -> ExUnit.run end)
 
-    assert output =~ "5 tests, 5 failures"
+    assert output =~ "6 tests, 6 failures"
     assert output =~ "A.fun was not called with given arguments expected number of times"
     assert output =~ "B.fun was not called with given arguments expected number of times"
     assert output =~ "C.fun was not called with given arguments expected number of times"
     assert output =~ "D.fun was not called with given arguments expected number of times"
     assert output =~ "E.fun was not called with given arguments expected number of times"
+    assert output =~ "args for Elixir.F.fun should be a list"
   end
 
   test "refute_called/4 success" do
@@ -542,14 +557,19 @@ defmodule Mockery.AssertionsTest do
 
         Assertions.refute_called C, :fun, ["a", _], 1..3
       end
+
+      test "when args are not list" do
+        Assertions.refute_called D, :fun, "invalid", 5
+      end
     end
 
     load_cases()
     output = capture_io(fn -> ExUnit.run end)
 
-    assert output =~ "3 tests, 3 failures"
+    assert output =~ "4 tests, 4 failures"
     assert output =~ "A.fun was called with given arguments unexpected number of times"
     assert output =~ "B.fun was called with given arguments unexpected number of times"
     assert output =~ "C.fun was called with given arguments unexpected number of times"
+    assert output =~ "args for Elixir.D.fun should be a list"
   end
 end

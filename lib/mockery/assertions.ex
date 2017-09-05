@@ -3,6 +3,7 @@ defmodule Mockery.Assertions do
   This module contains a set of additional assertion functions.
   """
 
+  alias Mockery.Error
   alias Mockery.Utils
 
   @doc """
@@ -168,6 +169,9 @@ defmodule Mockery.Assertions do
     |> Enum.any?(&match?({^arity, _}, &1))
   end
 
+  defp called_with?(mod, fun, args) when not is_list(args),
+    do: args_should_be_list(mod, fun)
+
   defp called_with?(mod, fun, args) do
     quote do
       unquote(mod)
@@ -175,6 +179,9 @@ defmodule Mockery.Assertions do
       |> Enum.any?(&match?({_, unquote(args)}, &1))
     end
   end
+
+  defp ncalled_with?(mod, fun, args, _times) when not is_list(args),
+    do: args_should_be_list(mod, fun)
 
   defp ncalled_with?(mod, fun, args, times) when is_integer(times) do
     quote do
@@ -216,6 +223,12 @@ defmodule Mockery.Assertions do
   defp nrefute_failure(mod, fun) do
     quote do
       "#{unquote(mod)}.#{unquote(fun)} was called with given arguments unexpected number of times"
+    end
+  end
+
+  defp args_should_be_list(mod, fun) do
+    quote do
+      raise Error, "args for #{unquote(mod)}.#{unquote(fun)} should be a list"
     end
   end
 end

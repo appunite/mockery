@@ -54,7 +54,7 @@ defmodule Mockery.AssertionsTest do
     output = capture_io(fn -> ExUnit.run end)
 
     assert output =~ "1 test, 1 failure"
-    assert output =~ "A.fun was not called"
+    assert output =~ ~r/[^\.]A.fun was not called/
   end
 
   test "assert_called/2 (fun and arity) success" do
@@ -119,8 +119,8 @@ defmodule Mockery.AssertionsTest do
     output = capture_io(fn -> ExUnit.run end)
 
     assert output =~ "2 tests, 2 failures"
-    assert output =~ "A.fun/0 was not called"
-    assert output =~ "B.fun/2 was not called"
+    assert output =~ ~r/[^\.]A.fun\/0 was not called/
+    assert output =~ ~r/[^\.]B.fun\/2 was not called/
   end
 
   test "refute_called/2 (fun name) success" do
@@ -169,9 +169,9 @@ defmodule Mockery.AssertionsTest do
     output = capture_io(fn -> ExUnit.run end)
 
     assert output =~ "3 tests, 3 failures"
-    assert output =~ "A.fun was called at least once"
-    assert output =~ "B.fun was called at least once"
-    assert output =~ "C.fun was called at least once"
+    assert output =~ ~r/[^\.]A.fun was called at least once/
+    assert output =~ ~r/[^\.]B.fun was called at least once/
+    assert output =~ ~r/[^\.]C.fun was called at least once/
   end
 
   test "refute_called/2 (fun and arity) success" do
@@ -236,10 +236,10 @@ defmodule Mockery.AssertionsTest do
     output = capture_io(fn -> ExUnit.run end)
 
     assert output =~ "4 tests, 4 failures"
-    assert output =~ "A.fun/0 was called at least once"
-    assert output =~ "B.fun/2 was called at least once"
-    assert output =~ "C.fun/0 was called at least once"
-    assert output =~ "D.fun/0 was called at least once"
+    assert output =~ ~r/[^\.]A.fun\/0 was called at least once/
+    assert output =~ ~r/[^\.]B.fun\/2 was called at least once/
+    assert output =~ ~r/[^\.]C.fun\/0 was called at least once/
+    assert output =~ ~r/[^\.]D.fun\/0 was called at least once/
   end
 
   test "assert_called/3 success" do
@@ -305,9 +305,9 @@ defmodule Mockery.AssertionsTest do
     output = capture_io(fn -> ExUnit.run end)
 
     assert output =~ "3 tests, 3 failures"
-    assert output =~ "A.fun was not called with given arguments"
-    assert output =~ "B.fun was not called with given arguments"
-    assert output =~ "args for Elixir.C.fun should be a list"
+    assert output =~ ~r/[^\.]A.fun was not called with given arguments/
+    assert output =~ ~r/[^\.]B.fun was not called with given arguments/
+    assert output =~ "args for C.fun should be a list"
   end
 
   test "refute_called/3 success" do
@@ -373,10 +373,10 @@ defmodule Mockery.AssertionsTest do
     output = capture_io(fn -> ExUnit.run end)
 
     assert output =~ "4 tests, 4 failures"
-    assert output =~ "A.fun was called with given arguments at least once"
-    assert output =~ "B.fun was called with given arguments at least once"
-    assert output =~ "C.fun was called with given arguments at least once"
-    assert output =~ "args for Elixir.D.fun should be a list"
+    assert output =~ ~r/[^\.]A.fun was called with given arguments at least once/
+    assert output =~ ~r/[^\.]B.fun was called with given arguments at least once/
+    assert output =~ ~r/[^\.]C.fun was called with given arguments at least once/
+    assert output =~ "args for D.fun should be a list"
   end
 
   test "assert_called/4 success" do
@@ -469,12 +469,12 @@ defmodule Mockery.AssertionsTest do
     output = capture_io(fn -> ExUnit.run end)
 
     assert output =~ "6 tests, 6 failures"
-    assert output =~ "A.fun was not called with given arguments expected number of times"
-    assert output =~ "B.fun was not called with given arguments expected number of times"
-    assert output =~ "C.fun was not called with given arguments expected number of times"
-    assert output =~ "D.fun was not called with given arguments expected number of times"
-    assert output =~ "E.fun was not called with given arguments expected number of times"
-    assert output =~ "args for Elixir.F.fun should be a list"
+    assert output =~ ~r/[^\.]A.fun was not called with given arguments expected number of times/
+    assert output =~ ~r/[^\.]B.fun was not called with given arguments expected number of times/
+    assert output =~ ~r/[^\.]C.fun was not called with given arguments expected number of times/
+    assert output =~ ~r/[^\.]D.fun was not called with given arguments expected number of times/
+    assert output =~ ~r/[^\.]E.fun was not called with given arguments expected number of times/
+    assert output =~ "args for F.fun should be a list"
   end
 
   test "refute_called/4 success" do
@@ -567,9 +567,9 @@ defmodule Mockery.AssertionsTest do
     output = capture_io(fn -> ExUnit.run end)
 
     assert output =~ "4 tests, 4 failures"
-    assert output =~ "A.fun was called with given arguments unexpected number of times"
-    assert output =~ "B.fun was called with given arguments unexpected number of times"
-    assert output =~ "C.fun was called with given arguments unexpected number of times"
-    assert output =~ "args for Elixir.D.fun should be a list"
+    assert output =~ ~r/[^\.]A.fun was called with given arguments unexpected number of times/
+    assert output =~ ~r/[^\.]B.fun was called with given arguments unexpected number of times/
+    assert output =~ ~r/[^\.]C.fun was called with given arguments unexpected number of times/
+    assert output =~ "args for D.fun should be a list"
   end
 end

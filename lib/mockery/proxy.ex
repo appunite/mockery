@@ -31,9 +31,7 @@ defmodule Mockery.Proxy do
           value
       end
     else
-      md = mod |> Module.split() |> Enum.join(".")
-
-      raise Error, "function #{md}.#{name}/#{arity} is undefined or private"
+      raise Error, "function #{Utils.print_mod mod}.#{name}/#{arity} is undefined or private"
     end
   end
 end

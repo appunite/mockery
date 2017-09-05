@@ -25,9 +25,9 @@ defmodule Mockery.Assertions do
 
   """
   def assert_called(mod, [{fun, arity}]),
-    do: ExUnit.Assertions.assert called?(mod, fun, arity), "#{mod}.#{fun}/#{arity} was not called"
+    do: ExUnit.Assertions.assert called?(mod, fun, arity), "#{Utils.print_mod mod}.#{fun}/#{arity} was not called"
   def assert_called(mod, fun),
-    do: ExUnit.Assertions.assert called?(mod, fun), "#{mod}.#{fun} was not called"
+    do: ExUnit.Assertions.assert called?(mod, fun), "#{Utils.print_mod mod}.#{fun} was not called"
 
   @doc """
   Asserts that function from given module with given name or name and arity
@@ -48,9 +48,9 @@ defmodule Mockery.Assertions do
 
   """
   def refute_called(mod, [{fun, arity}]),
-    do: ExUnit.Assertions.refute called?(mod, fun, arity), "#{mod}.#{fun}/#{arity} was called at least once"
+    do: ExUnit.Assertions.refute called?(mod, fun, arity), "#{Utils.print_mod mod}.#{fun}/#{arity} was called at least once"
   def refute_called(mod, fun),
-    do: ExUnit.Assertions.refute called?(mod, fun), "#{mod}.#{fun} was called at least once"
+    do: ExUnit.Assertions.refute called?(mod, fun), "#{Utils.print_mod mod}.#{fun} was called at least once"
 
   @doc """
   Asserts that function from given module with given name was called
@@ -71,6 +71,7 @@ defmodule Mockery.Assertions do
 
   """
   defmacro assert_called(mod, fun, args) do
+    mod = Macro.expand(mod, __CALLER__)
     quote do
       ExUnit.Assertions.assert unquote(called_with?(mod, fun, args)), unquote(failure(mod, fun))
     end
@@ -95,6 +96,7 @@ defmodule Mockery.Assertions do
 
   """
   defmacro refute_called(mod, fun, args) do
+    mod = Macro.expand(mod, __CALLER__)
     quote do
       ExUnit.Assertions.refute unquote(called_with?(mod, fun, args)), unquote(refute_failure(mod, fun))
     end
@@ -126,6 +128,7 @@ defmodule Mockery.Assertions do
 
   """
   defmacro assert_called(mod, fun, args, times) do
+    mod = Macro.expand(mod, __CALLER__)
     quote do
       ExUnit.Assertions.assert unquote(ncalled_with?(mod, fun, args, times)), unquote(nfailure(mod, fun))
     end
@@ -157,6 +160,7 @@ defmodule Mockery.Assertions do
 
   """
   defmacro refute_called(mod, fun, args, times) do
+    mod = Macro.expand(mod, __CALLER__)
     quote do
       ExUnit.Assertions.refute unquote(ncalled_with?(mod, fun, args, times)), unquote(nrefute_failure(mod, fun))
     end
@@ -204,31 +208,31 @@ defmodule Mockery.Assertions do
 
   defp failure(mod, fun) do
     quote do
-      "#{unquote(mod)}.#{unquote(fun)} was not called with given arguments"
+      "#{unquote(Utils.print_mod mod)}.#{unquote(fun)} was not called with given arguments"
     end
   end
 
   defp nfailure(mod, fun) do
     quote do
-      "#{unquote(mod)}.#{unquote(fun)} was not called with given arguments expected number of times"
+      "#{unquote(Utils.print_mod mod)}.#{unquote(fun)} was not called with given arguments expected number of times"
     end
   end
 
   defp refute_failure(mod, fun) do
     quote do
-      "#{unquote(mod)}.#{unquote(fun)} was called with given arguments at least once"
+      "#{unquote(Utils.print_mod mod)}.#{unquote(fun)} was called with given arguments at least once"
     end
   end
 
   defp nrefute_failure(mod, fun) do
     quote do
-      "#{unquote(mod)}.#{unquote(fun)} was called with given arguments unexpected number of times"
+      "#{unquote(Utils.print_mod mod)}.#{unquote(fun)} was called with given arguments unexpected number of times"
     end
   end
 
   defp args_should_be_list(mod, fun) do
     quote do
-      raise Error, "args for #{unquote(mod)}.#{unquote(fun)} should be a list"
+      raise Error, "args for #{unquote(Utils.print_mod mod)}.#{unquote(fun)} should be a list"
     end
   end
 end

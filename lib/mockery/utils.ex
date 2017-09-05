@@ -1,6 +1,12 @@
 defmodule Mockery.Utils do
   @moduledoc false #this module is private to Mockery
 
+  # removes unnecessary `Elixir.` prefix from module names
+  def print_mod(mod), do: mod |> to_string |> remove_elixir_prefix()
+
+  defp remove_elixir_prefix("Elixir." <> rest), do: rest
+  defp remove_elixir_prefix(erlang_mod), do: ":#{erlang_mod}"
+
   def get_calls(mod, fun) do
     key = dict_called_key(mod, fun)
 

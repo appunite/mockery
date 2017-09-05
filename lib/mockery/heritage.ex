@@ -67,7 +67,7 @@ defmodule Mockery.Heritage do
               value
           end
         else
-          md = __MODULE__ |> Module.split() |> Enum.join(".")
+          md = __MODULE__ |> Utils.print_mod()
 
           raise Error, "function #{md}.#{name}/#{arity} is undefined or private"
         end

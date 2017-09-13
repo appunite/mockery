@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.2.0
+* Introduced `Mockery.History`
+
 ## 1.1.1
 * More descriptive errors (when args are not list) for:
   * `Mockery.Assertions.assert_called/3`

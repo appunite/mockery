@@ -5,7 +5,7 @@ defmodule Mockery.History do
   It's disabled by default.
   It can be enabled/disabled globally by following config
 
-      config Mockery, history: true
+      config :mockery, history: true
 
   Or for single test process
 

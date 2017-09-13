@@ -13,6 +13,7 @@ defmodule Mockery.History do
 
   Process config has higher priority than global config
   """
+  import IO.ANSI
   alias Mockery.Utils
 
   @doc """
@@ -45,10 +46,10 @@ defmodule Mockery.History do
       if Mockery.Utils.history_enabled? do
         """
         \n
-        #{IO.ANSI.yellow()}Given:#{IO.ANSI.white()}
+        #{yellow()}Given:#{white()}
         #{unquote(Macro.to_string args)}
 
-        #{IO.ANSI.yellow()}History:#{IO.ANSI.white()}
+        #{yellow()}History:#{white()}
         #{unquote(colorize(mod, fun, args))}
         """
       end
@@ -64,21 +65,21 @@ defmodule Mockery.History do
       |> Enum.reverse()
       |> Enum.map(fn({call_arity, call_args})->
         if unquote(arity) == call_arity do
-          "#{IO.ANSI.white()}[" <> (
+          "#{white()}[" <> (
             [unquote(args), call_args]
             |> List.zip
             |> Enum.map(fn
-              {Mockery.History.UnboundVar, called}->
-                "#{IO.ANSI.green()}#{inspect called}#{IO.ANSI.white()}"
+              {Mockery.History.UnboundVar, called} ->
+                "#{green()}#{inspect called}#{white()}"
               {called, called} ->
-                "#{IO.ANSI.green()}#{inspect called}#{IO.ANSI.white()}"
+                "#{green()}#{inspect called}#{white()}"
               {_given, called} ->
-                "#{IO.ANSI.red()}#{inspect called}#{IO.ANSI.white()}"
+                "#{red()}#{inspect called}#{white()}"
             end)
             |> Enum.join(", ")
-          ) <> "#{IO.ANSI.white()}]"
+          ) <> "]"
         else
-          "#{IO.ANSI.red()}#{inspect call_args}#{IO.ANSI.white()}"
+          "#{red()}#{inspect call_args}#{white()}"
         end
       end)
       |> Enum.join("\n")

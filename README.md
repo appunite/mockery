@@ -125,6 +125,15 @@ assert_called Foo, :bar, [1, _], [3, 5]
 Every assert_called/x function/macro has its refute_called/x counterpart.<br>
 For more information see [docs](https://hexdocs.pm/mockery/Mockery.Assertions.html)
 
+#### History
+
+Mockery.History  module provides more descriptive failure messages for
+assert_called/{3,4} and refute_called/{3,4} that includes colorized list of
+argument passed to given function in scope of single test process.
+
+Disabled by default.
+For more information see [docs](https://hexdocs.pm/mockery/Mockery.History.html)
+
 ## Global mock
 
 ```elixir

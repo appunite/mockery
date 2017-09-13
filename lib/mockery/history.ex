@@ -57,24 +57,7 @@ defmodule Mockery.History do
 
   defp colorize(mod, fun, args) do
     arity = Enum.count(args)
-    args =
-      args
-      |> Macro.postwalk(fn
-        {name, _, context} = node when is_atom(name) and is_atom(context) ->
-          {Mockery.History.Var, node}
-        {:^, _, [{Mockery.History.Var, node}]} ->
-          {Mockery.History.PinnedVar, node}
-        node ->
-          node
-      end)
-      |> Macro.postwalk(fn
-        {Mockery.History.PinnedVar, node} ->
-          node
-        {Mockery.History.Var, _node} ->
-          Mockery.History.UnboundVar
-        node ->
-          node
-      end)
+    args = postwalk_args(args)
 
     quote do
       Utils.get_calls(unquote(mod), unquote(fun))
@@ -100,5 +83,25 @@ defmodule Mockery.History do
       end)
       |> Enum.join("\n")
     end
+  end
+
+  defp postwalk_args(args) do
+    args
+    |> Macro.postwalk(fn
+      {name, _, context} = node when is_atom(name) and is_atom(context) ->
+        {Mockery.History.Var, node}
+      {:^, _, [{Mockery.History.Var, node}]} ->
+        {Mockery.History.PinnedVar, node}
+      node ->
+        node
+    end)
+    |> Macro.postwalk(fn
+      {Mockery.History.PinnedVar, node} ->
+        node
+      {Mockery.History.Var, _node} ->
+        Mockery.History.UnboundVar
+      node ->
+        node
+    end)
   end
 end

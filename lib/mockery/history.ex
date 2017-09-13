@@ -57,39 +57,48 @@ defmodule Mockery.History do
 
   defp colorize(mod, fun, args) do
     arity = Enum.count(args)
-    args = args |> Macro.postwalk(fn
-      ({name, _, args}) when is_atom(name) and not is_list(args) -> Mockery.History.Var
-      (other)-> other
-    end)
+    args =
+      args
+      |> Macro.postwalk(fn
+        {name, _, context} = node when is_atom(name) and is_atom(context) ->
+          {Mockery.History.Var, node}
+        {:^, _, [{Mockery.History.Var, node}]} ->
+          {Mockery.History.PinnedVar, node}
+        node ->
+          node
+      end)
+      |> Macro.postwalk(fn
+        {Mockery.History.PinnedVar, node} ->
+          node
+        {Mockery.History.Var, _node} ->
+          Mockery.History.UnboundVar
+        node ->
+          node
+      end)
 
     quote do
       Utils.get_calls(unquote(mod), unquote(fun))
       |> Enum.reverse()
       |> Enum.map(fn({call_arity, call_args})->
         if unquote(arity) == call_arity do
-          "#{IO.ANSI.white()}[#{Mockery.History.colorize_args(unquote(args), call_args)}#{IO.ANSI.white()}]"
+          "#{IO.ANSI.white()}[" <> (
+            [unquote(args), call_args]
+            |> List.zip
+            |> Enum.map(fn
+              {Mockery.History.UnboundVar, called}->
+                "#{IO.ANSI.green()}#{inspect called}#{IO.ANSI.white()}"
+              {called, called} ->
+                "#{IO.ANSI.green()}#{inspect called}#{IO.ANSI.white()}"
+              {_given, called} ->
+                "#{IO.ANSI.red()}#{inspect called}#{IO.ANSI.white()}"
+            end)
+            |> Enum.join(", ")
+          ) <> "#{IO.ANSI.white()}]"
         else
           "#{IO.ANSI.red()}#{inspect call_args}#{IO.ANSI.white()}"
         end
       end)
       |> Enum.join("\n")
     end
-  end
-
-  @doc false
-  def colorize_args(args, args2) do
-    [args, args2]
-    |> List.zip
-    |> Enum.map(fn({given, called})->
-      cond do
-        given == Mockery.History.Var ->
-          "#{IO.ANSI.green()}#{inspect called}#{IO.ANSI.white()}"
-        given == called ->
-          "#{IO.ANSI.green()}#{inspect called}#{IO.ANSI.white()}"
-        :else ->
-          "#{IO.ANSI.red()}#{inspect called}#{IO.ANSI.white()}"
-      end
-    end)
-    |> Enum.join(", ")
   end
 end

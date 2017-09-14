@@ -29,16 +29,29 @@ defmodule Mockery do
   Explicit version is used for global mocks. For more information see
   `Mockery.Heritage`
   """
-  def of(mod, opts \\ []) do
+  def of(mod, opts \\ [])
+  def of(mod, opts) when is_atom(mod) do
     env = opts[:env] || Mix.env
 
     cond do
       env != :test ->
         mod
       by = Keyword.get(opts, :by) ->
-        {by, :ok}
+        {Module.concat([by]), :ok}
       :else ->
         {Mockery.Proxy, mod}
+    end
+  end
+  def of(mod, opts) when is_binary(mod) do
+    env = opts[:env] || Mix.env
+
+    cond do
+      env != :test ->
+        Module.concat([mod])
+      by = Keyword.get(opts, :by) ->
+        {Module.concat([by]), :ok}
+      :else ->
+        {Mockery.Proxy, Module.concat([mod])}
     end
   end
 

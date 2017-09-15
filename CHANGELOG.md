@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.0
+* Added string version for `Mockery.of/2` (now recommended)
+* Fixed mocking of erlang modules
+
 ## 1.2.0
 * Introduced `Mockery.History`
 

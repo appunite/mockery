@@ -42,8 +42,8 @@ defmodule Mockery.HeritageTest do
   end
 
   defmodule Tested do
-    @dummy Mockery.of(Dummy, by: ElixirDummy)
-    @crypto Mockery.of(:crypto, by: ErlangDummy)
+    @dummy Mockery.of("Dummy", by: "ElixirDummy")
+    @crypto Mockery.of(:crypto, by: "ErlangDummy")
 
     def fun1, do: @dummy.fun1()
     def fun2, do: @dummy.fun2()

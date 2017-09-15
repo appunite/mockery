@@ -1,7 +1,7 @@
 defmodule Mockery.Utils do
   @moduledoc false #this module is private to Mockery
 
-  @application Mockery.of(Application)
+  @application Mockery.of("Application")
   def history_enabled? do
     Process.get(Mockery.History, @application.get_env(:mockery, :history, false))
   end

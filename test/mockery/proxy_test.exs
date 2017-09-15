@@ -13,7 +13,7 @@ defmodule Mockery.ProxyTest do
   # end
 
   defmodule Tested do
-    @dummy Mockery.of(Dummy)
+    @dummy Mockery.of("Dummy")
     @crypto Mockery.of(:crypto)
 
     def fun1, do: @dummy.fun1()

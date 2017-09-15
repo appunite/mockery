@@ -27,7 +27,7 @@ end
 
 ```elixir
 # prepare tested module
-@service Mockery.of(MyApp.UserService)
+@service Mockery.of("MyApp.UserService")
 
 def all do
   @service.users()
@@ -64,7 +64,7 @@ defmodule Foo do
 end
 
 # prepare tested module
-@foo Mockery.of(Foo)
+@foo Mockery.of("Foo")
 
 def parse(value) do
   @foo.bar(value)
@@ -81,7 +81,7 @@ assert parse("test") == "TEST"
 
 ```elixir
 # prepare tested module
-@foo Mockery.of(Foo)
+@foo Mockery.of("Foo")
 
 def call(value, opts) do
   @foo.bar(value)
@@ -149,7 +149,7 @@ end
 
 # prepare tested module
 defmodule MyApp.UserController do
-  @service Mockery.of(MyApp.UserService, by: MyApp.TestUserService)
+  @service Mockery.of("MyApp.UserService", by: "MyApp.TestUserService")
 
   def index do
     @service.users()

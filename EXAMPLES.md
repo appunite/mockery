@@ -5,7 +5,7 @@
 Let's assume we have a unique resource and function that is fetching it if exist or create new otherwise.
 
 ```elixir
-  @service Mockery.of(Service)
+  @service Mockery.of("Service")
 
   def fetch_or_create do
     with \
@@ -65,8 +65,8 @@ Run tasks synchronously in test environment for easier testing
 
 ```elixir
   defmodule MyApp.Controller do
-    @task_supervisor Mockery.of(Task.Supervisor, by: FakeTaskSupervisor)
-    @service Mockery.of(MyApp.Service)
+    @task_supervisor Mockery.of("Task.Supervisor", by: "FakeTaskSupervisor")
+    @service Mockery.of("MyApp.Service")
 
     def action do
       @task_supervisor.start_child(MyApp.TaskSupervisor, fn->

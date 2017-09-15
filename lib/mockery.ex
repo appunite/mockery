@@ -23,14 +23,23 @@ defmodule Mockery do
 
   Proxy can be implicit
 
-      @module Mockery.of(MyApp.Module)
+      @elixir_module Mockery.of("MyApp.Module")
+      @erlang_module Mockery.of(:crypto)
 
   or explicit
 
-      @module Mockery.of(MyApp.Module, by: MyApp.FakeModule)
+      @elixir_module Mockery.of("MyApp.Module", by: "MyApp.FakeElixirModule")
+      @erlang_module Mockery.of(:crypto, by: "MyApp.FakeErlangModule")
 
   Explicit version is used for global mocks. For more information see
-  `Mockery.Heritage`
+  `Mockery.Heritage`.
+
+  It is also possible to pass module in elixir format
+
+      @module Mockery.of(MyApp.Module, by: MyApp.FakeElixirModule)
+
+  but is not recommended as it creates unnecessary compile-time dependency
+  (see `mix xref graph` output for both versions).
   """
   @spec of(mod :: atom | String.t, opts :: keyword_opts) ::
     module | proxy

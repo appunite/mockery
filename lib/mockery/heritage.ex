@@ -51,7 +51,7 @@ defmodule Mockery.Heritage do
 
         Utils.push_call(unquote(mod), name, arity, args)
 
-        if fun_tuple in unquote(mod).__info__(:functions) do
+        if fun_tuple in unquote(mod).module_info[:exports] do
           case Process.get(key1) || Process.get(key2) do
             nil ->
               apply(unquote(mod), name, args)

@@ -15,7 +15,7 @@ defmodule Mockery.Proxy do
 
     Utils.push_call(mod, name, arity, args)
 
-    if fun_tuple in mod.__info__(:functions) do
+    if fun_tuple in mod.module_info[:exports] do
       case Process.get(key1) || Process.get(key2) do
         nil ->
           apply(mod, name, args)

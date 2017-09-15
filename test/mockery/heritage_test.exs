@@ -13,7 +13,7 @@ defmodule Mockery.HeritageTest do
   #   def ar(x, y), do: [x,y]
   # end
 
-  defmodule TestDummy do
+  defmodule ElixirDummy do
     use Mockery.Heritage, module: Dummy
 
     mock [fun2: 0] do
@@ -37,8 +37,13 @@ defmodule Mockery.HeritageTest do
     end
   end
 
+  defmodule ErlangDummy do
+    use Mockery.Heritage, module: :crypto
+  end
+
   defmodule Tested do
-    @dummy Mockery.of(Dummy, by: TestDummy)
+    @dummy Mockery.of(Dummy, by: ElixirDummy)
+    @crypto Mockery.of(:crypto, by: ErlangDummy)
 
     def fun1, do: @dummy.fun1()
     def fun2, do: @dummy.fun2()
@@ -49,6 +54,7 @@ defmodule Mockery.HeritageTest do
     def ar(a), do: @dummy.ar(a)
     def ar(a, b), do: @dummy.ar(a, b)
     def undefined(), do: @dummy.undefined()
+    def hash(type, data), do: @crypto.hash(type, data)
   end
 
   import Mockery
@@ -58,14 +64,17 @@ defmodule Mockery.HeritageTest do
   test "proxies to original functions" do
     assert Tested.fun1() == Dummy.fun1()
     assert Tested.ar(1, 2) == Dummy.ar(1, 2)
+    assert Tested.hash(:sha256, "test") == :crypto.hash(:sha256, "test")
   end
 
   test "allows mocking" do
     mock(Dummy, :fun1, "mocked1")
     mock(Dummy, [ar: 2], "mocked2")
+    mock(:crypto, :hash, "mocked3")
 
     assert Tested.fun1() == "mocked1"
     assert Tested.ar(1, 2) == "mocked2"
+    assert Tested.hash(:sha256, "test") == "mocked3"
   end
 
   test "allows mocking with function of same arity" do
@@ -109,7 +118,7 @@ defmodule Mockery.HeritageTest do
   test "raises when function doesn't exist" do
     assert_raise(
       Mockery.Error,
-      "function Mockery.HeritageTest.TestDummy.undefined/0 is undefined or private",
+      "function Mockery.HeritageTest.ElixirDummy.undefined/0 is undefined or private",
       fn -> Tested.undefined() end
     )
   end

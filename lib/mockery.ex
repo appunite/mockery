@@ -12,6 +12,9 @@ defmodule Mockery do
     end
   end
 
+  @opaque proxy      :: {module, module} | {module, :ok}
+  @type keyword_opts :: [{atom(), any()}]
+
   @doc """
   Function used to prepare module for mocking.
 
@@ -29,6 +32,8 @@ defmodule Mockery do
   Explicit version is used for global mocks. For more information see
   `Mockery.Heritage`
   """
+  @spec of(mod :: atom | String.t, opts :: keyword_opts) ::
+    module | proxy
   def of(mod, opts \\ [])
   def of(mod, opts) when is_atom(mod) do
     env = opts[:env] || Mix.env

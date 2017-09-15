@@ -24,8 +24,9 @@ defmodule Mockery.Mixfile do
 
   defp deps do
     [
+      {:dialyxir, "~> 0.5", only: :dev, runtime: false},
       {:excoveralls, "~> 0.7", only: :test},
-      {:ex_doc, "~> 0.13", only: :dev}
+      {:ex_doc, "~> 0.13", only: :dev, runtime: false}
     ]
   end
 

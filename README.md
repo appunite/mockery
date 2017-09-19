@@ -56,7 +56,9 @@ assert all() == :mocked
 refute filtered() == :mocked
 ```
 
-**Note**: Module names are passed as a string (`"MyApp.UserService`") instead o atoms (`MyApp.UserService`). This reduces the compilation time because it doesn't create a link between modules which caused modules to be recompiled too often. This doesn't affect the bahaviour in any way.
+**Note**: Elixir module names are passed as a string (`"MyApp.UserService`") instead of atoms (`MyApp.UserService`). This reduces the compilation time because it doesn't create a link between modules which caused modules to be recompiled too often. This doesn't affect the bahaviour in any way.
+
+Erlang module names (e.g. `:crypto`) should be passed in the original form (as atoms).
 
 #### Dynamic mock
 

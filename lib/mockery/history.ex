@@ -50,7 +50,7 @@ defmodule Mockery.History do
         #{unquote(Macro.to_string args)}
 
         #{yellow()}History:#{white()}
-        #{unquote(colorize(mod, fun, args))}
+        #{unquote(colorize(mod, fun, args))}\
         """
       end
     end

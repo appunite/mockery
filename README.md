@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/appunite/mockery.svg?branch=master)](https://travis-ci.org/appunite/mockery)
 [![Coverage Status](https://coveralls.io/repos/github/appunite/mockery/badge.svg?branch=master)](https://coveralls.io/github/appunite/mockery?branch=master)
-[![GitHub issues](https://img.shields.io/github/issues/appunite/mockery.svg)](https://github.com/appunite/mockery/issues)
-[![Hex.pm](https://img.shields.io/hexpm/v/mockery.svg?style=flat)](https://hex.pm/packages/mockery)
+[![Ebert](https://ebertapp.io/github/appunite/mockery.svg)](https://ebertapp.io/github/appunite/mockery)
+[![Hex.pm](https://img.shields.io/hexpm/v/mockery.svg)](https://hex.pm/packages/mockery)
 [![Hex.pm](https://img.shields.io/hexpm/dt/mockery.svg)](https://hex.pm/packages/mockery)
 [![Hex.pm](https://img.shields.io/hexpm/dw/mockery.svg)](https://hex.pm/packages/mockery)
 

@@ -21,7 +21,7 @@ defmodule Mockery.HeritageTest do
     end
 
     mock [fun3: 0] do
-      fn-> "global mock as function" end
+      fn -> "global mock as function" end
     end
 
     mock [fun4: 0] do
@@ -53,7 +53,7 @@ defmodule Mockery.HeritageTest do
     def fun6, do: @dummy.fun6()
     def ar(a), do: @dummy.ar(a)
     def ar(a, b), do: @dummy.ar(a, b)
-    def undefined(), do: @dummy.undefined()
+    def undefined, do: @dummy.undefined()
     def hash(type, data), do: @crypto.hash(type, data)
   end
 

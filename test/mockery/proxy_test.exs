@@ -19,7 +19,7 @@ defmodule Mockery.ProxyTest do
     def fun1, do: @dummy.fun1()
     def ar(a), do: @dummy.ar(a)
     def ar(a, b), do: @dummy.ar(a, b)
-    def undefined(), do: @dummy.undefined()
+    def undefined, do: @dummy.undefined()
     def hash(type, data), do: @crypto.hash(type, data)
   end
 

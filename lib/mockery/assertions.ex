@@ -140,8 +140,10 @@ defmodule Mockery.Assertions do
     mod = Macro.expand(mod, __CALLER__)
     args = Macro.expand(args, __CALLER__)
     quote do
-      ExUnit.Assertions.assert unquote(ncalled_with?(mod, fun, args, times)), """
-      #{unquote(Utils.print_mod mod)}.#{unquote(fun)} was not called with given arguments expected number of times\
+      ExUnit.Assertions.assert unquote(ncalled_with?(mod, fun, args, times)),
+      """
+      #{unquote(Utils.print_mod mod)}.#{unquote(fun)} \
+      was not called with given arguments expected number of times\
       #{unquote(History.print(mod, fun, args))}
       """
     end
@@ -176,8 +178,10 @@ defmodule Mockery.Assertions do
     mod = Macro.expand(mod, __CALLER__)
     args = Macro.expand(args, __CALLER__)
     quote do
-      ExUnit.Assertions.refute unquote(ncalled_with?(mod, fun, args, times)), """
-      #{unquote(Utils.print_mod mod)}.#{unquote(fun)} was called with given arguments unexpected number of times\
+      ExUnit.Assertions.refute unquote(ncalled_with?(mod, fun, args, times)),
+      """
+      #{unquote(Utils.print_mod mod)}.#{unquote(fun)} \
+      was called with given arguments unexpected number of times\
       #{unquote(History.print(mod, fun, args))}
       """
     end

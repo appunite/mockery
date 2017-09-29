@@ -33,9 +33,9 @@ defmodule Mockery.Heritage do
   alias Mockery.Error
 
   defmacro __using__(opts) do
-    mod = opts |> Keyword.fetch!(:module)
+    mod = Keyword.fetch!(opts, :module)
 
-    Agent.start_link(fn-> mod end, name: __CALLER__.module)
+    Agent.start_link(fn -> mod end, name: __CALLER__.module)
 
     quote do
       import Mockery.Heritage, only: :macros
@@ -67,7 +67,7 @@ defmodule Mockery.Heritage do
               value
           end
         else
-          md = __MODULE__ |> Utils.print_mod()
+          md = Utils.print_mod(__MODULE__)
 
           raise Error, "function #{md}.#{name}/#{arity} is undefined or private"
         end
@@ -111,7 +111,10 @@ defmodule Mockery.Heritage do
       def unquote(name)(unquote_splicing(args)) do
         case Process.get(unquote(key1)) || Process.get(unquote(key2)) do
           nil ->
-            Mockery.Heritage.handle_nd(unquote_splicing([new_default, args, arity]))
+            # credo:disable-for-lines:1 Credo.Check.Design.AliasUsage
+            Mockery.Heritage.handle_nd(
+              unquote_splicing([new_default, args, arity])
+            )
           fun when is_function(fun, unquote(arity)) ->
             fun.(unquote_splicing(Enum.take(args, arity)))
           fun when is_function(fun) ->

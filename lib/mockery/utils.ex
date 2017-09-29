@@ -3,7 +3,9 @@ defmodule Mockery.Utils do
 
   @application Mockery.of("Application")
   def history_enabled? do
-    Process.get(Mockery.History, @application.get_env(:mockery, :history, false))
+    Process.get(
+      Mockery.History, @application.get_env(:mockery, :history, false)
+    )
   end
 
   # removes unnecessary `Elixir.` prefix from module names

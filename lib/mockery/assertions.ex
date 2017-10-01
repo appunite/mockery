@@ -25,10 +25,18 @@ defmodule Mockery.Assertions do
       assert_called Mod, :fun
 
   """
-  def assert_called(mod, [{fun, arity}]),
-    do: ExUnit.Assertions.assert called?(mod, fun, arity), "#{Utils.print_mod mod}.#{fun}/#{arity} was not called"
-  def assert_called(mod, fun),
-    do: ExUnit.Assertions.assert called?(mod, fun), "#{Utils.print_mod mod}.#{fun} was not called"
+  def assert_called(mod, [{fun, arity}]) do
+    ExUnit.Assertions.assert called?(mod, fun, arity),
+      "#{Utils.print_mod mod}.#{fun}/#{arity} was not called"
+
+    mod
+  end
+  def assert_called(mod, fun) do
+    ExUnit.Assertions.assert called?(mod, fun),
+      "#{Utils.print_mod mod}.#{fun} was not called"
+
+    mod
+  end
 
   @doc """
   Asserts that function from given module with given name or name and arity
@@ -48,10 +56,18 @@ defmodule Mockery.Assertions do
       refute_called Mod, :fun
 
   """
-  def refute_called(mod, [{fun, arity}]),
-    do: ExUnit.Assertions.refute called?(mod, fun, arity), "#{Utils.print_mod mod}.#{fun}/#{arity} was called at least once"
-  def refute_called(mod, fun),
-    do: ExUnit.Assertions.refute called?(mod, fun), "#{Utils.print_mod mod}.#{fun} was called at least once"
+  def refute_called(mod, [{fun, arity}]) do
+    ExUnit.Assertions.refute called?(mod, fun, arity),
+      "#{Utils.print_mod mod}.#{fun}/#{arity} was called at least once"
+
+    mod
+  end
+  def refute_called(mod, fun) do
+    ExUnit.Assertions.refute called?(mod, fun),
+      "#{Utils.print_mod mod}.#{fun} was called at least once"
+
+    mod
+  end
 
   @doc """
   Asserts that function from given module with given name was called
@@ -75,10 +91,14 @@ defmodule Mockery.Assertions do
     mod = Macro.expand(mod, __CALLER__)
     args = Macro.expand(args, __CALLER__)
     quote do
-      ExUnit.Assertions.assert unquote(called_with?(mod, fun, args)), """
-      #{unquote(Utils.print_mod mod)}.#{unquote(fun)} was not called with given arguments\
-      #{unquote(History.print(mod, fun, args))}
-      """
+      ExUnit.Assertions.assert unquote(called_with?(mod, fun, args)),
+        """
+        #{unquote(Utils.print_mod mod)}.#{unquote(fun)} \
+        was not called with given arguments\
+        #{unquote(History.print(mod, fun, args))}
+        """
+
+      unquote(mod)
     end
   end
 
@@ -104,10 +124,14 @@ defmodule Mockery.Assertions do
     mod = Macro.expand(mod, __CALLER__)
     args = Macro.expand(args, __CALLER__)
     quote do
-      ExUnit.Assertions.refute unquote(called_with?(mod, fun, args)), """
-      #{unquote(Utils.print_mod mod)}.#{unquote(fun)} was called with given arguments at least once\
-      #{unquote(History.print(mod, fun, args))}
-      """
+      ExUnit.Assertions.refute unquote(called_with?(mod, fun, args)),
+        """
+        #{unquote(Utils.print_mod mod)}.#{unquote(fun)} \
+        was called with given arguments at least once\
+        #{unquote(History.print(mod, fun, args))}
+        """
+
+      unquote(mod)
     end
   end
 
@@ -141,11 +165,13 @@ defmodule Mockery.Assertions do
     args = Macro.expand(args, __CALLER__)
     quote do
       ExUnit.Assertions.assert unquote(ncalled_with?(mod, fun, args, times)),
-      """
-      #{unquote(Utils.print_mod mod)}.#{unquote(fun)} \
-      was not called with given arguments expected number of times\
-      #{unquote(History.print(mod, fun, args))}
-      """
+        """
+        #{unquote(Utils.print_mod mod)}.#{unquote(fun)} \
+        was not called with given arguments expected number of times\
+        #{unquote(History.print(mod, fun, args))}
+        """
+
+      unquote(mod)
     end
   end
 
@@ -179,11 +205,13 @@ defmodule Mockery.Assertions do
     args = Macro.expand(args, __CALLER__)
     quote do
       ExUnit.Assertions.refute unquote(ncalled_with?(mod, fun, args, times)),
-      """
-      #{unquote(Utils.print_mod mod)}.#{unquote(fun)} \
-      was called with given arguments unexpected number of times\
-      #{unquote(History.print(mod, fun, args))}
-      """
+        """
+        #{unquote(Utils.print_mod mod)}.#{unquote(fun)} \
+        was called with given arguments unexpected number of times\
+        #{unquote(History.print(mod, fun, args))}
+        """
+
+      unquote(mod)
     end
   end
 

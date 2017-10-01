@@ -60,4 +60,13 @@ defmodule MockeryTest do
 
     assert Process.get({Mockery, {Dummy, {:fun1, 0}}}) == :mocked
   end
+
+  test "chainable mock/2 and mock/3" do
+    Dummy
+    |> Mockery.mock(fun1: 0)
+    |> Mockery.mock([fun2: 1], "value")
+
+    assert Process.get({Mockery, {Dummy, {:fun1, 0}}}) == :mocked
+    assert Process.get({Mockery, {Dummy, {:fun2, 1}}}) == "value"
+  end
 end

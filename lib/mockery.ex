@@ -104,10 +104,19 @@ defmodule Mockery do
   """
   def mock(mod, fun, value \\ :mocked)
 
-  def mock(mod, fun, nil),
-    do: Process.put(Utils.dict_mock_key(mod, fun), Mockery.Nil)
-  def mock(mod, fun, false),
-    do: Process.put(Utils.dict_mock_key(mod, fun), Mockery.False)
-  def mock(mod, fun, value),
-    do: Process.put(Utils.dict_mock_key(mod, fun), value)
+  def mock(mod, fun, nil) do
+    Process.put(Utils.dict_mock_key(mod, fun), Mockery.Nil)
+
+    mod
+  end
+  def mock(mod, fun, false) do
+    Process.put(Utils.dict_mock_key(mod, fun), Mockery.False)
+
+    mod
+  end
+  def mock(mod, fun, value) do
+    Process.put(Utils.dict_mock_key(mod, fun), value)
+
+    mod
+  end
 end

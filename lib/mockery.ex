@@ -101,6 +101,13 @@ defmodule Mockery do
       mock Mod, :fun, &string/1
 
   doesn't make any sense, because it will only work for Mod.fun/1.
+
+  Also, multiple mocks for same module can be chainable
+
+      Mod
+      |> mock(:fun1, "value")
+      |> mock([fun2: 1], &string/1)
+
   """
   def mock(mod, fun, value \\ :mocked)
 

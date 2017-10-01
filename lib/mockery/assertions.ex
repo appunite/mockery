@@ -28,14 +28,10 @@ defmodule Mockery.Assertions do
   def assert_called(mod, [{fun, arity}]) do
     ExUnit.Assertions.assert called?(mod, fun, arity),
       "#{Utils.print_mod mod}.#{fun}/#{arity} was not called"
-
-    mod
   end
   def assert_called(mod, fun) do
     ExUnit.Assertions.assert called?(mod, fun),
       "#{Utils.print_mod mod}.#{fun} was not called"
-
-    mod
   end
 
   @doc """
@@ -59,14 +55,10 @@ defmodule Mockery.Assertions do
   def refute_called(mod, [{fun, arity}]) do
     ExUnit.Assertions.refute called?(mod, fun, arity),
       "#{Utils.print_mod mod}.#{fun}/#{arity} was called at least once"
-
-    mod
   end
   def refute_called(mod, fun) do
     ExUnit.Assertions.refute called?(mod, fun),
       "#{Utils.print_mod mod}.#{fun} was called at least once"
-
-    mod
   end
 
   @doc """
@@ -97,8 +89,6 @@ defmodule Mockery.Assertions do
         was not called with given arguments\
         #{unquote(History.print(mod, fun, args))}
         """
-
-      unquote(mod)
     end
   end
 
@@ -130,8 +120,6 @@ defmodule Mockery.Assertions do
         was called with given arguments at least once\
         #{unquote(History.print(mod, fun, args))}
         """
-
-      unquote(mod)
     end
   end
 
@@ -170,8 +158,6 @@ defmodule Mockery.Assertions do
         was not called with given arguments expected number of times\
         #{unquote(History.print(mod, fun, args))}
         """
-
-      unquote(mod)
     end
   end
 
@@ -210,8 +196,6 @@ defmodule Mockery.Assertions do
         was called with given arguments unexpected number of times\
         #{unquote(History.print(mod, fun, args))}
         """
-
-      unquote(mod)
     end
   end
 

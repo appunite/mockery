@@ -54,6 +54,11 @@ refute filtered() == "mock"
 mock MyApp.UserService, users: 0
 assert all() == :mocked
 refute filtered() == :mocked
+
+# chaining multiple mocks for same module
+UserService
+|> mock([users: 0], "mock value")
+|> mock([users: 1], "mock value")
 ```
 
 **Note**: Elixir module names are passed as a string (`"MyApp.UserService`") instead of atoms (`MyApp.UserService`). This reduces the compilation time because it doesn't create a link between modules which caused modules to be recompiled too often. This doesn't affect the bahaviour in any way.

@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.4.0 ()
+* `Mockery.mock/2` and `Mockery.mock/3` are now chainable
+
 ## 1.3.1 (2017-09-21)
 * Minor format fix in `Mockery.History` failure messages
 

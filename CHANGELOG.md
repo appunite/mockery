@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.4.0 ()
+## 1.4.0 (2017-10-02)
 * `Mockery.mock/2` and `Mockery.mock/3` are now chainable
 
 ## 1.3.1 (2017-09-21)

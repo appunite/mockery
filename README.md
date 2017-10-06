@@ -9,7 +9,25 @@
 
 Simple mocking library for asynchronous testing in Elixir.
 
-In test environment it replaces prepared modules by mockable proxy. In other environments your modules remain unchanged.
+## Assumptions
+
+* It does not override your modules
+* It does not create modules during runtime
+* It does not replace modules by aliasing
+
+  It contains single proxy module that checks mocks or calls original function
+
+* It does not require to pass modules as function parameter
+
+  You won't lose any compilation warning
+
+* It does not allow to mock non-existent function
+
+  It checks if original module exports function you are trying to mock
+
+* It does not allow any test to interfere with other tests
+
+  Most of data is stored in process dictionary
 
 ## Installation
 
@@ -61,7 +79,10 @@ UserService
 |> mock([users: 1], "mock value")
 ```
 
-**Note**: Elixir module names are passed as a string (`"MyApp.UserService`") instead of atoms (`MyApp.UserService`). This reduces the compilation time because it doesn't create a link between modules which caused modules to be recompiled too often. This doesn't affect the bahaviour in any way.
+**Note**: Elixir module names are passed as a string (`"MyApp.UserService"`)
+instead of atoms (`MyApp.UserService`). This reduces the compilation time
+because it doesn't create a link between modules which caused modules to be
+recompiled too often. This doesn't affect the bahaviour in any way.
 
 Erlang module names (e.g. `:crypto`) should be passed in the original form (as atoms).
 
@@ -146,35 +167,6 @@ For more information see [docs](https://hexdocs.pm/mockery/Mockery.History.html)
 ## Advanced examples
 
 For advanced usage examples see [EXAMPLES.md](EXAMPLES.md)
-
-## Philosophy behind this project
-
-#### Nothing is shared
-
-Mocks and function call history are stored separately for every test in
-its own process dictionary.
-
-#### Don't use modules as additional function argument
-
-When you use functions like this:
-
-```elixir
-  def something(foo \\ Foo) do
-    foo.bar()
-  end
-```
-
-You lose some compilation warnings. It was always unacceptable for me.
-After changing function name I expect that project recompilation will show me
-if old name is still used somewhere in my code by throwing `function Foo.bar/0 is
-undefined or private` straight into my face. With `Mockery` it's no longer an issue.
-
-#### Don't create custom macros when it's not necessary
-
-To prepare module for mocking we decided to use module attributes instead of
-any magic macros that changes code behind the scene.
-In our company we believe that any new person joining project should be able
-to understand existing code immediately.
 
 ## License
 

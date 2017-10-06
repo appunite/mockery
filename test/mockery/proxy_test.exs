@@ -48,13 +48,13 @@ defmodule Mockery.ProxyTest do
   end
 
   test "allows mocking with function of same arity" do
-    mock(Dummy, :ar, &to_string/1)
+    mock(Dummy, [ar: 1], &to_string/1)
 
     assert Tested.ar(1) == "1"
   end
 
   test "raise when mocking with function of different arity" do
-    mock(Dummy, :ar, &to_string/1)
+    mock(Dummy, [ar: 2], &to_string/1)
 
     assert_raise(
       Mockery.Error,

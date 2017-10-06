@@ -25,16 +25,30 @@ defmodule MockeryTest do
     assert Mockery.of("A") == {Mockery.Proxy, A}
   end
 
-  test "mock/3 with name" do
+  test "mock/3 with name (static mock)" do
     Mockery.mock(Dummy, :fun1, "value1")
 
     assert Process.get({Mockery, {Dummy, :fun1}}) == "value1"
   end
 
-  test "mock/3 with name and arity" do
+  test "mock/3 with name (dynamic mock)" do
+    assert_raise Mockery.Error,
+      ~r/mock\(Dummy,\ \[fun1:\ 0\],\ fn\(\.\.\.\)\ \->\ \.\.\.\ end\)/,
+      fn ->
+        Mockery.mock(Dummy, :fun1, fn -> :mock end)
+      end
+  end
+
+  test "mock/3 with name and arity (static mock)" do
     Mockery.mock(Dummy, [fun1: 0], "value2")
 
     assert Process.get({Mockery, {Dummy, {:fun1, 0}}}) == "value2"
+  end
+
+  test "mock/3 with name and arity (dynamic mock)" do
+    Mockery.mock(Dummy, [fun1: 0], fn -> :mock end)
+
+    assert is_function Process.get({Mockery, {Dummy, {:fun1, 0}}})
   end
 
   test "mock/2 with name" do

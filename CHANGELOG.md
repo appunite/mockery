@@ -1,7 +1,10 @@
 # Changelog
 
 ## 2.0.0 ()
-* [BREAKING] Removed `Mockery.Heritage` and `:by` option from `Mockery.of/2`
+* Removed `Mockery.Heritage` and `:by` option from `Mockery.of/2`
+* Changed `Mockery.mock/3` when value is function (dynamic mock)
+  * `[function_name: arity]` syntax remains unchanged
+  * `:function_name` syntax will raise error
 
 ## 1.4.0 (2017-10-02)
 * `Mockery.mock/2` and `Mockery.mock/3` are now chainable

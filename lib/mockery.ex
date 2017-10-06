@@ -37,21 +37,19 @@ defmodule Mockery do
   def of(mod, opts) when is_atom(mod) do
     env = opts[:env] || Mix.env
 
-    cond do
-      env != :test ->
-        mod
-      :else ->
-        {Mockery.Proxy, mod}
+    if env != :test do
+      mod
+    else
+      {Mockery.Proxy, mod}
     end
   end
   def of(mod, opts) when is_binary(mod) do
     env = opts[:env] || Mix.env
 
-    cond do
-      env != :test ->
-        Module.concat([mod])
-      :else ->
-        {Mockery.Proxy, Module.concat([mod])}
+    if env != :test do
+      Module.concat([mod])
+    else
+      {Mockery.Proxy, Module.concat([mod])}
     end
   end
 
@@ -92,9 +90,9 @@ defmodule Mockery do
 
   """
   def mock(mod, fun, value \\ :mocked)
-
   def mock(mod, fun, value) when is_atom(fun) and is_function(value) do
     {:arity, arity} = :erlang.fun_info(value, :arity)
+
     raise Mockery.Error, """
     Dynamic mock requires [funtion: arity] syntax.
 

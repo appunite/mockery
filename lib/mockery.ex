@@ -21,22 +21,12 @@ defmodule Mockery do
   For MIX_ENV other than :test it returns first argument unchanged.
   For test env it creates kind of proxy to oryginal module.
 
-  Proxy can be implicit
-
       @elixir_module Mockery.of("MyApp.Module")
       @erlang_module Mockery.of(:crypto)
 
-  or explicit
-
-      @elixir_module Mockery.of("MyApp.Module", by: "MyApp.FakeElixirModule")
-      @erlang_module Mockery.of(:crypto, by: "MyApp.FakeErlangModule")
-
-  Explicit version is used for global mocks. For more information see
-  `Mockery.Heritage`.
-
   It is also possible to pass module in elixir format
 
-      @module Mockery.of(MyApp.Module, by: MyApp.FakeElixirModule)
+      @module Mockery.of(MyApp.Module)
 
   but is not recommended as it creates unnecessary compile-time dependency
   (see `mix xref graph` output for both versions).
@@ -50,8 +40,6 @@ defmodule Mockery do
     cond do
       env != :test ->
         mod
-      by = Keyword.get(opts, :by) ->
-        {Module.concat([by]), :ok}
       :else ->
         {Mockery.Proxy, mod}
     end
@@ -62,8 +50,6 @@ defmodule Mockery do
     cond do
       env != :test ->
         Module.concat([mod])
-      by = Keyword.get(opts, :by) ->
-        {Module.concat([by]), :ok}
       :else ->
         {Mockery.Proxy, Module.concat([mod])}
     end

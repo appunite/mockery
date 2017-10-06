@@ -143,32 +143,6 @@ argument passed to given function in scope of single test process.
 Disabled by default.
 For more information see [docs](https://hexdocs.pm/mockery/Mockery.History.html)
 
-## Global mock
-
-```elixir
-# create helper module
-defmodule MyApp.TestUserService do
-  use Mockery.Heritage,
-    module: MyApp.UserService
-
-  mock [users: 0] do
-    [:user1, :user2, :user3]
-  end
-end
-
-# prepare tested module
-defmodule MyApp.UserController do
-  @service Mockery.of("MyApp.UserService", by: "MyApp.TestUserService")
-
-  def index do
-    @service.users()
-  end
-end
-
-# tests
-assert index() == [:user1, :user2, :user3]
-```
-
 ## Advanced examples
 
 For advanced usage examples see [EXAMPLES.md](EXAMPLES.md)

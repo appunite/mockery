@@ -53,19 +53,8 @@ Run tasks synchronously in test environment for easier testing
 ```
 
 ```elixir
-  defmodule FakeTaskSupervisor do
-    use Mockery.Heritage,
-      module: Task.Supervisor
-
-    mock [start_child: 2] do
-      fn(_, fun) -> fun.() end
-    end
-  end
-```
-
-```elixir
   defmodule MyApp.Controller do
-    @task_supervisor Mockery.of("Task.Supervisor", by: "FakeTaskSupervisor")
+    @task_supervisor Mockery.of("Task.Supervisor")
     @service Mockery.of("MyApp.Service")
 
     def action do
@@ -82,6 +71,7 @@ Run tasks synchronously in test environment for easier testing
     import Mockery.Assertions
 
     test "something is called" do
+      mock Task.Supervisor, :start_child, fn(_, fun) -> fun.() end
       MyApp.Controller.action()
 
       assert_called MyApp.Service, :something

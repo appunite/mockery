@@ -164,7 +164,7 @@ When you use functions like this:
   end
 ```
 
-You loose some compilation warnings. It was always unacceptable for me.
+You lose some compilation warnings. It was always unacceptable for me.
 After changing function name I expect that project recompilation will show me
 if old name is still used somewhere in my code by throwing `function Foo.bar/0 is
 undefined or private` straight into my face. With `Mockery` it's no longer an issue.

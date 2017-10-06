@@ -61,7 +61,7 @@ defmodule Mockery do
   Mock created in one test won't leak to another.
   It can be used safely in asynchronous tests.
 
-  Mocks can be created with value:
+  Mocks can be created with static value:
 
       mock Mod, [fun: 2], "mocked value"
 
@@ -82,13 +82,9 @@ defmodule Mockery do
 
       mock Mod, :fun, "mocked value"
 
-  But this:
+  but this version doesn't support function as value.
 
-      mock Mod, :fun, &string/1
-
-  doesn't make any sense, because it will only work for Mod.fun/1.
-
-  Also, multiple mocks for same module can be chainable
+  Also, multiple mocks for same module are chainable
 
       Mod
       |> mock(:fun1, "value")
@@ -97,17 +93,23 @@ defmodule Mockery do
   """
   def mock(mod, fun, value \\ :mocked)
 
-  def mock(mod, fun, nil) do
-    Process.put(Utils.dict_mock_key(mod, fun), Mockery.Nil)
+  def mock(mod, fun, value) when is_atom(fun) and is_function(value) do
+    {:arity, arity} = :erlang.fun_info(value, :arity)
+    raise Mockery.Error, """
+    Dynamic mock requires [funtion: arity] syntax.
 
-    mod
+    Please use:
+        mock(#{Utils.print_mod mod}, [#{fun}: #{arity}], fn(...) -> ... end)
+    """
   end
-  def mock(mod, fun, false) do
-    Process.put(Utils.dict_mock_key(mod, fun), Mockery.False)
+  def mock(mod, fun, nil),
+    do: do_mock(mod, fun, Mockery.Nil)
+  def mock(mod, fun, false),
+    do: do_mock(mod, fun, Mockery.False)
+  def mock(mod, fun, value),
+    do: do_mock(mod, fun, value)
 
-    mod
-  end
-  def mock(mod, fun, value) do
+  defp do_mock(mod, fun, value) do
     Process.put(Utils.dict_mock_key(mod, fun), value)
 
     mod

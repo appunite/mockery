@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.0.0 ()
+* [BREAKING] Removed `Mockery.Heritage` and `:by` option from `Mockery.of/2`
+
 ## 1.4.0 (2017-10-02)
 * `Mockery.mock/2` and `Mockery.mock/3` are now chainable
 

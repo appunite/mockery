@@ -1,16 +1,9 @@
 defmodule Mockery.Utils do
   @moduledoc false #this module is private to Mockery
 
-  @application Mockery.of("Application")
-  def history_enabled? do
-    Process.get(
-      Mockery.History, @application.get_env(:mockery, :history, false)
-    )
-  end
+  alias Mockery.Error
 
-  # removes unnecessary `Elixir.` prefix from module names
-  def print_mod(mod), do: mod |> to_string |> remove_elixir_prefix()
-
+  # Helpers for manipulating process dict
   def get_calls(mod, fun) do
     key = dict_called_key(mod, fun)
 
@@ -21,6 +14,37 @@ defmodule Mockery.Utils do
     key = dict_called_key(mod, fun)
 
     Process.put(key, [{arity, args} | get_calls(mod, fun)])
+  end
+
+  # Removes unnecessary `Elixir.` prefix from module names
+  def print_mod(mod), do: mod |> to_string |> remove_elixir_prefix()
+
+  # Helper for Mockery.History
+  @application Mockery.of("Application")
+  def history_enabled? do
+    Process.get(
+      Mockery.History, @application.get_env(:mockery, :history, false)
+    )
+  end
+
+  # Helper for global mock
+  # Global mock cannot export function that the original module
+  # does not export
+  def validate_global_mock!(original, mock) do
+    original_exports = original.module_info[:exports]
+    mock_exports = mock.module_info[:exports]
+
+    case Enum.reject(mock_exports, &(&1 in original_exports)) do
+      [] ->
+        :ok
+      unknown ->
+        raise Error, """
+        Global mock "#{print_mod mock}" exports functions unknown to \
+        module "#{print_mod original}":
+
+            #{inspect unknown}
+        """
+    end
   end
 
   defp remove_elixir_prefix("Elixir." <> rest), do: rest

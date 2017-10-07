@@ -33,25 +33,20 @@ defmodule Mockery do
   """
   @spec of(mod :: atom | String.t, opts :: keyword_opts) ::
     module | proxy
-  def of(mod, opts \\ [])
-  def of(mod, opts) when is_atom(mod) do
+  def of(mod, opts \\ []) when is_atom(mod)
+                          when is_binary(mod) do
     env = opts[:env] || Mix.env
 
     if env != :test do
-      mod
+      to_mod(mod)
     else
-      {Mockery.Proxy, mod}
+      {Mockery.Proxy, to_mod(mod), to_mod(opts[:by])}
     end
   end
-  def of(mod, opts) when is_binary(mod) do
-    env = opts[:env] || Mix.env
 
-    if env != :test do
-      Module.concat([mod])
-    else
-      {Mockery.Proxy, Module.concat([mod])}
-    end
-  end
+  defp to_mod(nil), do: nil
+  defp to_mod(mod) when is_atom(mod), do: mod
+  defp to_mod(mod) when is_binary(mod), do: Module.concat([mod])
 
   @doc """
   Function used to create mock in context of single test.

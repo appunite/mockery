@@ -103,7 +103,7 @@ defmodule Mockery do
     do: do_mock(mod, fun, value)
 
   defp do_mock(mod, fun, value) do
-    Process.put(Utils.dict_mock_key(mod, fun), value)
+    Utils.put_mock(mod, fun, value)
 
     mod
   end

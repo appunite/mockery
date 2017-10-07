@@ -1,7 +1,8 @@
 # Changelog
 
 ## 2.0.0 ()
-* Removed `Mockery.Heritage` and `:by` option from `Mockery.of/2`
+* Removed `Mockery.Heritage`
+  * Global mocks will be handled without macros by pure elixir modules.
 * Changed `Mockery.mock/3` when value is function (dynamic mock)
   * `[function_name: arity]` syntax remains unchanged
   * `:function_name` syntax will raise error

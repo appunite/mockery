@@ -19,15 +19,15 @@ Simple mocking library for asynchronous testing in Elixir.
 
 * It does not require to pass modules as function parameter
 
-  You won't lose any compilation warning
+  You won't lose any compilation warnings
 
 * It does not allow to mock non-existent function
 
   It checks if original module exports function you are trying to mock
 
-* It does not allow any test to interfere with other tests
+* Mock created in one test doesn't interfere with other tests
 
-  Most of data is stored in process dictionary
+  Most of mock data is stored in process dictionary
 
 ## Installation
 

@@ -3,26 +3,38 @@ defmodule MockeryTest do
 
   test "of/2 dev env (atom erlang mod)" do
     assert Mockery.of(:a, env: :dev) == :a
+    assert Mockery.of(:a, env: :dev, by: X) == :a
+    assert Mockery.of(:a, env: :dev, by: "X") == :a
   end
 
   test "of/2 test env (atom erlang mod)" do
-    assert Mockery.of(:a) == {Mockery.Proxy, :a}
+    assert Mockery.of(:a) == {Mockery.Proxy, :a, nil}
+    assert Mockery.of(:a, by: X) == {Mockery.Proxy, :a, X}
+    assert Mockery.of(:a, by: "X") == {Mockery.Proxy, :a, X}
   end
 
   test "of/2 dev env (atom elixir mod)" do
     assert Mockery.of(A, env: :dev) == A
+    assert Mockery.of(A, env: :dev, by: X) == A
+    assert Mockery.of(A, env: :dev, by: "X") == A
   end
 
   test "of/2 test env (atom elixir mod)" do
-    assert Mockery.of(A) == {Mockery.Proxy, A}
+    assert Mockery.of(A) == {Mockery.Proxy, A, nil}
+    assert Mockery.of(A, by: X) == {Mockery.Proxy, A, X}
+    assert Mockery.of(A, by: "X") == {Mockery.Proxy, A, X}
   end
 
   test "of/2 dev env (string elixir mod)" do
     assert Mockery.of("A", env: :dev) == A
+    assert Mockery.of("A", env: :dev, by: X) == A
+    assert Mockery.of("A", env: :dev, by: "X") == A
   end
 
   test "of/2 test env (string elixir mod)" do
-    assert Mockery.of("A") == {Mockery.Proxy, A}
+    assert Mockery.of("A") == {Mockery.Proxy, A, nil}
+    assert Mockery.of("A", by: X) == {Mockery.Proxy, A, X}
+    assert Mockery.of("A", by: "X") == {Mockery.Proxy, A, X}
   end
 
   test "mock/3 with name (static mock)" do

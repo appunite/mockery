@@ -4,16 +4,28 @@ defmodule Mockery.Utils do
   alias Mockery.Error
 
   # Helpers for manipulating process dict
-  def get_calls(mod, fun) do
-    key = dict_called_key(mod, fun)
+  def get_mock(mod, fun) do
+    mod
+    |> dict_mock_key(fun)
+    |> Process.get()
+  end
 
-    Process.get(key, [])
+  def put_mock(mod, fun, value) do
+    mod
+    |> dict_mock_key(fun)
+    |> Process.put(value)
+  end
+
+  def get_calls(mod, fun) do
+    mod
+    |> dict_called_key(fun)
+    |> Process.get([])
   end
 
   def push_call(mod, fun, arity, args) do
-    key = dict_called_key(mod, fun)
-
-    Process.put(key, [{arity, args} | get_calls(mod, fun)])
+    mod
+    |> dict_called_key(fun)
+    |> Process.put([{arity, args} | get_calls(mod, fun)])
   end
 
   # Removes unnecessary `Elixir.` prefix from module names
@@ -54,9 +66,9 @@ defmodule Mockery.Utils do
   # note to myself: dont use three element tuples
 
   # key used to assign mocked value to given function
-  def dict_mock_key(mod, [{fun, arity}]),
+  defp dict_mock_key(mod, [{fun, arity}]),
     do: {Mockery, {mod, {fun, arity}}}
-  def dict_mock_key(mod, fun),
+  defp dict_mock_key(mod, fun),
     do: {Mockery, {mod, fun}}
 
   # function calls are stored under this key

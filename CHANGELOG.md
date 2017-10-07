@@ -3,6 +3,8 @@
 ## 2.0.0 ()
 * Removed `Mockery.Heritage`
   * Global mocks will be handled without macros by pure elixir modules.
+  * Some new restrictions have been added for global mock modules (see global
+    mock section in README)
 * Changed `Mockery.mock/3` when value is function (dynamic mock)
   * `[function_name: arity]` syntax remains unchanged
   * `:function_name` syntax will raise error

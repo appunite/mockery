@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.0.0 ()
+## 2.0.0 (2017-10-08)
 * Removed `Mockery.Heritage`
   * Global mocks will be handled without macros by pure elixir modules.
   * Some new restrictions have been added for global mock modules (see global

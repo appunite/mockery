@@ -99,6 +99,8 @@ Erlang module names (e.g. `:crypto`) should be passed in the original form (as a
 
 #### Dynamic mock
 
+Instead of static value you can use a function with same arity as original one.
+
 ```elixir
 defmodule Foo do
   def bar(value), do: value
@@ -129,43 +131,55 @@ end
 
 ```elixir
 # prepare tested module
-@foo Mockery.of("Foo")
+defmodule Tested do
+  @foo Mockery.of("Foo")
 
-def call(value, opts) do
-  @foo.bar(value)
+  def call(value, opts) do
+    @foo.bar(value)
+  end
 end
 
 # tests
-import Mockery.Assertions
-# use Mockery # when need to import both Mockery and Mockery.Assertions
+defmodule Tested do
+  # ...
+  import Mockery.Assertions
+  # use Mockery # when need to import both Mockery and Mockery.Assertions
 
-# assert any function bar from module Foo was called
-call(1, %{})
-assert_called Foo, :bar
+  test "assert any function bar from module Foo was called" do
+    Tested.call(1, %{})
+    assert_called Foo, :bar
+  end
 
-# assert Foo.bar/2 was called
-call(1, %{})
-assert_called Foo, bar: 2
+  test "assert Foo.bar/2 was called" do
+    Tested.call(1, %{})
+    assert_called Foo, bar: 2
+  end
 
-# assert Foo.bar/2 was called with given args
-call(1, %{})
-assert_called Foo, :bar, [1, %{}]
+  test "assert Foo.bar/2 was called with given args" do
+    Tested.call(1, %{})
+    assert_called Foo, :bar, [1, %{}]
+  end
 
-# assert Foo.bar/2 was called with 1 as first arg
-call(1, %{})
-assert_called Foo, :bar, [1, _]
+  test "assert Foo.bar/2 was called with 1 as first arg" do
+    Tested.call(1, %{})
+    assert_called Foo, :bar, [1, _]
+  end
 
-# assert Foo.bar/2 was called with 1 as first arg 5 times
-# ...
-assert_called Foo, :bar, [1, _], 5
+  test "assert Foo.bar/2 was called with 1 as first arg 5 times" do
+    # ...
+    assert_called Foo, :bar, [1, _], 5
+  end
 
-# assert Foo.bar/2 was called with 1 as first arg from 3 to 5 times
-# ...
-assert_called Foo, :bar, [1, _], 3..5
+  test "assert Foo.bar/2 was called with 1 as first arg from 3 to 5 times" do
+    # ...
+    assert_called Foo, :bar, [1, _], 3..5
+  end
 
-# assert Foo.bar/2 was called with 1 as first arg 3 or 5 times
-# ...
-assert_called Foo, :bar, [1, _], [3, 5]
+  test "assert Foo.bar/2 was called with 1 as first arg 3 or 5 times" do
+    # ...
+    assert_called Foo, :bar, [1, _], [3, 5]
+  end
+end
 ```
 
 #### Refute

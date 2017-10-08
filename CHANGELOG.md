@@ -8,6 +8,8 @@
 * Changed `Mockery.mock/3` when value is function (dynamic mock)
   * `[function_name: arity]` syntax remains unchanged
   * `:function_name` syntax will raise error
+* Changed `Mockery.of/2` output
+  * run `mix compile --force` when upgrading from Mockery 1.x.x
 
 ## 1.4.0 (2017-10-02)
 * `Mockery.mock/2` and `Mockery.mock/3` are now chainable

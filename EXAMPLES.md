@@ -28,8 +28,8 @@ How to cover `{:error, %Changeset{}} -> fetch_or_create()` with tests?
 
 ```elixir
 mock Service, :create, {:error, %Ecto.Changeset{...}}
-mock Service, :fetch, fn ->
-  mock Service, :fetch, &Service.fetch/0
+mock Service, [fetch: 0], fn ->
+  mock Service, [fetch: 0], &Service.fetch/0
 
   {:error, :not_found}
 end

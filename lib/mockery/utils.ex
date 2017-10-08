@@ -44,7 +44,7 @@ defmodule Mockery.Utils do
   # does not export
   def validate_global_mock!(original, mock) do
     original_exports = original.module_info[:exports]
-    mock_exports = mock.module_info[:exports]
+    mock_exports = mock.module_info[:exports] -- [__info__: 1]
 
     case Enum.reject(mock_exports, &(&1 in original_exports)) do
       [] ->
@@ -52,7 +52,7 @@ defmodule Mockery.Utils do
       unknown ->
         raise Error, """
         Global mock "#{print_mod mock}" exports functions unknown to \
-        module "#{print_mod original}":
+        "#{print_mod original}" module:
 
             #{inspect unknown}
 

@@ -34,7 +34,7 @@ Simple mocking library for asynchronous testing in Elixir.
 ```elixir
 def deps do
   [
-    {:mockery, "~> 1.0"}
+    {:mockery, "~> 2.0"}
   ]
 end
 ```
@@ -45,38 +45,49 @@ end
 
 ```elixir
 # prepare tested module
-@service Mockery.of("MyApp.UserService")
+defmodule MyApp.Controller do
+  # ...
+  @service Mockery.of("MyApp.UserService")
 
-def all do
-  @service.users()
-end
+  def all do
+    @service.users()
+  end
 
-def filtered do
-  @service.users("filter")
+  def filtered do
+    @service.users("filter")
+  end
 end
 
 # tests
-import Mockery
+defmodule MyApp.ControllerTest do
+  # ...
+  import Mockery
 
-# mock any function :users from MyApp.UserService
-mock MyApp.UserService, :users, "mock"
-assert all() == "mock"
-assert filtered() == "mock"
+  test "mock any function :users from MyApp.UserService" do
+    mock MyApp.UserService, :users, "mock"
+    assert all() == "mock"
+    assert filtered() == "mock"
+  end
 
-# mock MyApp.UserService.users/0
-mock MyApp.UserService, [users: 0], "mock"
-assert all() == "mock"
-refute filtered() == "mock"
+  test "mock MyApp.UserService.users/0" do
+    mock MyApp.UserService, [users: 0], "mock"
+    assert all() == "mock"
+    refute filtered() == "mock"
+  end
 
-# mock MyApp.UserService.users/0 with implicit value
-mock MyApp.UserService, users: 0
-assert all() == :mocked
-refute filtered() == :mocked
+  test "mock MyApp.UserService.users/0 with default value" do
+    mock MyApp.UserService, users: 0
+    assert all() == :mocked
+    refute filtered() == :mocked
+  end
 
-# chaining multiple mocks for same module
-UserService
-|> mock([users: 0], "mock value")
-|> mock([users: 1], "mock value")
+  test "chaining multiple mocks for same module" do
+    UserService
+    |> mock([users: 0], "mock value")
+    |> mock([users: 1], "mock value")
+    # ...
+  end
+end
 ```
 
 **Note**: Elixir module names are passed as a string (`"MyApp.UserService"`)
@@ -94,17 +105,24 @@ defmodule Foo do
 end
 
 # prepare tested module
-@foo Mockery.of("Foo")
+defmodule Other do
+  @foo Mockery.of("Foo")
 
-def parse(value) do
-  @foo.bar(value)
+  def parse(value) do
+    @foo.bar(value)
+  end
 end
 
 # tests
-import Mockery
+defmodule OtherTest do
+ # ...
+ import Mockery
 
-mock Foo, [bar: 1], fn(value)-> String.upcase(value) end
-assert parse("test") == "TEST"
+  test "with dynamic mock" do
+    mock Foo, [bar: 1], fn(value)-> String.upcase(value) end
+    assert parse("test") == "TEST"
+  end
+end
 ```
 
 ## Check if function was called
@@ -163,6 +181,50 @@ argument passed to given function in scope of single test process.
 
 Disabled by default.
 For more information see [docs](https://hexdocs.pm/mockery/Mockery.History.html)
+
+## Global mock
+
+Useful when you need to use same mock many times across different tests
+
+```elixir
+defmodule Foo do
+  def bar, do: 1
+  def baz, do: 2
+end
+
+defmodule FooGlobalMock do
+  def bar, do: :mocked
+end
+
+# prepare tested module
+defmodule Other do
+  @foo Mockery.of(Foo, by: FooGlobalMock)
+
+  def bar, do: @foo.bar()
+  def baz, do: @foo.baz()
+end
+
+# tests
+defmodule OtherTest do
+  # ...
+
+  test "with global mock" do
+    assert Other.bar == :mocked
+    assert Other.baz == 2
+  end
+end
+```
+
+#### Restrictions
+
+Global mock module doesn't have to contain every function exported by original
+module, but it cannot contain function which is not exported by original
+module.<br>
+It means that:
+* when you remove function from original module, you have to remove it from
+global mock module or Mockery will raise
+* when you change function name in original module, you have to change it in
+global mock module or Mockery will raise
 
 ## Advanced examples
 

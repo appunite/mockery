@@ -55,6 +55,8 @@ defmodule Mockery.Utils do
         module "#{print_mod original}":
 
             #{inspect unknown}
+
+        Remove or fix them.
         """
     end
   end

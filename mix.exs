@@ -1,7 +1,7 @@
 defmodule Mockery.Mixfile do
   use Mix.Project
 
-  @version "1.3.0"
+  @version "2.0.0"
 
   def project do
     [
@@ -24,6 +24,7 @@ defmodule Mockery.Mixfile do
 
   defp deps do
     [
+      {:credo, "~> 0.8", only: :dev, runtime: false},
       {:dialyxir, "~> 0.5", only: :dev, runtime: false},
       {:excoveralls, "~> 0.7", only: :test},
       {:ex_doc, "~> 0.13", only: :dev, runtime: false}
@@ -50,7 +51,10 @@ defmodule Mockery.Mixfile do
       files: ~w(lib mix.exs README.md CHANGELOG.md LICENSE),
       maintainers: ["Tobiasz Małecki"],
       licenses: ["Apache 2.0"],
-      links: %{"GitHub" => "https://github.com/appunite/mockery"}
+      links: %{
+        "GitHub" => "https://github.com/appunite/mockery",
+        "Changelog" => "https://hexdocs.pm/mockery/changelog.html"
+      }
     ]
   end
 

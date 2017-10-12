@@ -21,53 +21,32 @@ defmodule Mockery do
   For MIX_ENV other than :test it returns first argument unchanged.
   For test env it creates kind of proxy to oryginal module.
 
-  Proxy can be implicit
-
       @elixir_module Mockery.of("MyApp.Module")
       @erlang_module Mockery.of(:crypto)
 
-  or explicit
-
-      @elixir_module Mockery.of("MyApp.Module", by: "MyApp.FakeElixirModule")
-      @erlang_module Mockery.of(:crypto, by: "MyApp.FakeErlangModule")
-
-  Explicit version is used for global mocks. For more information see
-  `Mockery.Heritage`.
-
   It is also possible to pass module in elixir format
 
-      @module Mockery.of(MyApp.Module, by: MyApp.FakeElixirModule)
+      @module Mockery.of(MyApp.Module)
 
   but is not recommended as it creates unnecessary compile-time dependency
   (see `mix xref graph` output for both versions).
   """
   @spec of(mod :: atom | String.t, opts :: keyword_opts) ::
     module | proxy
-  def of(mod, opts \\ [])
-  def of(mod, opts) when is_atom(mod) do
+  def of(mod, opts \\ []) when is_atom(mod)
+                          when is_binary(mod) do
     env = opts[:env] || Mix.env
 
-    cond do
-      env != :test ->
-        mod
-      by = Keyword.get(opts, :by) ->
-        {Module.concat([by]), :ok}
-      :else ->
-        {Mockery.Proxy, mod}
+    if env != :test do
+      to_mod(mod)
+    else
+      {Mockery.Proxy, to_mod(mod), to_mod(opts[:by])}
     end
   end
-  def of(mod, opts) when is_binary(mod) do
-    env = opts[:env] || Mix.env
 
-    cond do
-      env != :test ->
-        Module.concat([mod])
-      by = Keyword.get(opts, :by) ->
-        {Module.concat([by]), :ok}
-      :else ->
-        {Mockery.Proxy, Module.concat([mod])}
-    end
-  end
+  defp to_mod(nil), do: nil
+  defp to_mod(mod) when is_atom(mod), do: mod
+  defp to_mod(mod) when is_binary(mod), do: Module.concat([mod])
 
   @doc """
   Function used to create mock in context of single test.
@@ -75,7 +54,7 @@ defmodule Mockery do
   Mock created in one test won't leak to another.
   It can be used safely in asynchronous tests.
 
-  Mocks can be created with value:
+  Mocks can be created with static value:
 
       mock Mod, [fun: 2], "mocked value"
 
@@ -96,18 +75,36 @@ defmodule Mockery do
 
       mock Mod, :fun, "mocked value"
 
-  But this:
+  but this version doesn't support function as value.
 
-      mock Mod, :fun, &string/1
+  Also, multiple mocks for same module are chainable
 
-  doesn't make any sense, because it will only work for Mod.fun/1.
+      Mod
+      |> mock(:fun1, "value")
+      |> mock([fun2: 1], &string/1)
+
   """
   def mock(mod, fun, value \\ :mocked)
+  def mock(mod, fun, value) when is_atom(fun) and is_function(value) do
+    {:arity, arity} = :erlang.fun_info(value, :arity)
 
+    raise Mockery.Error, """
+    Dynamic mock requires [funtion: arity] syntax.
+
+    Please use:
+        mock(#{Utils.print_mod mod}, [#{fun}: #{arity}], fn(...) -> ... end)
+    """
+  end
   def mock(mod, fun, nil),
-    do: Process.put(Utils.dict_mock_key(mod, fun), Mockery.Nil)
+    do: do_mock(mod, fun, Mockery.Nil)
   def mock(mod, fun, false),
-    do: Process.put(Utils.dict_mock_key(mod, fun), Mockery.False)
+    do: do_mock(mod, fun, Mockery.False)
   def mock(mod, fun, value),
-    do: Process.put(Utils.dict_mock_key(mod, fun), value)
+    do: do_mock(mod, fun, value)
+
+  defp do_mock(mod, fun, value) do
+    Utils.put_mock(mod, fun, value)
+
+    mod
+  end
 end

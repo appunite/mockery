@@ -43,6 +43,7 @@ defmodule Mockery.History do
   def print(_mod, _fun, args) when not is_list(args), do: nil
   def print(mod, fun, args) do
     quote do
+      # credo:disable-for-lines:1 Credo.Check.Design.AliasUsage
       if Mockery.Utils.history_enabled? do
         """
         \n
@@ -50,7 +51,7 @@ defmodule Mockery.History do
         #{unquote(Macro.to_string args)}
 
         #{yellow()}History:#{white()}
-        #{unquote(colorize(mod, fun, args))}
+        #{unquote(colorize(mod, fun, args))}\
         """
       end
     end
@@ -63,7 +64,7 @@ defmodule Mockery.History do
     quote do
       Utils.get_calls(unquote(mod), unquote(fun))
       |> Enum.reverse()
-      |> Enum.map(fn({call_arity, call_args})->
+      |> Enum.map(fn {call_arity, call_args} ->
         if unquote(arity) == call_arity do
           "#{white()}[" <> (
             [unquote(args), call_args]

@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/appunite/mockery.svg?branch=master)](https://travis-ci.org/appunite/mockery)
 [![Coverage Status](https://coveralls.io/repos/github/appunite/mockery/badge.svg?branch=master)](https://coveralls.io/github/appunite/mockery?branch=master)
-[![GitHub issues](https://img.shields.io/github/issues/appunite/mockery.svg)](https://github.com/appunite/mockery/issues)
-[![Hex.pm](https://img.shields.io/hexpm/v/mockery.svg?style=flat)](https://hex.pm/packages/mockery)
+[![Ebert](https://ebertapp.io/github/appunite/mockery.svg)](https://ebertapp.io/github/appunite/mockery)
+[![Hex.pm](https://img.shields.io/hexpm/v/mockery.svg)](https://hex.pm/packages/mockery)
 [![Hex.pm](https://img.shields.io/hexpm/dt/mockery.svg)](https://hex.pm/packages/mockery)
 [![Hex.pm](https://img.shields.io/hexpm/dw/mockery.svg)](https://hex.pm/packages/mockery)
 
@@ -9,14 +9,32 @@
 
 Simple mocking library for asynchronous testing in Elixir.
 
-In test environment it replaces prepared modules by mockable proxy. In other environments your modules remain unchanged.
+## Assumptions
+
+* It does not override your modules
+* It does not create modules during runtime
+* It does not replace modules by aliasing
+
+  It contains single proxy module that checks mocks or calls original function
+
+* It does not require to pass modules as function parameter
+
+  You won't lose any compilation warnings
+
+* It does not allow to mock non-existent function
+
+  It checks if original module exports function you are trying to mock
+
+* Mock created in one test doesn't interfere with other tests
+
+  Most of mock data is stored in process dictionary
 
 ## Installation
 
 ```elixir
 def deps do
   [
-    {:mockery, "~> 1.0"}
+    {:mockery, "~> 2.0"}
   ]
 end
 ```
@@ -27,40 +45,61 @@ end
 
 ```elixir
 # prepare tested module
-@service Mockery.of("MyApp.UserService")
+defmodule MyApp.Controller do
+  # ...
+  @service Mockery.of("MyApp.UserService")
 
-def all do
-  @service.users()
-end
+  def all do
+    @service.users()
+  end
 
-def filtered do
-  @service.users("filter")
+  def filtered do
+    @service.users("filter")
+  end
 end
 
 # tests
-import Mockery
+defmodule MyApp.ControllerTest do
+  # ...
+  import Mockery
 
-# mock any function :users from MyApp.UserService
-mock MyApp.UserService, :users, "mock"
-assert all() == "mock"
-assert filtered() == "mock"
+  test "mock any function :users from MyApp.UserService" do
+    mock MyApp.UserService, :users, "mock"
+    assert all() == "mock"
+    assert filtered() == "mock"
+  end
 
-# mock MyApp.UserService.users/0
-mock MyApp.UserService, [users: 0], "mock"
-assert all() == "mock"
-refute filtered() == "mock"
+  test "mock MyApp.UserService.users/0" do
+    mock MyApp.UserService, [users: 0], "mock"
+    assert all() == "mock"
+    refute filtered() == "mock"
+  end
 
-# mock MyApp.UserService.users/0 with implicit value
-mock MyApp.UserService, users: 0
-assert all() == :mocked
-refute filtered() == :mocked
+  test "mock MyApp.UserService.users/0 with default value" do
+    mock MyApp.UserService, users: 0
+    assert all() == :mocked
+    refute filtered() == :mocked
+  end
+
+  test "chaining multiple mocks for same module" do
+    UserService
+    |> mock([users: 0], "mock value")
+    |> mock([users: 1], "mock value")
+    # ...
+  end
+end
 ```
 
-**Note**: Elixir module names are passed as a string (`"MyApp.UserService`") instead of atoms (`MyApp.UserService`). This reduces the compilation time because it doesn't create a link between modules which caused modules to be recompiled too often. This doesn't affect the bahaviour in any way.
+**Note**: Elixir module names are passed as a string (`"MyApp.UserService"`)
+instead of atoms (`MyApp.UserService`). This reduces the compilation time
+because it doesn't create a link between modules which caused modules to be
+recompiled too often. This doesn't affect the bahaviour in any way.
 
 Erlang module names (e.g. `:crypto`) should be passed in the original form (as atoms).
 
 #### Dynamic mock
+
+Instead of static value you can use a function with same arity as original one.
 
 ```elixir
 defmodule Foo do
@@ -68,60 +107,79 @@ defmodule Foo do
 end
 
 # prepare tested module
-@foo Mockery.of("Foo")
+defmodule Other do
+  @foo Mockery.of("Foo")
 
-def parse(value) do
-  @foo.bar(value)
+  def parse(value) do
+    @foo.bar(value)
+  end
 end
 
 # tests
-import Mockery
+defmodule OtherTest do
+ # ...
+ import Mockery
 
-mock Foo, [bar: 1], fn(value)-> String.upcase(value) end
-assert parse("test") == "TEST"
+  test "with dynamic mock" do
+    mock Foo, [bar: 1], fn(value)-> String.upcase(value) end
+    assert parse("test") == "TEST"
+  end
+end
 ```
 
 ## Check if function was called
 
 ```elixir
 # prepare tested module
-@foo Mockery.of("Foo")
+defmodule Tested do
+  @foo Mockery.of("Foo")
 
-def call(value, opts) do
-  @foo.bar(value)
+  def call(value, opts) do
+    @foo.bar(value)
+  end
 end
 
 # tests
-import Mockery.Assertions
-# use Mockery # when need to import both Mockery and Mockery.Assertions
+defmodule Tested do
+  # ...
+  import Mockery.Assertions
+  # use Mockery # when need to import both Mockery and Mockery.Assertions
 
-# assert any function bar from module Foo was called
-call(1, %{})
-assert_called Foo, :bar
+  test "assert any function bar from module Foo was called" do
+    Tested.call(1, %{})
+    assert_called Foo, :bar
+  end
 
-# assert Foo.bar/2 was called
-call(1, %{})
-assert_called Foo, bar: 2
+  test "assert Foo.bar/2 was called" do
+    Tested.call(1, %{})
+    assert_called Foo, bar: 2
+  end
 
-# assert Foo.bar/2 was called with given args
-call(1, %{})
-assert_called Foo, :bar, [1, %{}]
+  test "assert Foo.bar/2 was called with given args" do
+    Tested.call(1, %{})
+    assert_called Foo, :bar, [1, %{}]
+  end
 
-# assert Foo.bar/2 was called with 1 as first arg
-call(1, %{})
-assert_called Foo, :bar, [1, _]
+  test "assert Foo.bar/2 was called with 1 as first arg" do
+    Tested.call(1, %{})
+    assert_called Foo, :bar, [1, _]
+  end
 
-# assert Foo.bar/2 was called with 1 as first arg 5 times
-# ...
-assert_called Foo, :bar, [1, _], 5
+  test "assert Foo.bar/2 was called with 1 as first arg 5 times" do
+    # ...
+    assert_called Foo, :bar, [1, _], 5
+  end
 
-# assert Foo.bar/2 was called with 1 as first arg from 3 to 5 times
-# ...
-assert_called Foo, :bar, [1, _], 3..5
+  test "assert Foo.bar/2 was called with 1 as first arg from 3 to 5 times" do
+    # ...
+    assert_called Foo, :bar, [1, _], 3..5
+  end
 
-# assert Foo.bar/2 was called with 1 as first arg 3 or 5 times
-# ...
-assert_called Foo, :bar, [1, _], [3, 5]
+  test "assert Foo.bar/2 was called with 1 as first arg 3 or 5 times" do
+    # ...
+    assert_called Foo, :bar, [1, _], [3, 5]
+  end
+end
 ```
 
 #### Refute
@@ -140,62 +198,51 @@ For more information see [docs](https://hexdocs.pm/mockery/Mockery.History.html)
 
 ## Global mock
 
-```elixir
-# create helper module
-defmodule MyApp.TestUserService do
-  use Mockery.Heritage,
-    module: MyApp.UserService
+Useful when you need to use same mock many times across different tests
 
-  mock [users: 0] do
-    [:user1, :user2, :user3]
-  end
+```elixir
+defmodule Foo do
+  def bar, do: 1
+  def baz, do: 2
+end
+
+defmodule FooGlobalMock do
+  def bar, do: :mocked
 end
 
 # prepare tested module
-defmodule MyApp.UserController do
-  @service Mockery.of("MyApp.UserService", by: "MyApp.TestUserService")
+defmodule Other do
+  @foo Mockery.of(Foo, by: FooGlobalMock)
 
-  def index do
-    @service.users()
-  end
+  def bar, do: @foo.bar()
+  def baz, do: @foo.baz()
 end
 
 # tests
-assert index() == [:user1, :user2, :user3]
+defmodule OtherTest do
+  # ...
+
+  test "with global mock" do
+    assert Other.bar == :mocked
+    assert Other.baz == 2
+  end
+end
 ```
+
+#### Restrictions
+
+Global mock module doesn't have to contain every function exported by original
+module, but it cannot contain function which is not exported by original
+module.<br>
+It means that:
+* when you remove function from original module, you have to remove it from
+global mock module or Mockery will raise
+* when you change function name in original module, you have to change it in
+global mock module or Mockery will raise
 
 ## Advanced examples
 
 For advanced usage examples see [EXAMPLES.md](EXAMPLES.md)
-
-## Philosophy behind this project
-
-#### Nothing is shared
-
-Mocks and function call history are stored separately for every test in
-its own process dictionary.
-
-#### Don't use modules as additional function argument
-
-When you use functions like this:
-
-```elixir
-  def something(foo \\ Foo) do
-    foo.bar()
-  end
-```
-
-You loose some compilation warnings. It was always unacceptable for me.
-After changing function name I expect that project recompilation will show me
-if old name is still used somewhere in my code by throwing `function Foo.bar/0 is
-undefined or private` straight into my face. With `Mockery` it's no longer an issue.
-
-#### Don't create custom macros when it's not necessary
-
-To prepare module for mocking we decided to use module attributes instead of
-any magic macros that changes code behind the scene.
-In our company we believe that any new person joining project should be able
-to understand existing code immediately.
 
 ## License
 

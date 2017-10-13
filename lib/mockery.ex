@@ -45,7 +45,7 @@ defmodule Mockery do
     module | proxy
   def of(mod, opts \\ [])
   def of(mod, opts) when is_atom(mod) do
-    env = opts[:env] || Mix.env
+    env = opts[:env] || mix_env()
 
     cond do
       env != :test ->
@@ -57,7 +57,7 @@ defmodule Mockery do
     end
   end
   def of(mod, opts) when is_binary(mod) do
-    env = opts[:env] || Mix.env
+    env = opts[:env] || mix_env()
 
     cond do
       env != :test ->
@@ -110,4 +110,8 @@ defmodule Mockery do
     do: Process.put(Utils.dict_mock_key(mod, fun), Mockery.False)
   def mock(mod, fun, value),
     do: Process.put(Utils.dict_mock_key(mod, fun), value)
+
+  defp mix_env do
+    if Kernel.function_exported?(Mix, :env, 0), do: Mix.env(), else: :prod
+  end
 end

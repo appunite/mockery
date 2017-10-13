@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.0.1 (2017-10-13)
+* When Mix is missing, `Mockery.of/2` assumes that env is `:prod`
+
 ## 2.0.0 (2017-10-08)
 * Removed `Mockery.Heritage`
   * Global mocks will be handled without macros by pure elixir modules.

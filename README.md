@@ -23,7 +23,7 @@ Simple mocking library for asynchronous testing in Elixir.
 
 * It does not allow to mock non-existent function
 
-  It checks if original module exports function you are trying to mock
+  It checks if original module exports function you are trying to call
 
 * Mock created in one test doesn't interfere with other tests
 
@@ -188,6 +188,8 @@ Every assert_called/x function/macro has its refute_called/x counterpart.<br>
 For more information see [docs](https://hexdocs.pm/mockery/Mockery.Assertions.html)
 
 #### History
+
+![history example](https://raw.githubusercontent.com/appunite/mockery/master/history.jpeg)
 
 Mockery.History  module provides more descriptive failure messages for
 assert_called/{3,4} and refute_called/{3,4} that includes colorized list of

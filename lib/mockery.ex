@@ -18,18 +18,18 @@ defmodule Mockery do
   @doc """
   Function used to prepare module for mocking.
 
-  For Mix.env other than :test it returns first argument unchanged.
-  For Mix.env == :test it creates kind of proxy to oryginal module.
+  For Mix.env other than :test it returns the first argument unchanged.
+  For Mix.env == :test it creates a proxy to the original module.
   When Mix is missing it assumes that env is :prod
 
       @elixir_module Mockery.of("MyApp.Module")
       @erlang_module Mockery.of(:crypto)
 
-  It is also possible to pass module in elixir format
+  It is also possible to pass the module in elixir format
 
       @module Mockery.of(MyApp.Module)
 
-  but is not recommended as it creates unnecessary compile-time dependency
+  but it is not recommended as it creates an unnecessary compile-time dependency
   (see `mix xref graph` output for both versions).
   """
   @spec of(mod :: atom | String.t, opts :: keyword_opts) ::

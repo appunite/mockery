@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/appunite/mockery.svg?branch=master)](https://travis-ci.org/appunite/mockery)
-[![Coverage Status](https://coveralls.io/repos/github/appunite/mockery/badge.svg?branch=master)](https://coveralls.io/github/appunite/mockery?branch=master)
+[![Codecov.io](https://codecov.io/gh/appunite/mockery/branch/master/graph/badge.svg)](https://codecov.io/gh/appunite/mockery)
 [![Ebert](https://ebertapp.io/github/appunite/mockery.svg)](https://ebertapp.io/github/appunite/mockery)
 [![Hex.pm](https://img.shields.io/hexpm/v/mockery.svg)](https://hex.pm/packages/mockery)
 [![Hex.pm](https://img.shields.io/hexpm/dt/mockery.svg)](https://hex.pm/packages/mockery)
@@ -20,6 +20,8 @@ Simple mocking library for asynchronous testing in Elixir.
 * It does not require to pass modules as function parameter
 
   You won't lose any compilation warnings
+
+* It does not require to create callbacks or wrappers around libraries
 
 * It does not allow to mock non-existent function
 

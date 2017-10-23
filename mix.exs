@@ -62,7 +62,7 @@ defmodule Mockery.Mixfile do
     [
       coveralls: :test,
       "coveralls.detail": :test,
-      "coveralls.travis": :test
+      "coveralls.json": :test
     ]
   end
 end

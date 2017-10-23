@@ -19,5 +19,6 @@ matrix:
     - elixir: 1.5
       otp_release: 20.0
 
-after_success:
-  - mix coveralls.travis
+script: mix coveralls.json
+after_script:
+  - bash <(curl -s https://codecov.io/bash)

@@ -9,7 +9,9 @@ defmodule Mockery.Mixfile do
       deps: deps(),
       description: description(),
       dialyzer: [
-        flags: [:error_handling, :race_conditions, :underspecs, :unmatched_returns],
+        flags: [
+          :error_handling, :race_conditions, :underspecs, :unmatched_returns
+        ],
         plt_add_apps: [:ex_unit, :mix],
       ],
       docs: [

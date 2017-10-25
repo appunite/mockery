@@ -94,14 +94,14 @@ end
 
 **Note**: Elixir module names are passed as a string (`"MyApp.UserService"`)
 instead of atoms (`MyApp.UserService`). This reduces the compilation time
-because it doesn't create a link between modules which caused modules to be
+because it doesn't create a link between modules, which can cause modules to be
 recompiled too often. This doesn't affect the behavior in any way.
 
-Erlang module names (e.g. `:crypto`) should be passed in the original form (as atoms).
+Erlang module names (e.g. `:crypto`) should be passed in as atoms.
 
 #### Dynamic mock
 
-Instead of static value you can use a function with same arity as original one.
+Instead of using a static value, you can use a function with the same arity as original one.
 
 ```elixir
 defmodule Foo do
@@ -145,7 +145,7 @@ end
 defmodule Tested do
   # ...
   import Mockery.Assertions
-  # use Mockery # when need to import both Mockery and Mockery.Assertions
+  # use Mockery # when you need to import both Mockery and Mockery.Assertions
 
   test "assert any function bar from module Foo was called" do
     Tested.call(1, %{})
@@ -194,15 +194,15 @@ For more information see [docs](https://hexdocs.pm/mockery/Mockery.Assertions.ht
 ![history example](https://raw.githubusercontent.com/appunite/mockery/master/history.jpeg)
 
 Mockery.History  module provides more descriptive failure messages for
-assert_called/{3,4} and refute_called/{3,4} that includes colorized list of
-argument passed to given function in scope of single test process.
+assert_called/{3,4} and refute_called/{3,4} that includes a colorized list of
+arguments passed to a given function in the scope of a single test process.
 
 Disabled by default.
 For more information see [docs](https://hexdocs.pm/mockery/Mockery.History.html)
 
 ## Global mock
 
-Useful when you need to use same mock many times across different tests
+Useful when you need to use the same mock many times across different tests
 
 ```elixir
 defmodule Foo do
@@ -235,13 +235,13 @@ end
 
 #### Restrictions
 
-Global mock module doesn't have to contain every function exported by original
-module, but it cannot contain function which is not exported by original
+Global mock module doesn't have to contain every function exported by the original
+module, but it cannot contain a function which is not exported by the original
 module.<br>
 It means that:
-* when you remove function from original module, you have to remove it from
+* when you remove a function from the original module, you have to remove it from
 global mock module or Mockery will raise
-* when you change function name in original module, you have to change it in
+* when you change a function name in the original module, you have to change it in
 global mock module or Mockery will raise
 
 ## Advanced examples

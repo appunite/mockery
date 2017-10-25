@@ -7,7 +7,11 @@ defmodule Mockery.Mixfile do
     [
       app: :mockery,
       deps: deps(),
-      description: description,
+      description: description(),
+      dialyzer: [
+        flags: [:error_handling, :race_conditions, :underspecs, :unmatched_returns],
+        plt_add_apps: [:ex_unit, :mix],
+      ],
       docs: [
         extras: ["README.md", "EXAMPLES.md", "CHANGELOG.md"],
         main: "readme"

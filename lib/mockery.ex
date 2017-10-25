@@ -12,8 +12,10 @@ defmodule Mockery do
     end
   end
 
-  @opaque proxy      :: {module, module} | {module, :ok}
-  @type keyword_opts :: [{atom(), any()}]
+  @type erlang_module :: atom
+
+  @typep global_mock  :: module | nil
+  @opaque proxy_tuple :: {Mockery.Proxy, module, global_mock}
 
   @doc """
   Function used to prepare module for mocking.
@@ -32,8 +34,11 @@ defmodule Mockery do
   but it is not recommended as it creates an unnecessary compile-time dependency
   (see `mix xref graph` output for both versions).
   """
-  @spec of(mod :: atom | String.t, opts :: keyword_opts) ::
-    module | proxy
+  @spec of(
+    mod :: module | erlang_module | String.t,
+    opts :: [by: module | String.t] | []
+  ) ::
+    module | proxy_tuple
   def of(mod, opts \\ []) when is_atom(mod)
                           when is_binary(mod) do
     env = opts[:env] || mix_env()

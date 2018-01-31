@@ -6,6 +6,10 @@ defmodule Mockery.AssertionsTest do
     if {:cases_loaded, 0} in ExUnit.Server.__info__(:functions) do
       ExUnit.Server.cases_loaded()
     end
+
+    if {:modules_loaded, 0} in ExUnit.Server.__info__(:functions) do
+      ExUnit.Server.modules_loaded()
+    end
   end
 
   test "assert_called/2 (fun name) success" do

@@ -10,6 +10,10 @@ defmodule Mockery.HistoryTest do
     if {:cases_loaded, 0} in ExUnit.Server.__info__(:functions) do
       ExUnit.Server.cases_loaded()
     end
+
+    if {:modules_loaded, 0} in ExUnit.Server.__info__(:functions) do
+      ExUnit.Server.modules_loaded()
+    end
   end
 
   test "failure with too few args" do

@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.1.0-dev ()
+* Added `Mockery.new/1`
+
 ## 2.0.2 (2017-10-25)
 * Fixed `Mockery.of/2` typespecs
 

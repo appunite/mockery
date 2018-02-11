@@ -46,8 +46,35 @@ defmodule Mockery do
     if env != :test do
       to_mod(mod)
     else
-      {Mockery.Proxy, to_mod(mod), to_mod(opts[:by])}
+      new(mod, opts)
     end
+  end
+
+  @doc """
+  Creates proxy to original module.
+
+  In contrast to `Mockery.of/2` it always returns proxy no matter what environemnt
+  is returned by `Mix.env/0`. User have to explicitely prepare module for mocking through
+  application configs.
+
+      # module
+      @something Application.get_env(:my_app, :something)
+
+      # config.exs
+      config :my_app, :something, Something
+
+      # test_helper.exs
+      Application.put_env(:my_app, :something, Mockery.new(Something))
+
+  """
+  @spec new(
+    mod :: module | erlang_module | String.t,
+    opts :: [by: module | String.t] | []
+  ) ::
+    proxy_tuple
+  def new(mod, opts \\ []) when is_atom(mod)
+                           when is_binary(mod) do
+    {Mockery.Proxy, to_mod(mod), to_mod(opts[:by])}
   end
 
   defp to_mod(nil), do: nil

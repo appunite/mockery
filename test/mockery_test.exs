@@ -37,6 +37,24 @@ defmodule MockeryTest do
     assert Mockery.of("A", by: "X") == {Mockery.Proxy, A, X}
   end
 
+  test "new/2 (atom erlang mod)" do
+    assert Mockery.new(:a) == {Mockery.Proxy, :a, nil}
+    assert Mockery.new(:a, by: X) == {Mockery.Proxy, :a, X}
+    assert Mockery.new(:a, by: "X") == {Mockery.Proxy, :a, X}
+  end
+
+  test "new/2 (atom elixir mod)" do
+    assert Mockery.new(A) == {Mockery.Proxy, A, nil}
+    assert Mockery.new(A, by: X) == {Mockery.Proxy, A, X}
+    assert Mockery.new(A, by: "X") == {Mockery.Proxy, A, X}
+  end
+
+  test "new/2 (string elixir mod)" do
+    assert Mockery.new("A") == {Mockery.Proxy, A, nil}
+    assert Mockery.new("A", by: X) == {Mockery.Proxy, A, X}
+    assert Mockery.new("A", by: "X") == {Mockery.Proxy, A, X}
+  end
+
   test "mock/3 with name (static mock)" do
     Mockery.mock(Dummy, :fun1, "value1")
 

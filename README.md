@@ -13,33 +13,77 @@ Simple mocking library for asynchronous testing in Elixir.
 
 * It does not override your modules
 * It does not create modules during runtime
-* It does not replace modules by aliasing
-
+* It does not replace modules by aliasing<br>
   It contains single proxy module that checks mocks or calls original function
-
-* It does not require to pass modules as function parameter
-
+* It does not require to pass modules as function parameter<br>
   You won't lose any compilation warnings
-
 * It does not require to create callbacks or wrappers around libraries
-
-* It does not allow to mock non-existent function
-
+* It does not allow to mock non-existent function<br>
   It checks if original module exports function you are trying to call
-
-* Mock created in one test doesn't interfere with other tests
-
+* Mock created in one test doesn't interfere with other tests<br>
   Most of mock data is stored in process dictionary
 
-## Installation
+## Getting started
+
+### Mockery as test dependency
+
+**Installation**
 
 ```elixir
 def deps do
   [
-    {:mockery, "~> 2.0"}
+    {:mockery, "~> 2.0", only: :test}
   ]
 end
 ```
+
+**Preparation of the module for mocking**
+
+```elixir
+# lib/my_app/foo.ex
+defmodule MyApp.Foo do
+  @bar Application.get_env(:my_app, :bar)
+
+  def baz, do: @bar.function()
+end
+
+# config/config.exs
+config :my_app, :bar, MyApp.Bar
+
+# test/test_helper.exs
+ExUnit.start()
+Application.put_env(:my_app, :bar, Mockery.new(MyApp.Bar))
+```
+
+### Mockery as compile-time dependency
+Useful in large projects to avoid jumping over configuration files.
+
+**Installation**
+
+```elixir
+def deps do
+  [
+    {:mockery, "~> 2.0", runtime: false}
+  ]
+end
+```
+
+**Preparation of the module for mocking**
+
+```elixir
+# lib/my_app/foo.ex
+defmodule MyApp.Foo do
+  @bar Mockery.of("MyApp.Bar")
+
+  def baz, do: @bar.function()
+end
+```
+
+**Note**: Elixir module names are passed as a string (`"MyApp.Bar"`)
+instead of atoms (`MyApp.Bar`). This reduces the compilation time
+because it doesn't create a link between modules, which can cause modules to be
+recompiled too often. This doesn't affect the behavior in any way.<br>
+Erlang module names (e.g. `:crypto`) should be passed in as atoms.
 
 ## Basic usage
 
@@ -92,13 +136,6 @@ defmodule MyApp.ControllerTest do
 end
 ```
 
-**Note**: Elixir module names are passed as a string (`"MyApp.UserService"`)
-instead of atoms (`MyApp.UserService`). This reduces the compilation time
-because it doesn't create a link between modules, which can cause modules to be
-recompiled too often. This doesn't affect the behavior in any way.
-
-Erlang module names (e.g. `:crypto`) should be passed in as atoms.
-
 #### Dynamic mock
 
 Instead of using a static value, you can use a function with the same arity as original one.
@@ -129,7 +166,7 @@ defmodule OtherTest do
 end
 ```
 
-## Check if function was called
+## Checking if function was called
 
 ```elixir
 # prepare tested module
@@ -240,9 +277,11 @@ module, but it cannot contain a function which is not exported by the original
 module.<br>
 It means that:
 * when you remove a function from the original module, you have to remove it from
-global mock module or Mockery will raise
+global mock module or Mockery will raise exception
 * when you change a function name in the original module, you have to change it in
-global mock module or Mockery will raise
+global mock module or Mockery will raise exception
+* when you change a function arity in the original module, you have to change it in
+global mock module or Mockery will raise exception
 
 ## Advanced examples
 
@@ -250,7 +289,7 @@ For advanced usage examples see [EXAMPLES.md](EXAMPLES.md)
 
 ## License
 
-Copyright 2017 Tobiasz Małecki <tobiasz.malecki@appunite.com>
+Copyright 2017-2018 Tobiasz Małecki <tobiasz.malecki@appunite.com>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

@@ -42,13 +42,10 @@ end
 ```elixir
 # lib/my_app/foo.ex
 defmodule MyApp.Foo do
-  @bar Application.get_env(:my_app, :bar)
+  @bar Application.get_env(:my_app, :bar, MyApp.Bar)
 
   def baz, do: @bar.function()
 end
-
-# config/config.exs
-config :my_app, :bar, MyApp.Bar
 
 # test/test_helper.exs
 ExUnit.start()

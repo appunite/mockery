@@ -3,6 +3,7 @@
 ## 2.1.0-dev ()
 * Added `Mockery.new/1`
 * Fixed typo in error message (#21)
+* Removed support for Elixir 1.1 and 1.2
 
 ## 2.0.2 (2017-10-25)
 * Fixed `Mockery.of/2` typespecs

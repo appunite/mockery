@@ -21,7 +21,7 @@ defmodule Mockery.Mixfile do
         extras: ["README.md", "EXAMPLES.md", "CHANGELOG.md"],
         main: "readme"
       ],
-      elixir: "~> 1.1",
+      elixir: "~> 1.3",
       elixirc_paths: elixirc_paths(Mix.env()),
       package: package(),
       preferred_cli_env: [

@@ -46,7 +46,7 @@ defmodule Mockery do
     if env != :test do
       to_mod(mod)
     else
-      new(mod, opts)
+      do_proxy_tuple(mod, opts)
     end
   end
 
@@ -75,6 +75,10 @@ defmodule Mockery do
     proxy_tuple
   def new(mod, opts \\ []) when is_atom(mod)
                            when is_binary(mod) do
+    do_proxy_tuple(mod, opts)
+  end
+
+  defp do_proxy_tuple(mod, opts) do
     {Mockery.Proxy, to_mod(mod), to_mod(opts[:by])}
   end
 

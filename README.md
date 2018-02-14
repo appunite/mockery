@@ -9,6 +9,8 @@
 
 Simple mocking library for asynchronous testing in Elixir.
 
+> Readme and documentation for last stable version are available on [hex](https://hexdocs.pm/mockery/readme.html)
+
 ## Assumptions
 
 * It does not override your modules

@@ -56,21 +56,21 @@ defmodule Mockery.ProxyTest do
   test "raise when mocking with function of different arity" do
     mock(Dummy, [ar: 2], &to_string/1)
 
-    assert_raise Mockery.Error,
-      "function used for mock should have same arity as original",
-      fn -> Tested1.ar(1, 2) end
+    assert_raise Mockery.Error, "function used for mock should have same arity as original", fn ->
+      Tested1.ar(1, 2)
+    end
   end
 
   test "raise when function doesn't exist" do
-    assert_raise Mockery.Error,
-      "function Dummy.undefined/0 is undefined or private",
-      fn -> Tested1.undefined() end
+    assert_raise Mockery.Error, "function Dummy.undefined/0 is undefined or private", fn ->
+      Tested1.undefined()
+    end
   end
 
   test "allow mocking with nil" do
     mock(Dummy, [ar: 2], nil)
 
-    assert is_nil Tested1.ar(1, 2)
+    assert is_nil(Tested1.ar(1, 2))
   end
 
   test "allow mocking with false" do
@@ -91,7 +91,7 @@ defmodule Mockery.ProxyTest do
   end
 
   test "function was called mutiple times (0 arity)" do
-    Enum.each(1..3, fn(_i) -> Tested1.fun1() end)
+    Enum.each(1..3, fn _i -> Tested1.fun1() end)
 
     assert Utils.get_calls(Dummy, :fun1) == [{0, []}, {0, []}, {0, []}]
   end
@@ -159,10 +159,10 @@ defmodule Mockery.ProxyTest do
 
   test "validates global_mock module" do
     assert_raise Mockery.Error,
-      ~r"""
-      Global mock \"Mockery.ProxyTest.Tested3.DummyGlobalMock\" exports \
-      functions unknown to \"Dummy\" module:
-      """,
-      fn -> Tested3.fun1() end
+                 ~r"""
+                 Global mock \"Mockery.ProxyTest.Tested3.DummyGlobalMock\" exports \
+                 functions unknown to \"Dummy\" module:
+                 """,
+                 fn -> Tested3.fun1() end
   end
 end

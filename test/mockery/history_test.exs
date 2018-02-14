@@ -25,12 +25,12 @@ defmodule Mockery.HistoryTest do
         Mockery.Utils.push_call(A, :fun, 1, ["a"])
 
         enable_history()
-        Mockery.Assertions.assert_called A, :fun, ["a", "b"]
+        Mockery.Assertions.assert_called(A, :fun, ["a", "b"])
       end
     end
 
     load_cases()
-    output = capture_io(fn -> ExUnit.run end)
+    output = capture_io(fn -> ExUnit.run() end)
 
     assert output =~ "1 test, 1 failure"
     assert output =~ ~s(#{red()}["a"]#{white()})
@@ -45,12 +45,12 @@ defmodule Mockery.HistoryTest do
         Mockery.Utils.push_call(A, :fun, 3, ["a", "b", "c"])
 
         enable_history()
-        Mockery.Assertions.assert_called A, :fun, ["a", "b"]
+        Mockery.Assertions.assert_called(A, :fun, ["a", "b"])
       end
     end
 
     load_cases()
-    output = capture_io(fn -> ExUnit.run end)
+    output = capture_io(fn -> ExUnit.run() end)
 
     assert output =~ "1 test, 1 failure"
     assert output =~ ~s(#{red()}["a", "b", "c"]#{white()})
@@ -65,12 +65,12 @@ defmodule Mockery.HistoryTest do
         Mockery.Utils.push_call(A, :fun, 2, ["a", "c"])
 
         enable_history()
-        Mockery.Assertions.assert_called A, :fun, ["a", "b"]
+        Mockery.Assertions.assert_called(A, :fun, ["a", "b"])
       end
     end
 
     load_cases()
-    output = capture_io(fn -> ExUnit.run end)
+    output = capture_io(fn -> ExUnit.run() end)
 
     assert output =~ "1 test, 1 failure"
     assert output =~ ~s(#{white()}[#{green()}"a"#{white()}, #{red()}"c"#{white()}])
@@ -85,12 +85,12 @@ defmodule Mockery.HistoryTest do
         Mockery.Utils.push_call(A, :fun, 2, ["a", "c"])
 
         enable_history()
-        Mockery.Assertions.assert_called A, :fun, [_, "b"]
+        Mockery.Assertions.assert_called(A, :fun, [_, "b"])
       end
     end
 
     load_cases()
-    output = capture_io(fn -> ExUnit.run end)
+    output = capture_io(fn -> ExUnit.run() end)
 
     assert output =~ "1 test, 1 failure"
     assert output =~ ~s(#{white()}[#{green()}"a"#{white()}, #{red()}"c"#{white()}])
@@ -106,12 +106,12 @@ defmodule Mockery.HistoryTest do
 
         enable_history()
         x = "b"
-        Mockery.Assertions.assert_called A, :fun, ["a", ^x]
+        Mockery.Assertions.assert_called(A, :fun, ["a", ^x])
       end
     end
 
     load_cases()
-    output = capture_io(fn -> ExUnit.run end)
+    output = capture_io(fn -> ExUnit.run() end)
 
     assert output =~ "1 test, 1 failure"
     assert output =~ ~s(#{white()}[#{green()}"a"#{white()}, #{red()}"c"#{white()}])

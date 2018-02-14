@@ -1,5 +1,6 @@
 defmodule Mockery.Utils do
-  @moduledoc false #this module is private to Mockery
+  # this module is private to Mockery
+  @moduledoc false
 
   alias Mockery.Error
 
@@ -35,7 +36,8 @@ defmodule Mockery.Utils do
   @application Mockery.of("Application")
   def history_enabled? do
     Process.get(
-      Mockery.History, @application.get_env(:mockery, :history, false)
+      Mockery.History,
+      @application.get_env(:mockery, :history, false)
     )
   end
 
@@ -49,12 +51,13 @@ defmodule Mockery.Utils do
     case Enum.reject(mock_exports, &(&1 in original_exports)) do
       [] ->
         :ok
+
       unknown ->
         raise Error, """
-        Global mock "#{print_mod mock}" exports functions unknown to \
-        "#{print_mod original}" module:
+        Global mock "#{print_mod(mock)}" exports functions unknown to \
+        "#{print_mod(original)}" module:
 
-            #{inspect unknown}
+            #{inspect(unknown)}
 
         Remove or fix them.
         """
@@ -68,12 +71,9 @@ defmodule Mockery.Utils do
   # note to myself: dont use three element tuples
 
   # key used to assign mocked value to given function
-  defp dict_mock_key(mod, [{fun, arity}]),
-    do: {Mockery, {mod, {fun, arity}}}
-  defp dict_mock_key(mod, fun),
-    do: {Mockery, {mod, fun}}
+  defp dict_mock_key(mod, [{fun, arity}]), do: {Mockery, {mod, {fun, arity}}}
+  defp dict_mock_key(mod, fun), do: {Mockery, {mod, fun}}
 
   # function calls are stored under this key
-  defp dict_called_key(mod, fun),
-    do: {Mockery.Assertions, {mod, fun}}
+  defp dict_called_key(mod, fun), do: {Mockery.Assertions, {mod, fun}}
 end

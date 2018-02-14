@@ -13,22 +13,22 @@ defmodule Mockery.UtilsTest do
   end
 
   test "history_enabled?/0 returns false by default" do
-    refute Utils.history_enabled?
-    assert_called Application, :get_env, [:mockery, :history, _], 1
+    refute Utils.history_enabled?()
+    assert_called(Application, :get_env, [:mockery, :history, _], 1)
   end
 
   test "history_enabled?/0 changed by global config" do
-    mock Application, :get_env, true
+    mock(Application, :get_env, true)
 
-    assert Utils.history_enabled?
-    assert_called Application, :get_env, [:mockery, :history, _], 1
+    assert Utils.history_enabled?()
+    assert_called(Application, :get_env, [:mockery, :history, _], 1)
   end
 
   test "history_enabled?/0 global config ignored when process config present" do
-    mock Application, :get_env, true
+    mock(Application, :get_env, true)
     enable_history(false)
 
-    refute Utils.history_enabled?
-    assert_called Application, :get_env, [:mockery, :history, _], 1
+    refute Utils.history_enabled?()
+    assert_called(Application, :get_env, [:mockery, :history, _], 1)
   end
 end

@@ -14,7 +14,7 @@ defmodule Mockery do
 
   @type erlang_module :: atom
 
-  @typep global_mock  :: module | nil
+  @typep global_mock :: module | nil
   @opaque proxy_tuple :: {Mockery.Proxy, module, global_mock}
 
   @doc """
@@ -35,12 +35,12 @@ defmodule Mockery do
   (see `mix xref graph` output for both versions).
   """
   @spec of(
-    mod :: module | erlang_module | String.t,
-    opts :: [by: module | String.t] | []
-  ) ::
-    module | proxy_tuple
-  def of(mod, opts \\ []) when is_atom(mod)
-                          when is_binary(mod) do
+          mod :: module | erlang_module | String.t(),
+          opts :: [by: module | String.t()] | []
+        ) :: module | proxy_tuple
+  def of(mod, opts \\ [])
+      when is_atom(mod)
+      when is_binary(mod) do
     env = opts[:env] || mix_env()
 
     if env != :test do
@@ -69,12 +69,12 @@ defmodule Mockery do
 
   """
   @spec new(
-    mod :: module | erlang_module | String.t,
-    opts :: [by: module | String.t] | []
-  ) ::
-    proxy_tuple
-  def new(mod, opts \\ []) when is_atom(mod)
-                           when is_binary(mod) do
+          mod :: module | erlang_module | String.t(),
+          opts :: [by: module | String.t()] | []
+        ) :: proxy_tuple
+  def new(mod, opts \\ [])
+      when is_atom(mod)
+      when is_binary(mod) do
     do_proxy_tuple(mod, opts)
   end
 
@@ -123,6 +123,7 @@ defmodule Mockery do
 
   """
   def mock(mod, fun, value \\ :mocked)
+
   def mock(mod, fun, value) when is_atom(fun) and is_function(value) do
     {:arity, arity} = :erlang.fun_info(value, :arity)
 
@@ -130,15 +131,13 @@ defmodule Mockery do
     Dynamic mock requires [function: arity] syntax.
 
     Please use:
-        mock(#{Utils.print_mod mod}, [#{fun}: #{arity}], fn(...) -> ... end)
+        mock(#{Utils.print_mod(mod)}, [#{fun}: #{arity}], fn(...) -> ... end)
     """
   end
-  def mock(mod, fun, nil),
-    do: do_mock(mod, fun, Mockery.Nil)
-  def mock(mod, fun, false),
-    do: do_mock(mod, fun, Mockery.False)
-  def mock(mod, fun, value),
-    do: do_mock(mod, fun, value)
+
+  def mock(mod, fun, nil), do: do_mock(mod, fun, Mockery.Nil)
+  def mock(mod, fun, false), do: do_mock(mod, fun, Mockery.False)
+  def mock(mod, fun, value), do: do_mock(mod, fun, value)
 
   defp do_mock(mod, fun, value) do
     Utils.put_mock(mod, fun, value)

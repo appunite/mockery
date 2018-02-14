@@ -63,10 +63,10 @@ defmodule MockeryTest do
 
   test "mock/3 with name (dynamic mock)" do
     assert_raise Mockery.Error,
-      ~r/mock\(Dummy,\ \[fun1:\ 0\],\ fn\(\.\.\.\)\ \->\ \.\.\.\ end\)/,
-      fn ->
-        Mockery.mock(Dummy, :fun1, fn -> :mock end)
-      end
+                 ~r/mock\(Dummy,\ \[fun1:\ 0\],\ fn\(\.\.\.\)\ \->\ \.\.\.\ end\)/,
+                 fn ->
+                   Mockery.mock(Dummy, :fun1, fn -> :mock end)
+                 end
   end
 
   test "mock/3 with name and arity (static mock)" do
@@ -78,7 +78,7 @@ defmodule MockeryTest do
   test "mock/3 with name and arity (dynamic mock)" do
     Mockery.mock(Dummy, [fun1: 0], fn -> :mock end)
 
-    assert is_function Process.get({Mockery, {Dummy, {:fun1, 0}}})
+    assert is_function(Process.get({Mockery, {Dummy, {:fun1, 0}}}))
   end
 
   test "mock/2 with name" do
@@ -88,7 +88,7 @@ defmodule MockeryTest do
   end
 
   test "mock/2 with name and arity" do
-    Mockery.mock(Dummy, [fun1: 0])
+    Mockery.mock(Dummy, fun1: 0)
 
     assert Process.get({Mockery, {Dummy, {:fun1, 0}}}) == :mocked
   end

@@ -10,16 +10,19 @@ defmodule Mockery.Mixfile do
       description: description(),
       dialyzer: [
         flags: [
-          :error_handling, :race_conditions, :underspecs, :unmatched_returns
+          :error_handling,
+          :race_conditions,
+          :underspecs,
+          :unmatched_returns
         ],
-        plt_add_apps: [:ex_unit, :mix],
+        plt_add_apps: [:ex_unit, :mix]
       ],
       docs: [
         extras: ["README.md", "EXAMPLES.md", "CHANGELOG.md"],
         main: "readme"
       ],
       elixir: "~> 1.1",
-      elixirc_paths: elixirc_paths(Mix.env),
+      elixirc_paths: elixirc_paths(Mix.env()),
       package: package(),
       preferred_cli_env: [
         coveralls: :test,
@@ -49,7 +52,7 @@ defmodule Mockery.Mixfile do
   end
 
   defp elixirc_paths(:test), do: ["lib", "test/support"]
-  defp elixirc_paths(_),     do: ["lib"]
+  defp elixirc_paths(_), do: ["lib"]
 
   defp package do
     [

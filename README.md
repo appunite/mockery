@@ -25,6 +25,31 @@ Simple mocking library for asynchronous testing in Elixir.
 
 ## Getting started
 
+### Mockery as compile-time dependency
+Useful in large projects to avoid jumping between config files.<br>
+Bad idea if you wish to release project as package.
+
+**Installation**
+
+```elixir
+def deps do
+  [
+    {:mockery, "~> 2.0", runtime: false}
+  ]
+end
+```
+
+**Preparation of the module for mocking**
+
+```elixir
+# lib/my_app/foo.ex
+defmodule MyApp.Foo do
+  @bar Mockery.of(MyApp.Bar)
+
+  def baz, do: @bar.function()
+end
+```
+
 ### Mockery as test dependency
 
 **Installation**
@@ -47,40 +72,13 @@ defmodule MyApp.Foo do
   def baz, do: @bar.function()
 end
 
-# test/test_helper.exs
-ExUnit.start()
-Application.put_env(:my_app, :bar, Mockery.new(MyApp.Bar))
+# MIX_ENV=test iex -S mix
+iex(1)> Mockery.new(MyApp.Bar)
+{Mockery.Proxy, MyApp.Bar, nil}
+
+# config/test.exs
+config :my_app, :bar, {Mockery.Proxy, MyApp.Bar, nil}
 ```
-
-### Mockery as compile-time dependency
-Useful in large projects to avoid jumping over configuration files.
-
-**Installation**
-
-```elixir
-def deps do
-  [
-    {:mockery, "~> 2.0", runtime: false}
-  ]
-end
-```
-
-**Preparation of the module for mocking**
-
-```elixir
-# lib/my_app/foo.ex
-defmodule MyApp.Foo do
-  @bar Mockery.of("MyApp.Bar")
-
-  def baz, do: @bar.function()
-end
-```
-
-**Note**: Elixir module names are passed as a string (`"MyApp.Bar"`)
-instead of atoms (`MyApp.Bar`). This reduces the compilation time
-because it doesn't create a link between modules, which can cause modules to be
-recompiled too often. This doesn't affect the behavior in any way.<br>
-Erlang module names (e.g. `:crypto`) should be passed in as atoms.
 
 ## Basic usage
 
@@ -132,6 +130,11 @@ defmodule MyApp.ControllerTest do
   end
 end
 ```
+**Note**: Elixir module names are passed as a string (`"MyApp.Bar"`)
+instead of atoms (`MyApp.Bar`). This reduces the compilation time
+because it doesn't create a link between modules, which can cause modules to be
+recompiled too often. This doesn't affect the behavior in any way.<br>
+Erlang module names (e.g. `:crypto`) should be passed in as atoms.
 
 #### Dynamic mock
 

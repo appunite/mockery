@@ -58,10 +58,14 @@ defmodule Mockery do
   application configs.
 
       # module
-      @something Application.get_env(:my_app, :something, Something)
+      @foo Application.get_env(:my_app, :foo, MyApp.Foo)
 
-      # test_helper.exs
-      Application.put_env(:my_app, :something, Mockery.new(Something))
+      # MIX_ENV=test iex -S mix
+      iex(1)> Mockery.new(MyApp.Foo)
+      {Mockery.Proxy, MyApp.Foo, nil}
+
+      # config/test.exs
+      config :my_app, :bar, {Mockery.Proxy, MyApp.Foo, nil}
 
   """
   @spec new(

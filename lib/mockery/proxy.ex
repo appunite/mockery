@@ -1,5 +1,6 @@
 defmodule Mockery.Proxy do
-  @moduledoc false #this module is private to Mockery
+  # this module is private to Mockery
+  @moduledoc false
 
   alias Mockery.Utils
   alias Mockery.Error
@@ -15,29 +16,34 @@ defmodule Mockery.Proxy do
       case Utils.get_mock(mod, [{name, arity}]) || Utils.get_mock(mod, name) do
         nil ->
           fallback_to_global_mock(mod, name, args, arity, by)
+
         Mockery.Nil ->
           nil
+
         Mockery.False ->
           false
+
         fun when is_function(fun, arity) ->
           apply(fun, args)
+
         fun when is_function(fun) ->
-          raise Error,
-            "function used for mock should have same arity as original"
+          raise Error, "function used for mock should have same arity as original"
+
         value ->
           value
       end
     else
       raise Error, """
-        function #{Utils.print_mod mod}.#{name}/#{arity} \
-        is undefined or private\
-        """
+      function #{Utils.print_mod(mod)}.#{name}/#{arity} \
+      is undefined or private\
+      """
     end
   end
 
   defp fallback_to_global_mock(mod, name, args, _arity, nil) do
     fallback_to_original(mod, name, args)
   end
+
   defp fallback_to_global_mock(mod, name, args, arity, global_mock) do
     Utils.validate_global_mock!(mod, global_mock)
 

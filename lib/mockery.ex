@@ -95,7 +95,7 @@ defmodule Mockery do
     {:arity, arity} = :erlang.fun_info(value, :arity)
 
     raise Mockery.Error, """
-    Dynamic mock requires [funtion: arity] syntax.
+    Dynamic mock requires [function: arity] syntax.
 
     Please use:
         mock(#{Utils.print_mod mod}, [#{fun}: #{arity}], fn(...) -> ... end)

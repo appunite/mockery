@@ -18,14 +18,14 @@
         {Credo.Check.Consistency.SpaceInParentheses},
         {Credo.Check.Consistency.TabsOrSpaces},
 
-        {Credo.Check.Design.AliasUsage, excluded_namespaces: ["ExUnit"]},
+        {Credo.Check.Design.AliasUsage, excluded_namespaces: ["ExUnit", "IntegrationTest"]},
         {Credo.Check.Design.DuplicatedCode, excluded_macros: []},
         {Credo.Check.Design.TagFIXME},
         {Credo.Check.Design.TagTODO},
 
         {Credo.Check.Readability.FunctionNames},
         {Credo.Check.Readability.LargeNumbers},
-        {Credo.Check.Readability.MaxLineLength, max_length: 80},
+        {Credo.Check.Readability.MaxLineLength, max_length: 100},
         {Credo.Check.Readability.ModuleAttributeNames},
         {Credo.Check.Readability.ModuleDoc},
         {Credo.Check.Readability.ModuleNames},

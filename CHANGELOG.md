@@ -1,8 +1,8 @@
 # Changelog
 
-## 2.1.0-dev ()
-* Added `Mockery.new/1`
-* Fixed typo in error message (#21)
+## 2.1.0 (2018-02-19)
+* Added `Mockery.new/2`
+* Fixed typo in error message [#21](https://github.com/appunite/mockery/pull/21)
 * Removed support for Elixir 1.1 and 1.2
 
 ## 2.0.2 (2017-10-25)

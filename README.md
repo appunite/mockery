@@ -36,7 +36,7 @@ Bad idea if you wish to release project as package.
 ```elixir
 def deps do
   [
-    {:mockery, "~> 2.0", runtime: false}
+    {:mockery, "~> 2.1", runtime: false}
   ]
 end
 ```
@@ -59,7 +59,7 @@ end
 ```elixir
 def deps do
   [
-    {:mockery, "~> 2.0", only: :test}
+    {:mockery, "~> 2.1", only: :test}
   ]
 end
 ```

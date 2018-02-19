@@ -1,5 +1,7 @@
 # Changelog
 
+## 2.1.1-dev ()
+
 ## 2.1.0 (2018-02-19)
 * Added `Mockery.new/2`
 * Fixed typo in error message [#21](https://github.com/appunite/mockery/pull/21)

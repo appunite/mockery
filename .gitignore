@@ -21,6 +21,3 @@ erl_crash.dump
 
 # Configuration file from asdf version manager
 .tool-versions
-
-# Some additional modules used during development
-lib/dev

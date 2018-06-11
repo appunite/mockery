@@ -8,6 +8,11 @@ defmodule Mockery.Proxy do
   def unquote(:"$handle_undefined_function")(name, args) do
     [{_proxy, mod, by} | rest] = Enum.reverse(args)
     args = Enum.reverse(rest)
+
+    do_proxy(mod, name, args, by)
+  end
+
+  def do_proxy(mod, name, args, by) do
     arity = Enum.count(args)
 
     Utils.push_call(mod, name, arity, args)

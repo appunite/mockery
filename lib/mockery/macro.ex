@@ -32,7 +32,7 @@ defmodule Mockery.Macro do
       end
 
   """
-  defmacro mockable(mod, opts) when is_atom(mod) do
+  defmacro mockable(mod, opts \\ []) do
     case opts[:env] || mix_env() do
       :test ->
         quote do

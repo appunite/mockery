@@ -17,4 +17,10 @@ defmodule IntegrationTest do
 
     assert IntegrationTest.Tested.fun2() == 3
   end
+
+  test "macro version" do
+    mock(IntegrationTest.Mocked, :fun, 4)
+
+    assert IntegrationTest.Tested.fun3() == 4
+  end
 end

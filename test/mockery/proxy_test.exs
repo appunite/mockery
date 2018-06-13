@@ -12,7 +12,7 @@ defmodule Mockery.ProxyTest do
   #   def ar(x, y), do: [x,y]
   # end
 
-  defmodule Tuple.Tested1 do
+  defmodule TupleCall.Tested1 do
     @dummy Mockery.of("Dummy")
     @crypto Mockery.of(:crypto)
 
@@ -33,7 +33,7 @@ defmodule Mockery.ProxyTest do
     def hash(type, data), do: mockable(:crypto).hash(type, data)
   end
 
-  defmodule Tuple.Tested2 do
+  defmodule TupleCall.Tested2 do
     defmodule DummyGlobalMock do
       def fun1, do: :fun1_global_mock
     end
@@ -66,7 +66,7 @@ defmodule Mockery.ProxyTest do
     def hash(type, data), do: mockable(:crypto, by: CryptoGlobalMock).hash(type, data)
   end
 
-  defmodule Tuple.Tested3 do
+  defmodule TupleCall.Tested3 do
     defmodule DummyGlobalMock do
       def undefined, do: :undefined
     end
@@ -86,7 +86,7 @@ defmodule Mockery.ProxyTest do
     def fun1, do: mockable(Dummy, by: DummyGlobalMock).fun1()
   end
 
-  Enum.each(["Tuple", "Macro"], fn type ->
+  Enum.each(["TupleCall", "Macro"], fn type ->
     tested1 = Module.concat([__MODULE__, type, Tested1])
     tested2 = Module.concat([__MODULE__, type, Tested2])
     tested3 = Module.concat([__MODULE__, type, Tested3])

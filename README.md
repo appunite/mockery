@@ -11,41 +11,51 @@ Simple mocking library for asynchronous testing in Elixir.
 
 > Readme and documentation for last stable version are available on [hex](https://hexdocs.pm/mockery/readme.html)
 
-## Assumptions
+## Advantages
 
-* It does not override your modules
-* It does not create modules during runtime
-* It does not replace modules by aliasing<br>
-  It contains single proxy module that checks mocks or calls original function
-* It does not require to pass modules as function parameter<br>
-  You won't lose any compilation warnings
-* It does not require to create callbacks or wrappers around libraries
-* It does not allow to mock non-existent function<br>
-  It checks if original module exports function you are trying to call
-* Mock created in one test doesn't interfere with other tests<br>
-  Most of mock data is stored in process dictionary
+* Mockery does not override your modules
+* Mockery does not replace modules by aliasing
+* Mockery does not require to pass modules as function parameter
+* Mockery does not require to create callbacks or wrappers around libraries
+* Mockery does not create modules during runtime (neither by `defmodule/2` nor `Module.create/3`)
+* Mockery does not allow to mock non-existent function
+* Mockery does not share any data between test processes
+
+## Disadvantages
+
+* Mockery is not designed for libraries as it would force end user to download Mockery as dependency of dependency
+* Mockery can cause issues with dialyzer if you are using dialyzer with `MIX_ENV=test`
 
 ## Getting started
-
-### Mockery as compile-time dependency
-Useful in large projects to avoid jumping between config files.<br>
-Bad idea if you wish to release project as package.
 
 **Installation**
 
 ```elixir
 def deps do
   [
-    {:mockery, "~> 2.1", runtime: false}
+    {:mockery, "~> 2.2.0", runtime: false}
   ]
 end
 ```
 
-**Preparation of the module for mocking**
+**Preparation of the module for mocking (macro)**
 
 ```elixir
 # lib/my_app/foo.ex
 defmodule MyApp.Foo do
+  import Mockery.Macro
+  alias MyApp.Bar
+
+  def baz, do: mockable(Bar).function()
+end
+```
+
+**Preparation of the module for mocking (tuple calls)**
+
+```elixir
+# lib/my_app/foo.ex
+defmodule MyApp.Foo do
+  @compile :tuple_calls # required for OTP 21+
   @bar Mockery.of(MyApp.Bar)
 
   def baz, do: @bar.function()
@@ -60,14 +70,14 @@ end
 # prepare tested module
 defmodule MyApp.Controller do
   # ...
-  @service Mockery.of("MyApp.UserService")
+  import Mockery.Macro
 
   def all do
-    @service.users()
+    mockable(MyApp.UserService).users()
   end
 
   def filtered do
-    @service.users("filter")
+    mockable(MyApp.UserService).users("filter")
   end
 end
 
@@ -102,11 +112,6 @@ defmodule MyApp.ControllerTest do
   end
 end
 ```
-**Note**: Elixir module names are passed as a string (`"MyApp.Bar"`)
-instead of atoms (`MyApp.Bar`). This reduces the compilation time
-because it doesn't create a link between modules, which can cause modules to be
-recompiled too often. This doesn't affect the behavior in any way.<br>
-Erlang module names (e.g. `:crypto`) should be passed in as atoms.
 
 #### Dynamic mock
 
@@ -119,10 +124,10 @@ end
 
 # prepare tested module
 defmodule Other do
-  @foo Mockery.of("Foo")
+  import Mockery.Macro
 
   def parse(value) do
-    @foo.bar(value)
+    mockable(Foo).bar(value)
   end
 end
 
@@ -143,10 +148,10 @@ end
 ```elixir
 # prepare tested module
 defmodule Tested do
-  @foo Mockery.of("Foo")
+  import Mockery.Macro
 
   def call(value, opts) do
-    @foo.bar(value)
+    mockable(Foo).bar(value)
   end
 end
 
@@ -225,10 +230,10 @@ end
 
 # prepare tested module
 defmodule Other do
-  @foo Mockery.of(Foo, by: FooGlobalMock)
+  import Mockery.Macro
 
-  def bar, do: @foo.bar()
-  def baz, do: @foo.baz()
+  def bar, do: mockable(Foo, by: FooGlobalMock).bar()
+  def baz, do: mockable(Foo, by: FooGlobalMock).baz()
 end
 
 # tests

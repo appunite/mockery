@@ -52,36 +52,6 @@ defmodule MyApp.Foo do
 end
 ```
 
-### Mockery as test dependency
-
-**Installation**
-
-```elixir
-def deps do
-  [
-    {:mockery, "~> 2.1", only: :test}
-  ]
-end
-```
-
-**Preparation of the module for mocking**
-
-```elixir
-# lib/my_app/foo.ex
-defmodule MyApp.Foo do
-  @bar Application.get_env(:my_app, :bar, MyApp.Bar)
-
-  def baz, do: @bar.function()
-end
-
-# MIX_ENV=test iex -S mix
-iex(1)> Mockery.new(MyApp.Bar)
-{Mockery.Proxy, MyApp.Bar, nil}
-
-# config/test.exs
-config :my_app, :bar, {Mockery.Proxy, MyApp.Bar, nil}
-```
-
 ## Basic usage
 
 #### Static value mock

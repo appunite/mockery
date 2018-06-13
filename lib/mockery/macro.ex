@@ -3,10 +3,8 @@ defmodule Mockery.Macro do
   Contains alternative macro-based way to prepare module for mocking.
   """
 
-  alias Mockery.Utils
-
   defmacro __using__(_opts) do
-    env = Utils.env()
+    env = mix_env()
 
     quote do
       import Mockery.Macro, only: [mockable: 2]
@@ -35,7 +33,7 @@ defmodule Mockery.Macro do
 
   """
   defmacro mockable(mod, opts) when is_atom(mod) do
-    case opts[:env] || Utils.mix_env() do
+    case opts[:env] || mix_env() do
       :test ->
         quote do
           Process.put(Mockery.MockableModule, {unquote(mod), unquote(opts[:by])})
@@ -46,5 +44,10 @@ defmodule Mockery.Macro do
       _ ->
         mod
     end
+  end
+
+  @compile {:inline, mix_env: 0}
+  defp mix_env do
+    if function_exported?(Mix, :env, 0), do: Mix.env(), else: :prod
   end
 end

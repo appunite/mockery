@@ -4,10 +4,6 @@ defmodule Mockery.Utils do
 
   alias Mockery.Error
 
-  def mix_env do
-    if function_exported?(Mix, :env, 0), do: Mix.env(), else: :prod
-  end
-
   # Helpers for manipulating process dict
   def get_mock(mod, fun) do
     mod

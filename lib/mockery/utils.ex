@@ -1,5 +1,4 @@
 defmodule Mockery.Utils do
-  # this module is private to Mockery
   @moduledoc false
 
   alias Mockery.Error

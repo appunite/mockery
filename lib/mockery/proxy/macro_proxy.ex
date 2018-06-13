@@ -1,5 +1,4 @@
-defmodule Mockery.MacroProxy do
-  # this module is private to Mockery
+defmodule Mockery.Proxy.MacroProxy do
   @moduledoc false
 
   def unquote(:"$handle_undefined_function")(name, args) do

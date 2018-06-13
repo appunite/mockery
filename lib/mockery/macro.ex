@@ -38,7 +38,7 @@ defmodule Mockery.Macro do
         quote do
           Process.put(Mockery.MockableModule, {unquote(mod), unquote(opts[:by])})
 
-          Mockery.MacroProxy
+          Mockery.Proxy.MacroProxy
         end
 
       _ ->

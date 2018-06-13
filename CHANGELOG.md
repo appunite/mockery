@@ -1,6 +1,7 @@
 # Changelog
 
-## 2.1.1-dev ()
+## 2.2.0-dev ()
+* Added `Mockery.Macro` as alternative way to prepare module for mocking
 
 ## 2.1.0 (2018-02-19)
 * Added `Mockery.new/2`

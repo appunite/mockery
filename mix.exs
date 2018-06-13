@@ -29,6 +29,7 @@ defmodule Mockery.Mixfile do
         "coveralls.detail": :test,
         "coveralls.json": :test
       ],
+      source_url: "https://github.com/appunite/mockery",
       test_coverage: [tool: ExCoveralls],
       version: @version
     ]

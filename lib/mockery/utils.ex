@@ -1,6 +1,8 @@
 defmodule Mockery.Utils do
   @moduledoc false
 
+  import Mockery.Macro
+
   alias Mockery.Error
 
   # Helpers for manipulating process dict
@@ -32,11 +34,10 @@ defmodule Mockery.Utils do
   def print_mod(mod), do: mod |> to_string |> remove_elixir_prefix()
 
   # Helper for Mockery.History
-  @application Mockery.of("Application")
   def history_enabled? do
     Process.get(
       Mockery.History,
-      @application.get_env(:mockery, :history, false)
+      mockable(Application).get_env(:mockery, :history, false)
     )
   end
 

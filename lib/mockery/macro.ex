@@ -7,10 +7,11 @@ defmodule Mockery.Macro do
   Function used to prepare module for mocking.
 
   For Mix.env other than :test it returns the first argument unchanged.
-  If Mix.env == :test it creates a proxy to the original module.
+  If Mix.env equal :test it creates a proxy to the original module.
   When Mix is missing it assumes that env is :prod.
 
-  ## Example
+  ## Examples
+  #### Prepare for mocking
 
       defmodule Foo do
         import Mockery.Macro
@@ -20,10 +21,26 @@ defmodule Mockery.Macro do
         end
       end
 
-  ## `Mockery.of/2` comparison
+  #### Prepare for mocking with global mock
+
+      # test/support/global_mocks/bar.ex
+      defmodule BarGlobalMock do
+        def bar, do: :mocked
+      end
+
+      # lib/foo.ex
+      defmodule Foo do
+        import Mockery.Macro
+
+        def foo do
+          mockable(Bar, by: BarGlobalMock).bar()
+        end
+      end
+
+  ## Mockery.of/2 comparison
 
     * It's based on macro and process dictionary instead of on tuple calls. (Tuple calls
-    are disabled by default in OTP21+)
+    are disabled by default in OTP21+ and require additional compile flag to be reenabled)
     * It doesn't support passing module names as a string as it don't create unwanted compile-time
     dependencies between modules
 

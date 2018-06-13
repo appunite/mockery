@@ -3,17 +3,6 @@ defmodule Mockery.Macro do
   Contains alternative macro-based way to prepare module for mocking.
   """
 
-  defmacro __using__(_opts) do
-    env = mix_env()
-
-    quote do
-      import Mockery.Macro, only: [mockable: 2]
-
-      # disables dialyzer warnings about missing function in test env
-      if unquote(env) == :test, do: @dialyzer(:nowarn_missing_function)
-    end
-  end
-
   @doc """
   Function used to prepare module for mocking.
 

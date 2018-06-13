@@ -12,10 +12,29 @@ defmodule Mockery do
     end
   end
 
-  @type erlang_module :: atom
-
   @typep global_mock :: module | nil
+
+  @typedoc """
+  Mockery uses tuple calls to send additional data to internal proxy module
+  """
   @opaque proxy_tuple :: {Mockery.Proxy, module, global_mock}
+
+  @typedoc """
+  Used to avoid unnecessary compile-time dependencies between modules
+
+  ## Examples
+
+      defmodule Foo do
+        # this creates compile-time dependency between Foo and Bar
+        @bar1 Mockery.of(Bar)
+
+        # same result but without compile-time dependency
+        @bar2 Mockery.of("Bar")
+      end
+
+  `mix xref graph` can be used to check difference between module and string versions
+  """
+  @type elixir_module_as_string :: String.t()
 
   @doc """
   Function used to prepare module for mocking.
@@ -35,8 +54,8 @@ defmodule Mockery do
   (see `mix xref graph` output for both versions).
   """
   @spec of(
-          mod :: module | erlang_module | String.t(),
-          opts :: [by: module | String.t()] | []
+          mod :: module | elixir_module_as_string,
+          opts :: [by: module | elixir_module_as_string]
         ) :: module | proxy_tuple
   def of(mod, opts \\ [])
       when is_atom(mod)
@@ -69,8 +88,8 @@ defmodule Mockery do
 
   """
   @spec new(
-          mod :: module | erlang_module | String.t(),
-          opts :: [by: module | String.t()] | []
+          mod :: module | elixir_module_as_string,
+          opts :: [by: module | elixir_module_as_string]
         ) :: proxy_tuple
   def new(mod, opts \\ [])
       when is_atom(mod)

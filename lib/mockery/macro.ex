@@ -45,6 +45,10 @@ defmodule Mockery.Macro do
     dependencies between modules
 
   """
+  @spec mockable(
+          mod :: module,
+          opts :: [by: module]
+        ) :: module
   defmacro mockable(mod, opts \\ []) do
     case opts[:env] || mix_env() do
       :test ->

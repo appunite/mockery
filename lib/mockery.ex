@@ -21,7 +21,7 @@ defmodule Mockery do
   Function used to prepare module for mocking.
 
   For Mix.env other than :test it returns module given in the first argument.
-  For Mix.env == :test it creates a proxy to the original module.
+  If Mix.env equal :test it creates a proxy to the original module.
   When Mix is missing it assumes that env is :prod
 
       @elixir_module Mockery.of("MyApp.Module")

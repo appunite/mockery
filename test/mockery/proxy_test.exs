@@ -13,6 +13,8 @@ defmodule Mockery.ProxyTest do
   # end
 
   defmodule TupleCall.Tested1 do
+    if :erlang.system_info(:otp_release) >= '21', do: @compile(:tuple_calls)
+
     @dummy Mockery.of("Dummy")
     @crypto Mockery.of(:crypto)
 
@@ -34,6 +36,8 @@ defmodule Mockery.ProxyTest do
   end
 
   defmodule TupleCall.Tested2 do
+    if :erlang.system_info(:otp_release) >= '21', do: @compile(:tuple_calls)
+
     defmodule DummyGlobalMock do
       def fun1, do: :fun1_global_mock
     end
@@ -67,6 +71,8 @@ defmodule Mockery.ProxyTest do
   end
 
   defmodule TupleCall.Tested3 do
+    if :erlang.system_info(:otp_release) >= '21', do: @compile(:tuple_calls)
+
     defmodule DummyGlobalMock do
       def undefined, do: :undefined
     end

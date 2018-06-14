@@ -227,6 +227,7 @@ defmodule Mockery.ProxyTest do
     def invalid, do: @invalid.fun1()
   end
 
+  # credo:disable-for-lines:7 Credo.Check.Design.AliasUsage
   test "raise if mockable/2 macro wasn't used directly in code" do
     assert_raise(
       Mockery.Error,

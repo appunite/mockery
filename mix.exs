@@ -58,8 +58,6 @@ defmodule Mockery.Mixfile do
 
   defp package do
     [
-      name: :mockery,
-      files: ~w(lib mix.exs README.md CHANGELOG.md LICENSE),
       maintainers: ["Tobiasz Małecki"],
       licenses: ["Apache 2.0"],
       links: %{

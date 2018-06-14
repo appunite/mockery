@@ -219,4 +219,19 @@ defmodule Mockery.ProxyTest do
       end
     end
   end)
+
+  defmodule Macro.Tested4 do
+    import Mockery.Macro
+    @invalid mockable(Dummy)
+
+    def invalid, do: @invalid.fun1()
+  end
+
+  test "raise if mockable/2 macro wasn't used directly in code" do
+    assert_raise(
+      Mockery.Error,
+      ~r"Mockery.Macro.mockable/2 needs to be invoked directly in other function.",
+      fn -> Macro.Tested4.invalid() end
+    )
+  end
 end

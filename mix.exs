@@ -41,6 +41,7 @@ defmodule Mockery.Mixfile do
 
   defp deps do
     [
+      {:beam_inspect, "~> 0.1.1", only: :dev, runtime: false},
       {:credo, "~> 0.8", only: :dev, runtime: false},
       {:dialyxir, "~> 0.5", only: :dev, runtime: false},
       {:excoveralls, "~> 0.7", only: :test, runtime: false},

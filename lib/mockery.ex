@@ -70,27 +70,12 @@ defmodule Mockery do
   end
 
   @doc """
-  Creates proxy to original module.
+  DEPRECATED
 
-  In contrast to `Mockery.of/2` it always returns proxy no matter what environemnt
-  is returned by `Mix.env/0`. User have to explicitely prepare module for mocking through
-  application configs.
-
-      # module
-      @foo Application.get_env(:my_app, :foo, MyApp.Foo)
-
-      # MIX_ENV=test iex -S mix
-      iex(1)> Mockery.new(MyApp.Foo)
-      {Mockery.Proxy, MyApp.Foo, nil}
-
-      # config/test.exs
-      config :my_app, :bar, {Mockery.Proxy, MyApp.Foo, nil}
-
+  Mockery was not designed as solution for other libraries.
+  It was a bad decision to try to workaround this.
+  This approach was also extremely ugly and lacking all the advantages of Mockery.
   """
-  @spec new(
-          mod :: module | elixir_module_as_string,
-          opts :: [by: module | elixir_module_as_string]
-        ) :: proxy_tuple
   def new(mod, opts \\ [])
       when is_atom(mod)
       when is_binary(mod) do

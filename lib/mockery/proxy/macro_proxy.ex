@@ -10,7 +10,7 @@ defmodule Mockery.Proxy.MacroProxy do
           raise Mockery.Error, """
           Mockery.Macro.mockable/2 needs to be invoked directly in other function.
 
-          You can't use anything like:
+          You can't use it in module attribute:
               import Mockery.Macro
               @foo mockable(Foo)
 

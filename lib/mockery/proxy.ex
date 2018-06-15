@@ -1,8 +1,8 @@
 defmodule Mockery.Proxy do
   @moduledoc false
 
-  alias Mockery.Utils
   alias Mockery.Error
+  alias Mockery.Utils
 
   def unquote(:"$handle_undefined_function")(name, args) do
     [{_proxy, mod, by} | rest] = Enum.reverse(args)

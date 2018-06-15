@@ -44,6 +44,12 @@ defmodule Mockery.Macro do
     * It doesn't support passing module names as a string as it don't create unwanted compile-time
     dependencies between modules
 
+  ## Potential issues
+
+  Output of `mockable/2` macro should not be bind to variable or module attribute.
+  If it happens, you'll see a compilation warning at best, and in the worst case Mockery won't
+  work correctly.
+
   """
   @spec mockable(
           mod :: module,

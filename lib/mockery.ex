@@ -60,12 +60,12 @@ defmodule Mockery do
   def of(mod, opts \\ [])
       when is_atom(mod)
       when is_binary(mod) do
-    env = opts[:env] || mix_env()
+    case opts[:env] || mix_env() do
+      :test ->
+        do_proxy_tuple(mod, opts)
 
-    if env != :test do
-      to_mod(mod)
-    else
-      do_proxy_tuple(mod, opts)
+      _ ->
+        to_mod(mod)
     end
   end
 

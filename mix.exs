@@ -1,7 +1,7 @@
 defmodule Mockery.Mixfile do
   use Mix.Project
 
-  @version "2.2.0-dev"
+  @version "2.2.0"
 
   def project do
     [

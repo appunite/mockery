@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.2.0-dev (2018-06-XX)
+## 2.2.0 (2018-06-17)
 * Added `Mockery.Macro.mockable/2` macro as alternative way to prepare module for mocking
 * Deprecated `Mockery.new/2`
 

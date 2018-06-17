@@ -264,6 +264,10 @@ global mock module or Mockery will raise exception
 
 For advanced usage examples see [EXAMPLES.md](EXAMPLES.md)
 
+## External resources
+
+* <https://stephenbussey.com/2018/02/15/my-favorite-elixir-testing-tool-mockery>
+
 ## License
 
 Copyright 2017-2018 Tobiasz Małecki <tobiasz.malecki@appunite.com>

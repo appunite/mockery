@@ -38,6 +38,18 @@ def deps do
 end
 ```
 
+**Preparation of the module for mocking (tuple calls)**
+
+```elixir
+# lib/my_app/foo.ex
+defmodule MyApp.Foo do
+  @compile :tuple_calls # required for OTP 21+
+  @bar Mockery.of("MyApp.Bar")
+
+  def baz, do: @bar.function()
+end
+```
+
 **Preparation of the module for mocking (macro)**
 
 ```elixir
@@ -47,18 +59,6 @@ defmodule MyApp.Foo do
   alias MyApp.Bar
 
   def baz, do: mockable(Bar).function()
-end
-```
-
-**Preparation of the module for mocking (tuple calls)**
-
-```elixir
-# lib/my_app/foo.ex
-defmodule MyApp.Foo do
-  @compile :tuple_calls # required for OTP 21+
-  @bar Mockery.of(MyApp.Bar)
-
-  def baz, do: @bar.function()
 end
 ```
 

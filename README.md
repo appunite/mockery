@@ -26,6 +26,10 @@ Simple mocking library for asynchronous testing in Elixir.
 * Mockery is not designed for libraries as it would force end user to download Mockery as dependency of dependency
 * Mockery can cause issues with dialyzer if you are using dialyzer with `MIX_ENV=test`
 
+## Upgrading Erlang/OTP to 21
+Erlang/OTP 21 contains some changes that prevent the package from functioning as before.<br>
+Please check [migration guide](MIGRATION_TO_OTP21.md).
+
 ## Getting started
 
 **Installation**
@@ -43,7 +47,7 @@ end
 ```elixir
 # lib/my_app/foo.ex
 defmodule MyApp.Foo do
-  @compile :tuple_calls # required for OTP 21+
+  @compile :tuple_calls # required for OTP 21+, please check migration guide for more details
   @bar Mockery.of("MyApp.Bar")
 
   def baz, do: @bar.function()

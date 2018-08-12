@@ -1,7 +1,8 @@
 # Migration to Erlang/OTP21
 
 ## Tuple calls
-Due to this PR https://github.com/erlang/otp/pull/1499, it is now necessary to add
+
+Due to this PR <https://github.com/erlang/otp/pull/1499>, it is now necessary to add
 `@compile :tuple_calls` in every module where old Mockery API was used.
 
 So, for example, most efficient way to make this
@@ -39,6 +40,7 @@ end
 This reenables tuple calls only for `:test` environment.
 
 ## Macro-based alternative
+
 For those who prefer not to reenable tuple calls, there is a new macro-based API.
 
 Previous example rewritten to use macros:

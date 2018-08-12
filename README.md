@@ -1,11 +1,11 @@
+# Mockery
+
 [![Build Status](https://travis-ci.org/appunite/mockery.svg?branch=master)](https://travis-ci.org/appunite/mockery)
 [![Codecov.io](https://codecov.io/gh/appunite/mockery/branch/master/graph/badge.svg)](https://codecov.io/gh/appunite/mockery)
 [![Ebert](https://ebertapp.io/github/appunite/mockery.svg)](https://ebertapp.io/github/appunite/mockery)
 [![Hex.pm](https://img.shields.io/hexpm/v/mockery.svg)](https://hex.pm/packages/mockery)
 [![Hex.pm](https://img.shields.io/hexpm/dt/mockery.svg)](https://hex.pm/packages/mockery)
 [![Hex.pm](https://img.shields.io/hexpm/dw/mockery.svg)](https://hex.pm/packages/mockery)
-
-# Mockery
 
 Simple mocking library for asynchronous testing in Elixir.
 
@@ -27,12 +27,13 @@ Simple mocking library for asynchronous testing in Elixir.
 * Mockery can cause issues with dialyzer if you are using dialyzer with `MIX_ENV=test`
 
 ## Upgrading Erlang/OTP to 21
-Erlang/OTP 21 contains some changes that prevent the package from functioning as before.<br>
+
+Erlang/OTP 21 contains some changes that prevent the package from functioning as before.</br>
 Please check [migration guide](MIGRATION_TO_OTP21.md).
 
 ## Getting started
 
-**Installation**
+### Installation
 
 ```elixir
 def deps do
@@ -42,7 +43,7 @@ def deps do
 end
 ```
 
-**Preparation of the module for mocking (tuple calls)**
+### Preparation of the module for mocking (tuple calls)
 
 ```elixir
 # lib/my_app/foo.ex
@@ -54,7 +55,7 @@ defmodule MyApp.Foo do
 end
 ```
 
-**Preparation of the module for mocking (macro)**
+### Preparation of the module for mocking (macro)
 
 ```elixir
 # lib/my_app/foo.ex
@@ -68,7 +69,7 @@ end
 
 ## Basic usage
 
-#### Static value mock
+### Static value mock
 
 ```elixir
 # prepare tested module
@@ -117,7 +118,7 @@ defmodule MyApp.ControllerTest do
 end
 ```
 
-#### Dynamic mock
+### Dynamic mock
 
 Instead of using a static value, you can use a function with the same arity as original one.
 
@@ -202,12 +203,12 @@ defmodule Tested do
 end
 ```
 
-#### Refute
+### Refute
 
-Every assert_called/x function/macro has its refute_called/x counterpart.<br>
+Every assert_called/x function/macro has its refute_called/x counterpart.<\br>
 For more information see [docs](https://hexdocs.pm/mockery/Mockery.Assertions.html)
 
-#### History
+### History
 
 ![history example](https://raw.githubusercontent.com/appunite/mockery/master/history.jpeg)
 
@@ -251,18 +252,19 @@ defmodule OtherTest do
 end
 ```
 
-#### Restrictions
+### Restrictions
 
 Global mock module doesn't have to contain every function exported by the original
 module, but it cannot contain a function which is not exported by the original
-module.<br>
+module.</br>
 It means that:
+
 * when you remove a function from the original module, you have to remove it from
-global mock module or Mockery will raise exception
+  global mock module or Mockery will raise exception
 * when you change a function name in the original module, you have to change it in
-global mock module or Mockery will raise exception
+  global mock module or Mockery will raise exception
 * when you change a function arity in the original module, you have to change it in
-global mock module or Mockery will raise exception
+  global mock module or Mockery will raise exception
 
 ## Advanced examples
 
@@ -280,7 +282,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-http://www.apache.org/licenses/LICENSE-2.0
+<http://www.apache.org/licenses/LICENSE-2.0>
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,

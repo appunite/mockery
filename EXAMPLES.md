@@ -38,6 +38,7 @@ assert {:ok, %Resource{}} = fetch_or_create()
 ```
 
 In solution above:
+
 - `Service.create/0` is permanently mocked to return `{:error, %Changeset{}}`
 - First call of `Service.fetch/0` changes mock for next calls to original function and returns `{:error, :not_found}`
 - Second call of `Service.fetch/0` returns `{:ok, resource}`

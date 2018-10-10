@@ -8,7 +8,7 @@ defmodule Mockery do
     quote do
       import Mockery
       import Mockery.Assertions
-      import Mockery.History, only: [enable_history: 0, enable_history: 1]
+      import Mockery.History, only: [enable_history: 0, disable_history: 0]
     end
   end
 

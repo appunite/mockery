@@ -9,7 +9,8 @@ defmodule Mockery.History do
 
   Or for single test process
 
-      Mockery.History.enable_history(true)
+      Mockery.History.enable_history()
+      Mockery.History.disable_history()
 
   Process config has higher priority than global config
   """
@@ -17,7 +18,7 @@ defmodule Mockery.History do
   alias Mockery.Utils
 
   @doc """
-  Enables/disables history in scope of single test process
+  Enables history in scope of single test process
 
       use Mockery
 
@@ -26,15 +27,32 @@ defmodule Mockery.History do
 
         enable_history()
         assert_called Foo, :bar, [_, :a]
-
-        enable_history(false)
-        assert_called Foo, :bar, [_, :b]
       end
 
   """
-  @spec enable_history(enabled :: boolean) :: :ok
-  def enable_history(enabled \\ true) do
-    Process.put(__MODULE__, enabled)
+  @spec enable_history() :: :ok
+  def enable_history() do
+    Process.put(__MODULE__, true)
+
+    :ok
+  end
+
+  @doc """
+  Disables history in scope of single test process
+
+      use Mockery
+
+      test "example" do
+        #...
+
+        disable_history()
+        assert_called Foo, :bar, [_, :a]
+      end
+
+  """
+  @spec disable_history() :: :ok
+  def disable_history() do
+    Process.put(__MODULE__, false)
 
     :ok
   end

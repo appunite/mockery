@@ -59,7 +59,8 @@ defmodule Mockery.Macro do
     case opts[:env] || mix_env() do
       :test ->
         quote do
-          Process.put(Mockery.MockableModule, {unquote(mod), unquote(opts[:by])})
+          mocked_calls = Process.get(Mockery.MockableModule, [])
+          Process.put(Mockery.MockableModule, [{unquote(mod), unquote(opts[:by])} | mocked_calls])
 
           Mockery.Proxy.MacroProxy
         end

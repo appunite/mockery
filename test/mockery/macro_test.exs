@@ -38,13 +38,13 @@ defmodule Mockery.MacroTest do
     assert Process.get(Mockery.MockableModule) == [{A, X}]
   end
 
-  test "mockable/2 works in a pipeline" do
+  test "mockable/2 handles nested calls" do
     use Mockery
-    mock(Dummy, [fun1: 0], fn -> :it_worked end)
-    mock(Dummy, ar: 1)
+    Dummy
+    |> mock([fun1: 0], fn -> :it_worked end)
+    |> mock(ar: 1)
 
-    mockable(Dummy).fun1()
-    |> mockable(Dummy).ar()
+    mockable(Dummy).ar(mockable(Dummy).fun1())
 
     assert_called(Dummy, :fun1, [])
     assert_called(Dummy, :ar, [:it_worked])

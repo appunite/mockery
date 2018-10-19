@@ -17,17 +17,6 @@ defmodule Mockery.History do
   import IO.ANSI
   alias Mockery.Utils
 
-  @doc """
-  Enables/disables history in scope of single test process
-      use Mockery
-      test "example" do
-        #...
-        enable_history()
-        assert_called Foo, :bar, [_, :a]
-        enable_history(false)
-        assert_called Foo, :bar, [_, :b]
-      end
-  """
   @deprecated "Use enable_history/0 or disable_history/0 instead"
   @spec enable_history(enabled :: boolean) :: :ok
   def enable_history(enabled) do

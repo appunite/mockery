@@ -37,19 +37,4 @@ defmodule Mockery.MacroTest do
     assert mockable(A, by: X) == Mockery.Proxy.MacroProxy
     assert Process.get(Mockery.MockableModule) == [{A, X}]
   end
-
-  test "mockable/2 handles nested calls" do
-    use Mockery
-
-    Dummy
-    |> mock([fun1: 0], fn -> :it_worked end)
-    |> mock(ar: 1)
-
-    # credo:disable-for-lines:2 Credo.Check.Readability.SinglePipe
-    mockable(Dummy).fun1()
-    |> mockable(Dummy).ar()
-
-    assert_called(Dummy, :fun1, [])
-    assert_called(Dummy, :ar, [:it_worked])
-  end
 end

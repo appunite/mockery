@@ -6,7 +6,8 @@ defmodule Mockery.Proxy.MacroProxy do
   def unquote(:"$handle_undefined_function")(name, args) do
     {mod, by} =
       case Process.get(Mockery.MockableModule, []) do
-        [] ->
+        # TODO remove nil pattern in v3
+        missing when missing in [nil, []] ->
           raise Mockery.Error, """
           Mockery.Macro.mockable/2 needs to be invoked directly in other function.
 
@@ -22,9 +23,14 @@ defmodule Mockery.Proxy.MacroProxy do
               def bar, do: mockable(Foo).foo()
           """
 
-        [valid | rest] ->
+        [current | rest] ->
           _ = Process.put(Mockery.MockableModule, rest)
-          valid
+          current
+
+        # TODO remove tuple pattern in v3
+        {mod, global} = current when is_atom(mod) and is_atom(global) ->
+          _ = Process.delete(Mockery.MockableModule)
+          current
       end
 
     Proxy.do_proxy(mod, name, args, by)

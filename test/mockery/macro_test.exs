@@ -10,12 +10,12 @@ defmodule Mockery.MacroTest do
     refute Process.get(Mockery.MockableModule)
   end
 
-  test "mockable/2 test env (atom erlang mod)" do
+  test "mockable/2 test env (atom erlang mod) without global mock" do
     assert mockable(:a) == Mockery.Proxy.MacroProxy
     assert Process.get(Mockery.MockableModule) == [{:a, nil}]
+  end
 
-    Process.delete(Mockery.MockableModule)
-
+  test "mockable/2 test env (atom erlang mod) with global mock" do
     assert mockable(:a, by: X) == Mockery.Proxy.MacroProxy
     assert Process.get(Mockery.MockableModule) == [{:a, X}]
   end
@@ -28,12 +28,12 @@ defmodule Mockery.MacroTest do
     refute Process.get(Mockery.MockableModule)
   end
 
-  test "mockable/2 test env (atom elixir mod)" do
+  test "mockable/2 test env (atom elixir mod) without global mock" do
     assert mockable(A) == Mockery.Proxy.MacroProxy
     assert Process.get(Mockery.MockableModule) == [{A, nil}]
+  end
 
-    Process.delete(Mockery.MockableModule)
-
+  test "mockable/2 test env (atom elixir mod) with global mock" do
     assert mockable(A, by: X) == Mockery.Proxy.MacroProxy
     assert Process.get(Mockery.MockableModule) == [{A, X}]
   end

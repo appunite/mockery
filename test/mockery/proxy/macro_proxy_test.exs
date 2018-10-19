@@ -1,8 +1,10 @@
 defmodule Mockery.Proxy.MacroProxyTest do
   use ExUnit.Case, async: true
   import Mockery
+  import Mockery.Assertions
   import Mockery.Macro
 
+  alias Mockery.Proxy.MacroProxy
   alias Mockery.Utils
 
   # dummy.ex
@@ -160,5 +162,38 @@ defmodule Mockery.Proxy.MacroProxyTest do
       ~r"Mockery.Macro.mockable/2 needs to be invoked directly in other function.",
       fn -> Macro.InvalidUsage.invalid() end
     )
+  end
+
+  ############### NESTED CALLS/PIPES ###############
+  test "handles piped calls" do
+    Dummy
+    |> mock([fun1: 0], fn -> :it_worked end)
+    |> mock(ar: 1)
+
+    # credo:disable-for-lines:2 Credo.Check.Readability.SinglePipe
+    mockable(Dummy).fun1()
+    |> mockable(Dummy).ar()
+
+    assert_called(Dummy, :fun1, [])
+    assert_called(Dummy, :ar, [:it_worked])
+  end
+
+  test "handles nested calls" do
+    Dummy
+    |> mock([fun1: 0], fn -> :it_worked end)
+    |> mock(ar: 1)
+
+    mockable(Dummy).ar(mockable(Dummy).fun1())
+
+    assert_called(Dummy, :fun1, [])
+    assert_called(Dummy, :ar, [:it_worked])
+  end
+
+  # TODO remove in v3
+  test "preserves backward compatibility" do
+    _ = Process.put(Mockery.MockableModule, {Dummy, nil})
+    MacroProxy.fun1()
+
+    assert_called(Dummy, :fun1, [])
   end
 end

@@ -49,8 +49,8 @@ defmodule Mockery.History do
       end
 
   """
-  @spec enable_history() :: :ok
-  def enable_history() do
+  @spec enable_history :: :ok
+  def enable_history do
     Process.put(__MODULE__, true)
 
     :ok
@@ -69,8 +69,8 @@ defmodule Mockery.History do
       end
 
   """
-  @spec disable_history() :: :ok
-  def disable_history() do
+  @spec disable_history :: :ok
+  def disable_history do
     Process.put(__MODULE__, false)
 
     :ok

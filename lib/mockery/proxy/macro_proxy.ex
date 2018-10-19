@@ -5,8 +5,8 @@ defmodule Mockery.Proxy.MacroProxy do
 
   def unquote(:"$handle_undefined_function")(name, args) do
     {mod, by} =
-      case Process.get(Mockery.MockableModule) do
-        nil ->
+      case Process.get(Mockery.MockableModule, []) do
+        [] ->
           raise Mockery.Error, """
           Mockery.Macro.mockable/2 needs to be invoked directly in other function.
 
@@ -22,11 +22,10 @@ defmodule Mockery.Proxy.MacroProxy do
               def bar, do: mockable(Foo).foo()
           """
 
-        valid ->
+        [valid | rest] ->
+          _ = Process.put(Mockery.MockableModule, rest)
           valid
       end
-
-    _ = Process.delete(Mockery.MockableModule)
 
     Proxy.do_proxy(mod, name, args, by)
   end

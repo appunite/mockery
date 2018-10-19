@@ -12,10 +12,12 @@ defmodule Mockery.MacroTest do
 
   test "mockable/2 test env (atom erlang mod)" do
     assert mockable(:a) == Mockery.Proxy.MacroProxy
-    assert Process.get(Mockery.MockableModule) == {:a, nil}
+    assert Process.get(Mockery.MockableModule) == [{:a, nil}]
+
+    Process.delete(Mockery.MockableModule)
 
     assert mockable(:a, by: X) == Mockery.Proxy.MacroProxy
-    assert Process.get(Mockery.MockableModule) == {:a, X}
+    assert Process.get(Mockery.MockableModule) == [{:a, X}]
   end
 
   test "mockable/2 dev env (atom elixir mod)" do
@@ -28,9 +30,23 @@ defmodule Mockery.MacroTest do
 
   test "mockable/2 test env (atom elixir mod)" do
     assert mockable(A) == Mockery.Proxy.MacroProxy
-    assert Process.get(Mockery.MockableModule) == {A, nil}
+    assert Process.get(Mockery.MockableModule) == [{A, nil}]
+
+    Process.delete(Mockery.MockableModule)
 
     assert mockable(A, by: X) == Mockery.Proxy.MacroProxy
-    assert Process.get(Mockery.MockableModule) == {A, X}
+    assert Process.get(Mockery.MockableModule) == [{A, X}]
+  end
+
+  test "mockable/2 handles nested calls" do
+    use Mockery
+    Dummy
+    |> mock([fun1: 0], fn -> :it_worked end)
+    |> mock(ar: 1)
+
+    mockable(Dummy).ar(mockable(Dummy).fun1())
+
+    assert_called(Dummy, :fun1, [])
+    assert_called(Dummy, :ar, [:it_worked])
   end
 end

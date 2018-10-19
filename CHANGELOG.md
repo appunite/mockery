@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.3.0-dev
+
+* Allowed multiple mocks when using pipe operator or nested calls [#27](https://github.com/appunite/mockery/pull/27)
+
 ## 2.2.0 (2018-06-17)
 
 * Added `Mockery.Macro.mockable/2` macro as alternative way to prepare module for mocking

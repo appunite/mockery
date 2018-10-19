@@ -17,6 +17,7 @@ defmodule Mockery.History do
   import IO.ANSI
   alias Mockery.Utils
 
+  # TODO remove in v3
   @deprecated "Use enable_history/0 or disable_history/0 instead"
   @spec enable_history(enabled :: boolean) :: :ok
   def enable_history(enabled) do

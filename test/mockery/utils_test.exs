@@ -26,7 +26,7 @@ defmodule Mockery.UtilsTest do
 
   test "history_enabled?/0 global config ignored when process config present" do
     mock(Application, :get_env, true)
-    enable_history(false)
+    disable_history()
 
     refute Utils.history_enabled?()
     assert_called(Application, :get_env, [:mockery, :history, _], 1)

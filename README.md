@@ -205,7 +205,7 @@ end
 
 ### Refute
 
-Every assert_called/x function/macro has its refute_called/x counterpart.<\br>
+Every assert_called/x function/macro has its refute_called/x counterpart.</br>
 For more information see [docs](https://hexdocs.pm/mockery/Mockery.Assertions.html)
 
 ### History

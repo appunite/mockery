@@ -43,19 +43,7 @@ def deps do
 end
 ```
 
-### Preparation of the module for mocking (tuple calls)
-
-```elixir
-# lib/my_app/foo.ex
-defmodule MyApp.Foo do
-  @compile :tuple_calls # required for OTP 21+, please check migration guide for more details
-  @bar Mockery.of("MyApp.Bar")
-
-  def baz, do: @bar.function()
-end
-```
-
-### Preparation of the module for mocking (macro)
+### Preparation of the module for mocking
 
 ```elixir
 # lib/my_app/foo.ex
@@ -72,7 +60,6 @@ end
 ### Static value mock
 
 ```elixir
-# prepare tested module
 defmodule MyApp.Controller do
   # ...
   import Mockery.Macro

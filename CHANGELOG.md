@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.3.0-dev
+## 2.3.0 (2018-10-22)
 
 * Allowed multiple mocks when using pipe operator or nested calls [#27](https://github.com/appunite/mockery/pull/27)
 * Deprecated `Mockery.History.enable_history/1` in favor of `Mockery.History.enable_history/0` and `Mockery.History.disable_history/0`

@@ -38,7 +38,7 @@ Please check [migration guide](MIGRATION_TO_OTP21.md).
 ```elixir
 def deps do
   [
-    {:mockery, "~> 2.2.0", runtime: false}
+    {:mockery, "~> 2.3.0", runtime: false}
   ]
 end
 ```

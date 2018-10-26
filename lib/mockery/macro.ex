@@ -1,10 +1,10 @@
 defmodule Mockery.Macro do
   @moduledoc """
-  Contains alternative macro-based way to prepare module for mocking.
+  Alternative macro-based way to prepare module for mocking/asserting.
   """
 
   @doc """
-  Function used to prepare module for mocking.
+  Function used to prepare module for mocking/asserting.
 
   For Mix.env other than :test it returns the first argument unchanged.
   If Mix.env equal :test it creates a proxy to the original module.

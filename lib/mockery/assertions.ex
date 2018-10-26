@@ -2,7 +2,7 @@ defmodule Mockery.Assertions do
   @moduledoc """
   Set of additional assertion functions.
 
-  **NOTE**: Mockery doesn't keep track of function calls:
+  **NOTE:** Mockery doesn't keep track of function calls:
 
     * on modules that weren't prepared by `Mockery.of/2` or `Mockery.Macro.mockable/2`
 

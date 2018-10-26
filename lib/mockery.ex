@@ -100,7 +100,7 @@ defmodule Mockery do
         # ...
       end
 
-  If don't want to reenable tuple calls, there's also new macro-based alternative
+  If you don't want to reenable tuple calls, there's also new macro-based alternative
   (for more information see `Mockery.Macro` module).
   """
   @spec of(
@@ -119,12 +119,11 @@ defmodule Mockery do
     end
   end
 
-  @doc """
-  DEPRECATED
-
+  # TODO remove in v3
+  @deprecated """
   Mockery was not designed as solution for other libraries.
   It was a bad decision to try to workaround this.
-  This approach was also extremely ugly and lacking all the advantages of Mockery.
+  This approach was also extremely ugly and lacking all the advantages of Mockery
   """
   def new(mod, opts \\ [])
       when is_atom(mod)
@@ -141,9 +140,9 @@ defmodule Mockery do
   defp to_mod(mod) when is_binary(mod), do: Module.concat([mod])
 
   @doc """
-  Function used to create mock in context of single test.
+  Function used to create mock in context of single test process.
 
-  Mock created in one test won't leak to another.
+  Mock created in test won't leak to another process (other test, spawned Task, GenServer...).
   It can be used safely in asynchronous tests.
 
   Mocks can be created with static value:

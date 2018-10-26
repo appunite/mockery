@@ -1,6 +1,14 @@
 defmodule Mockery.Assertions do
   @moduledoc """
-  This module contains a set of additional assertion functions.
+  Set of additional assertion functions.
+
+  **NOTE**: Mockery doesn't keep track of function calls:
+
+    * on modules that weren't prepared by `Mockery.of/2` or `Mockery.Macro.mockable/2`
+
+    * for `MIX_ENV` other than `:test`
+
+    * for function called outside of test process (in spawned Task, GenServer etc.)
   """
 
   alias Mockery.Error
@@ -10,9 +18,6 @@ defmodule Mockery.Assertions do
   @doc """
   Asserts that function from given module with given name or name and arity
   was called at least once.
-
-  **NOTE**: Mockery doesn't keep track of function calls on modules that
-  weren't prepared by `Mockery.of/2` and for MIX_ENV other than :test
 
   ## Examples
 
@@ -39,9 +44,6 @@ defmodule Mockery.Assertions do
   @doc """
   Asserts that function from given module with given name or name and arity
   was NOT called.
-
-  **NOTE**: Mockery doesn't keep track of function calls on modules that
-  weren't prepared by `Mockery.of/2` and for MIX_ENV other than :test
 
   ## Examples
 
@@ -72,9 +74,6 @@ defmodule Mockery.Assertions do
   Asserts that function from given module with given name was called
   at least once with arguments matching given pattern.
 
-  **NOTE**: Mockery doesn't keep track of function calls on modules that
-  weren't prepared by `Mockery.of/2` and for MIX_ENV other than :test
-
   ## Examples
 
   Assert Mod.fun/2 was called with given args list
@@ -102,9 +101,6 @@ defmodule Mockery.Assertions do
   @doc """
   Asserts that function from given module with given name was NOT called
   with arguments matching given pattern.
-
-  **NOTE**: Mockery doesn't keep track of function calls on modules that
-  weren't prepared by `Mockery.of/2` and for MIX_ENV other than :test
 
   ## Examples
 
@@ -136,9 +132,6 @@ defmodule Mockery.Assertions do
 
   Similar to `assert_called/3` but instead of checking if function was called
   at least once, it checks if function was called specific number of times.
-
-  **NOTE**: Mockery doesn't keep track of function calls on modules that
-  weren't prepared by `Mockery.of/2` and for MIX_ENV other than :test
 
   ## Examples
 
@@ -174,9 +167,6 @@ defmodule Mockery.Assertions do
 
   Similar to `refute_called/3` but instead of checking if function was called
   at least once, it checks if function was called specific number of times.
-
-  **NOTE**: Mockery doesn't keep track of function calls on modules that
-  weren't prepared by `Mockery.of/2` and for MIX_ENV other than :test
 
   ## Examples
 

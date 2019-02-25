@@ -148,7 +148,7 @@ defmodule Tested do
 end
 
 # tests
-defmodule Tested do
+defmodule TestedTest do
   # ...
   import Mockery.Assertions
   # use Mockery # when you need to import both Mockery and Mockery.Assertions

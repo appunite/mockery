@@ -23,20 +23,24 @@ matrix:
     - elixir: 1.6.6
       otp_release: 20.3
     - elixir: 1.6.6
-      otp_release: 21.2
+      otp_release: 21.3
     - elixir: 1.7.4
       otp_release: 19.3
     - elixir: 1.7.4
       otp_release: 20.3
     - elixir: 1.7.4
-      otp_release: 21.2
-    - elixir: 1.8.0
+      otp_release: 21.3
+    - elixir: 1.7.4
+      otp_release: 22.0
+    - elixir: 1.8.2
       otp_release: 20.3
-    - elixir: 1.8.0
-      otp_release: 21.2
+    - elixir: 1.8.2
+      otp_release: 21.3
+    - elixir: 1.8.2
+      otp_release: 22.0
     # additional checks
-    - elixir: 1.8.0
-      otp_release: 21.2
+    - elixir: 1.8.2
+      otp_release: 22.0
       install: skip
       script: mix format --check-formatted --dry-run
       env: FORMATTER=true # only as label in travis

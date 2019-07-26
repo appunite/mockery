@@ -167,6 +167,15 @@ defmodule TestedTest do
     Tested.call(1, %{})
     assert_called Foo, :bar, [1, %{}]
   end
+  
+  test "assert Foo.bar/1 was called with given arg (using variable)" do
+    params = %{a: 1, b: 2}
+  
+    Tested.call(params)
+    assert_called Foo, :bar, [^params]
+    # we need to use pinning here since assert_called/3 is a macro
+    # and not a regular function call and it gets expanded accordingly
+  end
 
   test "assert Foo.bar/2 was called with 1 as first arg" do
     Tested.call(1, %{})

@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/appunite/mockery.svg?branch=master)](https://travis-ci.org/appunite/mockery)
 [![Codecov.io](https://codecov.io/gh/appunite/mockery/branch/master/graph/badge.svg)](https://codecov.io/gh/appunite/mockery)
-[![Ebert](https://ebertapp.io/github/appunite/mockery.svg)](https://ebertapp.io/github/appunite/mockery)
+[![SourceLevel](https://app.sourcelevel.io/github/appunite/mockery.svg)](https://app.sourcelevel.io/github/appunite/mockery)
 [![Hex.pm](https://img.shields.io/hexpm/v/mockery.svg)](https://hex.pm/packages/mockery)
 [![Hex.pm](https://img.shields.io/hexpm/dt/mockery.svg)](https://hex.pm/packages/mockery)
 [![Hex.pm](https://img.shields.io/hexpm/dw/mockery.svg)](https://hex.pm/packages/mockery)
@@ -167,10 +167,10 @@ defmodule TestedTest do
     Tested.call(1, %{})
     assert_called Foo, :bar, [1, %{}]
   end
-  
+
   test "assert Foo.bar/1 was called with given arg (using variable)" do
     params = %{a: 1, b: 2}
-  
+
     Tested.call(params)
     assert_called Foo, :bar, [^params]
     # we need to use pinning here since assert_called/3 is a macro

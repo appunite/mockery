@@ -125,12 +125,18 @@ defmodule Mockery.History do
       {:^, _, [{Mockery.History.Var, node}]} ->
         {Mockery.History.PinnedVar, node}
 
+      {:@, meta, [{Mockery.History.Var, node}]} ->
+        {Mockery.History.ModuleAttr, {meta, node}}
+
       node ->
         node
     end)
     |> Macro.postwalk(fn
       {Mockery.History.PinnedVar, node} ->
         node
+
+      {Mockery.History.ModuleAttr, {meta, node}} ->
+        Macro.escape({:@, meta, node})
 
       {Mockery.History.Var, _node} ->
         Mockery.History.UnboundVar

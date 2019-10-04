@@ -278,12 +278,35 @@ defmodule Mockery.AssertionsTest do
 
         Assertions.assert_called(A, :fun, ["a", _])
       end
+
+      test "positive arity, pattern with pinned var" do
+        Utils.push_call(A, :fun, 0, [])
+        Utils.push_call(A, :fun, 2, ["a", "b"])
+
+        to_pin = "b"
+        Assertions.assert_called(A, :fun, ["a", ^to_pin])
+      end
+
+      @attr "b"
+      test "positive arity, pattern with module attr" do
+        Utils.push_call(A, :fun, 0, [])
+        Utils.push_call(A, :fun, 2, ["a", "b"])
+
+        Assertions.assert_called(A, :fun, ["a", @attr])
+      end
+
+      test "positive arity, pattern with nested module attr" do
+        Utils.push_call(A, :fun, 0, [])
+        Utils.push_call(A, :fun, 2, ["a", {"b", "c"}])
+
+        Assertions.assert_called(A, :fun, ["a", {@attr, _}])
+      end
     end
 
     load_cases()
     output = capture_io(fn -> ExUnit.run() end)
 
-    assert output =~ "3 tests, 0 failures"
+    assert output =~ "6 tests, 0 failures"
   end
 
   test "assert_called/3 failure" do

@@ -19,7 +19,8 @@ defmodule Mockery.Mixfile do
       ],
       docs: [
         extras: ["README.md", "EXAMPLES.md", "CHANGELOG.md", "MIGRATION_TO_OTP21.md"],
-        main: "readme"
+        main: "readme",
+        source_ref: @version
       ],
       elixir: "~> 1.3",
       elixirc_paths: elixirc_paths(Mix.env()),
@@ -29,7 +30,6 @@ defmodule Mockery.Mixfile do
         "coveralls.detail": :test,
         "coveralls.json": :test
       ],
-      source_ref: @version,
       source_url: "https://github.com/appunite/mockery",
       test_coverage: [tool: ExCoveralls],
       version: @version

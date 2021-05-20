@@ -1,13 +1,14 @@
 defmodule Mockery.Mixfile do
   use Mix.Project
 
+  @source_url "https://github.com/appunite/mockery"
   @version "2.3.1"
 
   def project do
     [
       app: :mockery,
       deps: deps(),
-      description: description(),
+      docs: docs(),
       dialyzer: [
         flags: [
           :error_handling,
@@ -17,11 +18,6 @@ defmodule Mockery.Mixfile do
         ],
         plt_add_apps: [:ex_unit, :mix]
       ],
-      docs: [
-        extras: ["README.md", "EXAMPLES.md", "CHANGELOG.md", "MIGRATION_TO_OTP21.md"],
-        main: "readme",
-        source_ref: @version
-      ],
       elixir: "~> 1.3",
       elixirc_paths: elixirc_paths(Mix.env()),
       package: package(),
@@ -30,7 +26,6 @@ defmodule Mockery.Mixfile do
         "coveralls.detail": :test,
         "coveralls.json": :test
       ],
-      source_url: "https://github.com/appunite/mockery",
       test_coverage: [tool: ExCoveralls],
       version: @version
     ]
@@ -46,12 +41,8 @@ defmodule Mockery.Mixfile do
       {:credo, "~> 0.8", only: :dev, runtime: false},
       {:dialyxir, "~> 0.5", only: :dev, runtime: false},
       {:excoveralls, "~> 0.7", only: :test, runtime: false},
-      {:ex_doc, "~> 0.13", only: :dev, runtime: false}
+      {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
     ]
-  end
-
-  defp description do
-    "Simple mocking library for asynchronous testing."
   end
 
   defp elixirc_paths(:test), do: ["lib", "test/support"]
@@ -59,12 +50,29 @@ defmodule Mockery.Mixfile do
 
   defp package do
     [
+      description: "Simple mocking library for asynchronous testing.",
       maintainers: ["Tobiasz Małecki"],
-      licenses: ["Apache 2.0"],
+      licenses: ["Apache-2.0"],
       links: %{
-        "GitHub" => "https://github.com/appunite/mockery",
-        "Changelog" => "https://hexdocs.pm/mockery/changelog.html"
+        "Changelog" => "https://hexdocs.pm/mockery/changelog.html",
+        "GitHub" => @source_url
       }
+    ]
+  end
+
+  defp docs do
+    [
+      extras: [
+        "CHANGELOG.md",
+        {:"LICENSE", [title: "License"]},
+        "README.md",
+        "EXAMPLES.md",
+        "MIGRATION_TO_OTP21.md"
+      ],
+      main: "readme",
+      source_url: @source_url,
+      source_ref: @version,
+      formatters: ["html"]
     ]
   end
 end

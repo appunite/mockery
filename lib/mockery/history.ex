@@ -3,16 +3,17 @@ defmodule Mockery.History do
   Provides calls history for Mockery.Assertions macros.
 
   It's disabled by default.
-  It can be enabled/disabled globally by following config
+
+  It can be enabled/disabled globally by following config:
 
       config :mockery, history: true
 
-  Or for single test process
+  Or for single test process:
 
       Mockery.History.enable_history()
       Mockery.History.disable_history()
 
-  Process config has higher priority than global config
+  Process config has higher priority than global config.
   """
   import IO.ANSI
   alias Mockery.Utils
@@ -27,7 +28,9 @@ defmodule Mockery.History do
   end
 
   @doc """
-  Enables history in scope of single test process
+  Enables history in scope of single test process.
+
+  ## Examples
 
       use Mockery
 
@@ -47,7 +50,9 @@ defmodule Mockery.History do
   end
 
   @doc """
-  Disables history in scope of single test process
+  Disables history in scope of single test process.
+
+  ## Examples
 
       use Mockery
 

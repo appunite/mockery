@@ -21,11 +21,11 @@ defmodule Mockery.Assertions do
 
   ## Examples
 
-  Assert Mod.fun/2 was called
+  Assert Mod.fun/2 was called:
 
       assert_called Mod, fun: 2
 
-  Assert any function named :fun from module Mod was called
+  Assert any function named :fun from module Mod was called:
 
       assert_called Mod, :fun
 
@@ -47,11 +47,11 @@ defmodule Mockery.Assertions do
 
   ## Examples
 
-  Assert Mod.fun/2 wasn't called
+  Assert Mod.fun/2 wasn't called:
 
       refute_called Mod, fun: 2
 
-  Assert any function named :fun from module Mod wasn't called
+  Assert any function named :fun from module Mod wasn't called:
 
       refute_called Mod, :fun
 
@@ -76,11 +76,11 @@ defmodule Mockery.Assertions do
 
   ## Examples
 
-  Assert Mod.fun/2 was called with given args list
+  Assert Mod.fun/2 was called with given args list:
 
       assert_called Mod, :fun, ["a", "b"]
 
-  You can also use unbound variables inside args pattern
+  You can also use unbound variables inside args pattern:
 
       assert_called Mod, :fun, ["a", _second]
 
@@ -104,11 +104,11 @@ defmodule Mockery.Assertions do
 
   ## Examples
 
-  Assert Mod.fun/2 wasn't called with given args list
+  Assert Mod.fun/2 wasn't called with given args list:
 
       refute_called Mod, :fun, ["a", "b"]
 
-  You can also use unbound variables inside args pattern
+  You can also use unbound variables inside args pattern:
 
       refute_called Mod, :fun, ["a", _second]
 
@@ -135,15 +135,15 @@ defmodule Mockery.Assertions do
 
   ## Examples
 
-  Assert Mod.fun/2 was called with given args 5 times
+  Assert Mod.fun/2 was called with given args 5 times:
 
       assert_called Mod, :fun, ["a", "b"], 5
 
-  Assert Mod.fun/2 was called with given args from 3 to 5 times
+  Assert Mod.fun/2 was called with given args from 3 to 5 times:
 
       assert_called Mod, :fun, ["a", "b"], 3..5
 
-  Assert Mod.fun/2 was called with given args 3 or 5 times
+  Assert Mod.fun/2 was called with given args 3 or 5 times:
 
       assert_called Mod, :fun, ["a", "b"], [3, 5]
 
@@ -170,15 +170,15 @@ defmodule Mockery.Assertions do
 
   ## Examples
 
-  Assert Mod.fun/2 was not called with given args 5 times
+  Assert Mod.fun/2 was not called with given args 5 times:
 
       refute_called Mod, :fun, ["a", "b"], 5
 
-  Assert Mod.fun/2 was not called with given args from 3 to 5 times
+  Assert Mod.fun/2 was not called with given args from 3 to 5 times:
 
       refute_called Mod, :fun, ["a", "b"], 3..5
 
-  Assert Mod.fun/2 was not called with given args 3 or 5 times
+  Assert Mod.fun/2 was not called with given args 3 or 5 times:
 
       refute_called Mod, :fun, ["a", "b"], [3, 5]
 

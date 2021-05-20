@@ -11,6 +11,7 @@ defmodule Mockery.Macro do
   When Mix is missing it assumes that env is :prod.
 
   ## Examples
+
   #### Prepare for mocking
 
       defmodule Foo do
@@ -40,13 +41,15 @@ defmodule Mockery.Macro do
   ## Mockery.of/2 comparison
 
     * It's based on macro and process dictionary instead of on tuple calls. (Tuple calls
-    are disabled by default in OTP21+ and require additional compile flag to be reenabled)
+      are disabled by default in OTP21+ and require additional compile flag to be reenabled)
+
     * It doesn't support passing module names as a string as it don't create unwanted compile-time
-    dependencies between modules
+      dependencies between modules
 
   ## Potential issues
 
   Output of `mockable/2` macro should not be bind to variable or module attribute.
+
   If it happens, you'll see a compilation warning at best, and in the worst case Mockery won't
   work correctly.
 

@@ -2,10 +2,12 @@
 
 [![Build Status](https://travis-ci.org/appunite/mockery.svg?branch=master)](https://travis-ci.org/appunite/mockery)
 [![Codecov.io](https://codecov.io/gh/appunite/mockery/branch/master/graph/badge.svg)](https://codecov.io/gh/appunite/mockery)
-[![SourceLevel](https://app.sourcelevel.io/github/appunite/mockery.svg)](https://app.sourcelevel.io/github/appunite/mockery)
-[![Hex.pm](https://img.shields.io/hexpm/v/mockery.svg)](https://hex.pm/packages/mockery)
-[![Hex.pm](https://img.shields.io/hexpm/dt/mockery.svg)](https://hex.pm/packages/mockery)
-[![Hex.pm](https://img.shields.io/hexpm/dw/mockery.svg)](https://hex.pm/packages/mockery)
+[![Module Version](https://img.shields.io/hexpm/v/mockery.svg)](https://hex.pm/packages/mockery)
+[![Hex Docs](https://img.shields.io/badge/hex-docs-lightgreen.svg)](https://hexdocs.pm/mockery/)
+[![Total Download](https://img.shields.io/hexpm/dt/mockery.svg)](https://hex.pm/packages/mockery)
+[![License](https://img.shields.io/hexpm/l/mockery.svg)](https://github.com/appunite/mockery/blob/master/LICENSE)
+[![Last Updated](https://img.shields.io/github/last-commit/appunite/mockery.svg)](https://github.com/appunite/mockery/commits/master)
+
 
 Simple mocking library for asynchronous testing in Elixir.
 
@@ -201,7 +203,8 @@ end
 
 ### Refute
 
-Every assert_called/x function/macro has its refute_called/x counterpart.</br>
+Every `assert_called/x` function/macro has its `refute_called/x` counterpart.
+
 For more information see [docs](https://hexdocs.pm/mockery/Mockery.Assertions.html)
 
 ### History
@@ -270,9 +273,9 @@ For advanced usage examples see [EXAMPLES.md](EXAMPLES.md)
 
 * <https://stephenbussey.com/2018/02/15/my-favorite-elixir-testing-tool-mockery>
 
-## License
+## Copyright and License
 
-Copyright 2017-2019 Tobiasz Małecki <tobiasz.malecki@appunite.com>
+Copyright 2017 Tobiasz Małecki <tobiasz.malecki@appunite.com>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

@@ -34,10 +34,5 @@ jobs:
       image: elixir:1.12-slim
     steps:
     - uses: actions/checkout@v2
-    - name: deps
-      run: |
-        mix local.rebar --force
-        mix local.hex --force
-        mix deps.get
     - name: format
       run: mix format --check-formatted --dry-run

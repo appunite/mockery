@@ -1,11 +1,6 @@
 # Mockery
 
-[![Build Status](https://travis-ci.org/appunite/mockery.svg?branch=master)](https://travis-ci.org/appunite/mockery)
-[![Codecov.io](https://codecov.io/gh/appunite/mockery/branch/master/graph/badge.svg)](https://codecov.io/gh/appunite/mockery)
-[![SourceLevel](https://app.sourcelevel.io/github/appunite/mockery.svg)](https://app.sourcelevel.io/github/appunite/mockery)
-[![Hex.pm](https://img.shields.io/hexpm/v/mockery.svg)](https://hex.pm/packages/mockery)
-[![Hex.pm](https://img.shields.io/hexpm/dt/mockery.svg)](https://hex.pm/packages/mockery)
-[![Hex.pm](https://img.shields.io/hexpm/dw/mockery.svg)](https://hex.pm/packages/mockery)
+[![Build Status](https://github.com/appunite/mockery/workflows/Test/badge.svg?branch=master)](https://github.com/appunite/mockery/actions) [![SourceLevel](https://app.sourcelevel.io/github/appunite/-/mockery.svg)](https://app.sourcelevel.io/github/appunite/-/mockery) [![Hex.pm](https://img.shields.io/hexpm/v/mockery.svg)](https://hex.pm/packages/mockery) [![Hex.pm](https://img.shields.io/hexpm/dt/mockery.svg)](https://hex.pm/packages/mockery) [![Hex.pm](https://img.shields.io/hexpm/dw/mockery.svg)](https://hex.pm/packages/mockery)
 
 Simple mocking library for asynchronous testing in Elixir.
 
@@ -13,22 +8,22 @@ Simple mocking library for asynchronous testing in Elixir.
 
 ## Advantages
 
-* Mockery does not override your modules
-* Mockery does not replace modules by aliasing
-* Mockery does not require to pass modules as function parameter
-* Mockery does not require to create callbacks or wrappers around libraries
-* Mockery does not create modules during runtime (neither by `defmodule/2` nor `Module.create/3`)
-* Mockery does not allow to mock non-existent function
-* Mockery does not share any data between test processes
+- Mockery does not override your modules
+- Mockery does not replace modules by aliasing
+- Mockery does not require to pass modules as function parameter
+- Mockery does not require to create callbacks or wrappers around libraries
+- Mockery does not create modules during runtime (neither by `defmodule/2` nor `Module.create/3`)
+- Mockery does not allow to mock non-existent function
+- Mockery does not share any data between test processes
 
 ## Disadvantages
 
-* Mockery is not designed for libraries as it would force end user to download Mockery as dependency of dependency
-* Mockery can cause issues with dialyzer if you are using dialyzer with `MIX_ENV=test`
+- Mockery is not designed for libraries as it would force end user to download Mockery as dependency of dependency
+- Mockery can cause issues with dialyzer if you are using dialyzer with `MIX_ENV=test`
 
 ## Upgrading Erlang/OTP to 21
 
-Erlang/OTP 21 contains some changes that prevent the package from functioning as before.</br>
+Erlang/OTP 21 contains some changes that prevent the package from functioning as before.<br>
 Please check [migration guide](MIGRATION_TO_OTP21.md).
 
 ## Getting started
@@ -201,19 +196,16 @@ end
 
 ### Refute
 
-Every assert_called/x function/macro has its refute_called/x counterpart.</br>
+Every assert_called/x function/macro has its refute_called/x counterpart.<br>
 For more information see [docs](https://hexdocs.pm/mockery/Mockery.Assertions.html)
 
 ### History
 
 ![history example](https://raw.githubusercontent.com/appunite/mockery/master/history.jpeg)
 
-Mockery.History  module provides more descriptive failure messages for
-assert_called/{3,4} and refute_called/{3,4} that includes a colorized list of
-arguments passed to a given function in the scope of a single test process.
+Mockery.History module provides more descriptive failure messages for assert_called/{3,4} and refute_called/{3,4} that includes a colorized list of arguments passed to a given function in the scope of a single test process.
 
-Disabled by default.
-For more information see [docs](https://hexdocs.pm/mockery/Mockery.History.html)
+Disabled by default. For more information see [docs](https://hexdocs.pm/mockery/Mockery.History.html)
 
 ## Global mock
 
@@ -250,38 +242,30 @@ end
 
 ### Restrictions
 
-Global mock module doesn't have to contain every function exported by the original
-module, but it cannot contain a function which is not exported by the original
-module.</br>
+Global mock module doesn't have to contain every function exported by the original module, but it cannot contain a function which is not exported by the original module.<br>
 It means that:
 
-* when you remove a function from the original module, you have to remove it from
-  global mock module or Mockery will raise exception
-* when you change a function name in the original module, you have to change it in
-  global mock module or Mockery will raise exception
-* when you change a function arity in the original module, you have to change it in
-  global mock module or Mockery will raise exception
+- when you remove a function from the original module, you have to remove it from global mock module or Mockery will raise exception
+- when you change a function name in the original module, you have to change it in global mock module or Mockery will raise exception
+- when you change a function arity in the original module, you have to change it in global mock module or Mockery will raise exception
 
 ## Advanced examples
 
-For advanced usage examples see [EXAMPLES.md](EXAMPLES.md)
+For advanced usage examples see
+
+<examples.md>
+</examples.md>
 
 ## External resources
 
-* <https://stephenbussey.com/2018/02/15/my-favorite-elixir-testing-tool-mockery>
+- <https://stephenbussey.com/2018/02/15/my-favorite-elixir-testing-tool-mockery>
 
 ## License
 
-Copyright 2017-2019 Tobiasz Małecki <tobiasz.malecki@appunite.com>
+Copyright 2017-2019 Tobiasz Małecki [tobiasz.malecki@appunite.com](mailto:tobiasz.malecki@appunite.com)
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
 
 <http://www.apache.org/licenses/LICENSE-2.0>
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.

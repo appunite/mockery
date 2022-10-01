@@ -8,10 +8,10 @@ jobs:
     strategy:
       matrix:
         elixir:
-          - 1.9-slim
-          - 1.10-slim
           - 1.11-slim
           - 1.12-slim
+          - 1.13-slim
+          - 1.14-slim
     container:
       image: elixir:${{ matrix.elixir }}
     steps:
@@ -31,7 +31,7 @@ jobs:
   format:
     runs-on: ubuntu-latest
     container:
-      image: elixir:1.12-slim
+      image: elixir:1.14-slim
     steps:
     - uses: actions/checkout@v2
     - name: format

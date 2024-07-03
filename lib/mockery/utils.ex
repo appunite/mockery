@@ -45,8 +45,8 @@ defmodule Mockery.Utils do
   # Global mock cannot export function that the original module
   # does not export
   def validate_global_mock!(original, mock) do
-    original_exports = original.module_info[:exports]
-    mock_exports = mock.module_info[:exports] -- [__info__: 1]
+    original_exports = original.module_info()[:exports]
+    mock_exports = mock.module_info()[:exports] -- [__info__: 1]
 
     case Enum.reject(mock_exports, &(&1 in original_exports)) do
       [] ->

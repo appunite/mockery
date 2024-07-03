@@ -16,7 +16,7 @@ defmodule Mockery.Proxy do
 
     Utils.push_call(mod, name, arity, args)
 
-    if {name, arity} in mod.module_info[:exports] do
+    if {name, arity} in mod.module_info()[:exports] do
       case Utils.get_mock(mod, [{name, arity}]) || Utils.get_mock(mod, name) do
         nil ->
           fallback_to_global_mock(mod, name, args, arity, by)
@@ -51,7 +51,7 @@ defmodule Mockery.Proxy do
   defp fallback_to_global_mock(mod, name, args, arity, global_mock) do
     Utils.validate_global_mock!(mod, global_mock)
 
-    if {name, arity} in global_mock.module_info[:exports] do
+    if {name, arity} in global_mock.module_info()[:exports] do
       apply(global_mock, name, args)
     else
       fallback_to_original(mod, name, args)

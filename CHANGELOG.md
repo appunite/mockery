@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.3.2 (2024-07-03)
+
+- Added missing () to fix warnings
+
 ## 2.3.1 (2019-10-10)
 
 - Fixed issue preventing module attributes to be used in assert_called macros [#34](https://github.com/appunite/mockery/pull/34)

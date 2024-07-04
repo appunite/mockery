@@ -47,7 +47,7 @@ Previous example rewritten to use macros:
 
 ```elixir
 defmodule MyProject do
-  import Mockery.Macro
+  use Mockery.Macro
 
   def bar, do: mockable(Foo).bar()
   def baz, do: mockable(Foo).baz()

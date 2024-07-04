@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.3.3 (2024-07-04)
+
+- Added `use Mockery.Macro` to solve new Elixir warnings
+
 ## 2.3.2 (2024-07-03)
 
 - Added missing () to fix warnings

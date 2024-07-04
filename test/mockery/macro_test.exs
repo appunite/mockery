@@ -1,6 +1,6 @@
 defmodule Mockery.MacroTest do
   use ExUnit.Case, async: true
-  import Mockery.Macro, only: [mockable: 1, mockable: 2]
+  use Mockery.Macro
 
   test "mockable/2 dev env (atom erlang mod)" do
     assert mockable(:a, env: :dev) == :a

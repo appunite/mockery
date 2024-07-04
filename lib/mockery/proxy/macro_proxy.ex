@@ -12,13 +12,13 @@ defmodule Mockery.Proxy.MacroProxy do
           Mockery.Macro.mockable/2 needs to be invoked directly in other function.
 
           You can't use it in module attribute:
-              import Mockery.Macro
+              use Mockery.Macro
               @foo mockable(Foo)
 
               def bar, do: @foo.foo()
 
           Instead use:
-              import Mockery.Macro
+              use Mockery.Macro
 
               def bar, do: mockable(Foo).foo()
           """

@@ -1,7 +1,7 @@
 defmodule Mockery.Utils do
   @moduledoc false
 
-  import Mockery.Macro
+  use Mockery.Macro
 
   alias Mockery.Error
 

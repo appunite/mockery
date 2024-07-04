@@ -9,7 +9,7 @@ defmodule Mockery.MultiprocessTest do
   end
 
   defmodule B do
-    import Mockery.Macro
+    use Mockery.Macro
 
     def run do
       mockable(A).run

@@ -3,6 +3,13 @@ defmodule Mockery.Macro do
   Alternative macro-based way to prepare module for mocking/asserting.
   """
 
+  defmacro __using__(_) do
+    quote do
+      @compile {:no_warn_undefined, Mockery.Proxy.MacroProxy}
+      import unquote(__MODULE__)
+    end
+  end
+
   @doc """
   Function used to prepare module for mocking/asserting.
 
@@ -14,7 +21,7 @@ defmodule Mockery.Macro do
   #### Prepare for mocking
 
       defmodule Foo do
-        import Mockery.Macro
+        use Mockery.Macro
 
         def foo do
           mockable(Bar).bar()
@@ -30,7 +37,7 @@ defmodule Mockery.Macro do
 
       # lib/foo.ex
       defmodule Foo do
-        import Mockery.Macro
+        use Mockery.Macro
 
         def foo do
           mockable(Bar, by: BarGlobalMock).bar()

@@ -43,7 +43,7 @@ end
 ```elixir
 # lib/my_app/foo.ex
 defmodule MyApp.Foo do
-  import Mockery.Macro
+  use Mockery.Macro
   alias MyApp.Bar
 
   def baz, do: mockable(Bar).function()
@@ -57,7 +57,7 @@ end
 ```elixir
 defmodule MyApp.Controller do
   # ...
-  import Mockery.Macro
+  use Mockery.Macro
 
   def all do
     mockable(MyApp.UserService).users()
@@ -111,7 +111,7 @@ end
 
 # prepare tested module
 defmodule Other do
-  import Mockery.Macro
+  use Mockery.Macro
 
   def parse(value) do
     mockable(Foo).bar(value)
@@ -135,7 +135,7 @@ end
 ```elixir
 # prepare tested module
 defmodule Tested do
-  import Mockery.Macro
+  use Mockery.Macro
 
   def call(value, opts) do
     mockable(Foo).bar(value)
@@ -223,7 +223,7 @@ end
 
 # prepare tested module
 defmodule Other do
-  import Mockery.Macro
+  use Mockery.Macro
 
   def bar, do: mockable(Foo, by: FooGlobalMock).bar()
   def baz, do: mockable(Foo, by: FooGlobalMock).baz()
@@ -262,7 +262,7 @@ For advanced usage examples see
 
 ## License
 
-Copyright 2017-2019 Tobiasz Małecki [tobiasz.malecki@appunite.com](mailto:tobiasz.malecki@appunite.com)
+Copyright 2017-2024 Tobiasz Małecki [tobiasz.malecki@appunite.com](mailto:tobiasz.malecki@appunite.com)
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
 

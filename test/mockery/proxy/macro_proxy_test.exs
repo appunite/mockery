@@ -1,8 +1,8 @@
 defmodule Mockery.Proxy.MacroProxyTest do
   use ExUnit.Case, async: true
+  use Mockery.Macro
   import Mockery
   import Mockery.Assertions
-  import Mockery.Macro
 
   alias Mockery.Proxy.MacroProxy
   alias Mockery.Utils
@@ -149,7 +149,7 @@ defmodule Mockery.Proxy.MacroProxyTest do
 
   ############### INVALID USAGE ###############
   defmodule Macro.InvalidUsage do
-    import Mockery.Macro
+    use Mockery.Macro
     @invalid mockable(Dummy)
 
     def invalid, do: @invalid.fun1()

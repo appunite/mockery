@@ -1,8 +1,8 @@
 defmodule IntegrationTest.Tested do
   @moduledoc false
-  if :erlang.system_info(:otp_release) >= '21', do: @compile(:tuple_calls)
+  if :erlang.system_info(:otp_release) >= ~c"21", do: @compile(:tuple_calls)
 
-  import Mockery.Macro
+  use Mockery.Macro
 
   @mock1 Mockery.of(IntegrationTest.Mocked)
   @mock2 Application.get_env(:mockery, :integration_test, IntegrationTest.Mocked)

@@ -5,7 +5,7 @@ defmodule IntegrationTest.Tested do
   use Mockery.Macro
 
   @mock1 Mockery.of(IntegrationTest.Mocked)
-  @mock2 Application.get_env(:mockery, :integration_test, IntegrationTest.Mocked)
+  @mock2 Application.compile_env(:mockery, :integration_test, IntegrationTest.Mocked)
 
   def fun1, do: @mock1.fun()
   def fun2, do: @mock2.fun()

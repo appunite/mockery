@@ -8,31 +8,38 @@ jobs:
     strategy:
       matrix:
         elixir:
-          - 1.11-slim
-          - 1.12-slim
-          - 1.13-slim
-          - 1.14-slim
+          - 1.15-slim
+          - 1.16-slim
+          - 1.17-slim
+          - 1.18-slim
     container:
       image: elixir:${{ matrix.elixir }}
     steps:
-    - uses: actions/checkout@v2
-    - name: deps
-      env:
-        MIX_ENV: test
-      run: |
-        mix local.rebar --force
-        mix local.hex --force
-        mix deps.get
-        apt-get update
-        apt-get install build-essential -y
-    - name: tests
-      run: mix test
+      - uses: actions/checkout@v4
+
+      - name: Install system deps (CA bundle first)
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends \
+            ca-certificates openssl build-essential git
+          update-ca-certificates
+
+      - name: Mix bootstrap & deps
+        env:
+          MIX_ENV: test
+        run: |
+          mix local.rebar --force
+          mix local.hex --force
+          mix deps.get
+
+      - name: Run tests
+        run: mix test
 
   format:
     runs-on: ubuntu-latest
     container:
-      image: elixir:1.14-slim
+      image: elixir:1.18-slim
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: format
       run: mix format --check-formatted --dry-run

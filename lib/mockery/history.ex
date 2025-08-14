@@ -96,7 +96,7 @@ defmodule Mockery.History do
         if unquote(arity) == call_arity do
           "#{white()}[" <>
             ([unquote(args), call_args]
-             |> List.zip()
+             |> Enum.zip()
              |> Enum.map(fn
                {Mockery.History.UnboundVar, called} ->
                  "#{green()}#{inspect(called)}#{white()}"

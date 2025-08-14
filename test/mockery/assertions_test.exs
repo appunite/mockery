@@ -2,16 +2,6 @@ defmodule Mockery.AssertionsTest do
   use ExUnit.Case
   import ExUnit.CaptureIO
 
-  defp load_cases do
-    if {:cases_loaded, 0} in ExUnit.Server.__info__(:functions) do
-      ExUnit.Server.cases_loaded()
-    end
-
-    if {:modules_loaded, 0} in ExUnit.Server.__info__(:functions) do
-      ExUnit.Server.modules_loaded()
-    end
-  end
-
   test "assert_called/2 (fun name) success" do
     defmodule FunSuccess do
       use ExUnit.Case
@@ -39,7 +29,6 @@ defmodule Mockery.AssertionsTest do
       end
     end
 
-    load_cases()
     output = capture_io(fn -> ExUnit.run() end)
 
     assert output =~ "3 tests, 0 failures"
@@ -56,7 +45,6 @@ defmodule Mockery.AssertionsTest do
       end
     end
 
-    load_cases()
     output = capture_io(fn -> ExUnit.run() end)
 
     assert output =~ "1 test, 1 failure"
@@ -97,7 +85,6 @@ defmodule Mockery.AssertionsTest do
       end
     end
 
-    load_cases()
     output = capture_io(fn -> ExUnit.run() end)
 
     assert output =~ "4 tests, 0 failure"
@@ -121,7 +108,6 @@ defmodule Mockery.AssertionsTest do
       end
     end
 
-    load_cases()
     output = capture_io(fn -> ExUnit.run() end)
 
     assert output =~ "2 tests, 2 failures"
@@ -140,7 +126,6 @@ defmodule Mockery.AssertionsTest do
       end
     end
 
-    load_cases()
     output = capture_io(fn -> ExUnit.run() end)
 
     assert output =~ "1 test, 0 failures"
@@ -173,7 +158,6 @@ defmodule Mockery.AssertionsTest do
       end
     end
 
-    load_cases()
     output = capture_io(fn -> ExUnit.run() end)
 
     assert output =~ "3 tests, 3 failures"
@@ -200,7 +184,6 @@ defmodule Mockery.AssertionsTest do
       end
     end
 
-    load_cases()
     output = capture_io(fn -> ExUnit.run() end)
 
     assert output =~ "2 tests, 0 failures"
@@ -240,7 +223,6 @@ defmodule Mockery.AssertionsTest do
       end
     end
 
-    load_cases()
     output = capture_io(fn -> ExUnit.run() end)
 
     assert output =~ "4 tests, 4 failures"
@@ -303,7 +285,6 @@ defmodule Mockery.AssertionsTest do
       end
     end
 
-    load_cases()
     output = capture_io(fn -> ExUnit.run() end)
 
     assert output =~ "6 tests, 0 failures"
@@ -332,7 +313,6 @@ defmodule Mockery.AssertionsTest do
       end
     end
 
-    load_cases()
     output = capture_io(fn -> ExUnit.run() end)
 
     assert output =~ "3 tests, 3 failures"
@@ -360,7 +340,6 @@ defmodule Mockery.AssertionsTest do
       end
     end
 
-    load_cases()
     output = capture_io(fn -> ExUnit.run() end)
 
     assert output =~ "2 tests, 0 failures"
@@ -400,7 +379,6 @@ defmodule Mockery.AssertionsTest do
       end
     end
 
-    load_cases()
     output = capture_io(fn -> ExUnit.run() end)
 
     assert output =~ "4 tests, 4 failures"
@@ -446,7 +424,6 @@ defmodule Mockery.AssertionsTest do
       end
     end
 
-    load_cases()
     output = capture_io(fn -> ExUnit.run() end)
 
     assert output =~ "3 tests, 0 failures"
@@ -496,7 +473,6 @@ defmodule Mockery.AssertionsTest do
       end
     end
 
-    load_cases()
     output = capture_io(fn -> ExUnit.run() end)
 
     assert output =~ "6 tests, 6 failures"
@@ -548,7 +524,6 @@ defmodule Mockery.AssertionsTest do
       end
     end
 
-    load_cases()
     output = capture_io(fn -> ExUnit.run() end)
 
     assert output =~ "5 tests, 0 failures"
@@ -594,7 +569,6 @@ defmodule Mockery.AssertionsTest do
       end
     end
 
-    load_cases()
     output = capture_io(fn -> ExUnit.run() end)
 
     assert output =~ "4 tests, 4 failures"

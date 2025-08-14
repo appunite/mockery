@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.3.4 (2025-08-15)
+
+- Fixed warnings (Elixir 1.18)
+
 ## 2.3.3 (2024-07-04)
 
 - Added `use Mockery.Macro` to solve new Elixir warnings

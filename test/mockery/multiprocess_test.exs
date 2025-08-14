@@ -12,7 +12,7 @@ defmodule Mockery.MultiprocessTest do
     use Mockery.Macro
 
     def run do
-      mockable(A).run
+      mockable(A).run()
     end
   end
 

@@ -17,7 +17,7 @@
         {Credo.Check.Consistency.SpaceAroundOperators},
         {Credo.Check.Consistency.SpaceInParentheses},
         {Credo.Check.Consistency.TabsOrSpaces},
-        {Credo.Check.Design.AliasUsage, excluded_namespaces: ["ExUnit", "IntegrationTest"]},
+        {Credo.Check.Design.AliasUsage, false},
         {Credo.Check.Design.DuplicatedCode, excluded_macros: []},
         {Credo.Check.Design.TagFIXME},
         {Credo.Check.Design.TagTODO, false},

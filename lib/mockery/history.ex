@@ -71,7 +71,6 @@ defmodule Mockery.History do
 
   def print(mod, fun, args) do
     quote do
-      # credo:disable-for-lines:1 Credo.Check.Design.AliasUsage
       if Mockery.Utils.history_enabled?() do
         """
         \n

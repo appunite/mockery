@@ -1,0 +1,80 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - "**"
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  format-check:
+    name: Check Mix Format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Elixir
+        uses: erlef/setup-elixir@v1
+        with:
+          elixir-version: 1.19
+          otp-version: 28
+
+      - name: Fetch Dependencies
+        run: mix deps.get
+
+      - name: Check code format
+        run: mix format --check-formatted
+
+  credo-check:
+    name: Check Mix Credo Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Elixir
+        uses: erlef/setup-elixir@v1
+        with:
+          elixir-version: 1.18
+          otp-version: 28
+
+      - name: Fetch Dependencies
+        run: mix deps.get
+
+      - name: Run Credo Linter
+        run: mix credo --strict --format=flycheck
+
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    needs:
+      - format-check
+      - credo-check
+    strategy:
+      matrix:
+        include:
+          - elixir: 1.19
+            otp: 28
+          - elixir: 1.18
+            otp: 27
+          - elixir: 1.17
+            otp: 26
+          - elixir: 1.16
+            otp: 25
+          - elixir: 1.15
+            otp: 24
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Elixir
+        uses: erlef/setup-elixir@v1
+        with:
+          elixir-version: ${{ matrix.elixir }}
+          otp-version: ${{ matrix.otp }}
+
+      - name: Fetch Dependencies
+        run: mix deps.get
+
+      - name: Run Tests
+        run: mix test

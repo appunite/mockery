@@ -81,4 +81,48 @@ defmodule Mockery.Macro do
   defp mix_env do
     if function_exported?(Mix, :env, 0), do: Mix.env(), else: :prod
   end
+
+  @doc """
+  Defines a private macro that expands to `mockable/1` or `mockable/2`.
+
+  Usage examples:
+
+      defmock :foo, Foo
+      defmock :bar, Bar, by: GlobalMock
+
+  These expand to:
+
+      defmacrop foo do
+        quote do: mockable(Foo)
+      end
+
+      defmacrop bar do
+        quote do: mockable(Bar, by: GlobalMock)
+      end
+
+  This macro allows you to refactor code like this:
+
+      def my_function do
+        mockable(Bar, by: GlobalMock).function_call()
+      end
+
+  Into a cleaner form:
+
+      defmock :bar, Bar, by: GlobalMock
+
+      def my_function do
+        bar().function_call()
+      end
+
+  """
+  defmacro defmock(name, mod, opts \\ []) do
+    quote do
+      defmacrop unquote(name)() do
+        mod = unquote(mod)
+        opts = unquote(opts)
+
+        quote do: mockable(unquote(mod), unquote(opts))
+      end
+    end
+  end
 end

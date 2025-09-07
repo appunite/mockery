@@ -3,5 +3,8 @@ defmodule IntegrationTest.Tested do
 
   use Mockery.Macro
 
-  def fun3, do: mockable(IntegrationTest.Mocked).fun()
+  def fun1, do: mockable(IntegrationTest.Mocked).fun()
+
+  defmock :mock, IntegrationTest.Mocked
+  def fun2, do: mock().fun()
 end

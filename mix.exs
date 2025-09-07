@@ -18,7 +18,7 @@ defmodule Mockery.Mixfile do
         plt_add_apps: [:ex_unit, :mix]
       ],
       docs: [
-        extras: ["README.md", "EXAMPLES.md", "CHANGELOG.md", "MIGRATION_TO_OTP21.md"],
+        extras: ["README.md", "EXAMPLES.md", "CHANGELOG.md"],
         main: "readme",
         source_ref: @version
       ],

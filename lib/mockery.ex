@@ -12,101 +12,11 @@ defmodule Mockery do
     end
   end
 
-  @typep global_mock :: module | nil
-
-  @typedoc """
-  Mockery uses tuple calls to send additional data to internal proxy module
+  # TODO remove in v3
+  @deprecated """
+  The `of` function is deprecated. Tuple calls won't be officially supported in Mockery v3.
+  Please migrate to the new macro-based alternative available in `Mockery.Macro`.
   """
-  @opaque proxy_tuple :: {Mockery.Proxy, module, global_mock}
-
-  @typedoc """
-  Used to avoid unnecessary compile-time dependencies between modules
-
-  ## Examples
-
-      defmodule Foo do
-        # this creates compile-time dependency between Foo and Bar
-        @bar1 Mockery.of(Bar)
-
-        # same result but without compile-time dependency
-        @bar2 Mockery.of("Bar")
-      end
-
-  `mix xref graph` can be used to check difference between module and string versions
-  """
-  @type elixir_module_as_string :: String.t()
-
-  @doc """
-  Function used to prepare module for mocking.
-
-  For Mix.env other than :test it returns module given in the first argument.
-  If Mix.env equal :test it creates a proxy to the original module.
-  When Mix is missing it assumes that env is :prod
-
-  ## Examples
-  #### Prepare for mocking (elixir module)
-
-      defmodule Foo do
-        @bar Mockery.of("Bar")
-
-        def foo do
-          @bar.bar()
-        end
-      end
-
-  It is also possible to pass the module in elixir format
-
-      @bar Mockery.of(Bar)
-
-  but it is not recommended as it creates an unnecessary compile-time dependency
-  (see `mix xref graph` output for both versions).
-
-  #### Prepare for mocking (erlang module)
-
-      defmodule Foo do
-        @crypto Mockery.of(:crypto)
-
-        def foo do
-          @crypto.rand_seed()
-        end
-      end
-
-  #### Prepare for mocking with global mock
-
-      # test/support/global_mocks/bar.ex
-      defmodule BarGlobalMock do
-        def bar, do: :mocked
-      end
-
-      # lib/foo.ex
-      defmodule Foo do
-        @bar Mockery.of(Bar, by: BarGlobalMock)
-
-        def foo do
-          @bar.bar()
-        end
-      end
-
-  ## OTP21+
-
-  Internally mockery is using tuple calls to pass additional data to its proxy module
-  when mock is called. Tuple calls are disabled by default in OTP21+ and require additional
-  compile flag to be reenabled.
-
-      defmodule Foo do
-        @compile :tuple_calls
-        @bar Mockery.of("Bar")
-
-        # ...
-      end
-
-  If you don't want to reenable tuple calls, there's also new macro-based alternative
-  (for more information see `Mockery.Macro` module).
-  """
-  @spec of(
-          mod :: module | elixir_module_as_string,
-          opts :: [by: module | elixir_module_as_string]
-        ) :: module | proxy_tuple
   def of(mod, opts \\ [])
       when is_atom(mod)
       when is_binary(mod) do

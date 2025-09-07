@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.4.0 (2025-09-xx)
+
+- Deprecated `Mockery.of/2` function.
+
+  Tuple calls used by this function won't be officially supported in Mockery v3.
+  Users should migrate to the macro-based alternative in `Mockery.Macro`.
+
+
 ## 2.3.4 (2025-08-15)
 
 - Fixed warnings (Elixir 1.18)

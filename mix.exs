@@ -8,15 +8,6 @@ defmodule Mockery.Mixfile do
       app: :mockery,
       deps: deps(),
       description: description(),
-      dialyzer: [
-        flags: [
-          :error_handling,
-          :race_conditions,
-          :underspecs,
-          :unmatched_returns
-        ],
-        plt_add_apps: [:ex_unit, :mix]
-      ],
       docs: [
         extras: ["README.md", "EXAMPLES.md", "CHANGELOG.md"],
         main: "readme",
@@ -25,13 +16,7 @@ defmodule Mockery.Mixfile do
       elixir: "~> 1.3",
       elixirc_paths: elixirc_paths(Mix.env()),
       package: package(),
-      preferred_cli_env: [
-        coveralls: :test,
-        "coveralls.detail": :test,
-        "coveralls.json": :test
-      ],
       source_url: "https://github.com/appunite/mockery",
-      test_coverage: [tool: ExCoveralls],
       version: @version
     ]
   end
@@ -44,7 +29,6 @@ defmodule Mockery.Mixfile do
     [
       {:beam_inspect, "~> 0.1.1", only: :dev, runtime: false},
       {:credo, "~> 1.7", only: :dev, runtime: false},
-      {:excoveralls, "~> 0.7", only: :test, runtime: false},
       {:ex_doc, "~> 0.13", only: :dev, runtime: false}
     ]
   end

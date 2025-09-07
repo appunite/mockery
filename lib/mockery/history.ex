@@ -91,12 +91,12 @@ defmodule Mockery.History do
     quote do
       Utils.get_calls(unquote(mod), unquote(fun))
       |> Enum.reverse()
-      |> Enum.map(fn {call_arity, call_args} ->
+      |> Enum.map_join("\n", fn {call_arity, call_args} ->
         if unquote(arity) == call_arity do
           "#{white()}[" <>
             ([unquote(args), call_args]
              |> Enum.zip()
-             |> Enum.map(fn
+             |> Enum.map_join(", ", fn
                {Mockery.History.UnboundVar, called} ->
                  "#{green()}#{inspect(called)}#{white()}"
 
@@ -105,13 +105,11 @@ defmodule Mockery.History do
 
                {_given, called} ->
                  "#{red()}#{inspect(called)}#{white()}"
-             end)
-             |> Enum.join(", ")) <> "]"
+             end)) <> "]"
         else
           "#{red()}#{inspect(call_args)}#{white()}"
         end
       end)
-      |> Enum.join("\n")
     end
   end
 

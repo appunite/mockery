@@ -67,13 +67,4 @@ defmodule Mockery.HistoryTest do
 
     refute Process.get(Mockery.History)
   end
-
-  # TODO remove in v3
-  test "enable_history/1" do
-    Mockery.History.enable_history(true)
-    assert Process.get(Mockery.History)
-
-    Mockery.History.enable_history(false)
-    refute Process.get(Mockery.History)
-  end
 end

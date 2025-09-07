@@ -1,6 +1,6 @@
 # Mockery
 
-[![Build Status](https://github.com/appunite/mockery/actions/workflows/test.yml/badge.svg?branch=master)](https://github.com/appunite/mockery/actions) [![Hex.pm](https://img.shields.io/hexpm/v/mockery.svg)](https://hex.pm/packages/mockery) [![Hex.pm](https://img.shields.io/hexpm/dt/mockery.svg)](https://hex.pm/packages/mockery) [![Hex.pm](https://img.shields.io/hexpm/dw/mockery.svg)](https://hex.pm/packages/mockery)
+[![Build Status](https://github.com/appunite/mockery/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/appunite/mockery/actions) [![Hex.pm](https://img.shields.io/hexpm/v/mockery.svg)](https://hex.pm/packages/mockery) [![Hex.pm](https://img.shields.io/hexpm/dt/mockery.svg)](https://hex.pm/packages/mockery) [![Hex.pm](https://img.shields.io/hexpm/dw/mockery.svg)](https://hex.pm/packages/mockery)
 
 Simple mocking library for asynchronous testing in Elixir.
 

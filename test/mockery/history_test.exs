@@ -1,4 +1,3 @@
-# credo:disable-for-this-file Credo.Check.Design.AliasUsage
 defmodule Mockery.HistoryTest do
   use ExUnit.Case
   use Mockery

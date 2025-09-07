@@ -71,7 +71,6 @@ defmodule Mockery.History do
 
   def print(mod, fun, args) do
     quote do
-      # credo:disable-for-lines:1 Credo.Check.Design.AliasUsage
       if Mockery.Utils.history_enabled?() do
         """
         \n
@@ -89,15 +88,16 @@ defmodule Mockery.History do
     arity = Enum.count(args)
     args = postwalk_args(args)
 
+    # credo:disable-for-lines:9 Credo.Check.Refactor.Nesting
     quote do
       Utils.get_calls(unquote(mod), unquote(fun))
       |> Enum.reverse()
-      |> Enum.map(fn {call_arity, call_args} ->
+      |> Enum.map_join("\n", fn {call_arity, call_args} ->
         if unquote(arity) == call_arity do
           "#{white()}[" <>
             ([unquote(args), call_args]
              |> Enum.zip()
-             |> Enum.map(fn
+             |> Enum.map_join(", ", fn
                {Mockery.History.UnboundVar, called} ->
                  "#{green()}#{inspect(called)}#{white()}"
 
@@ -106,13 +106,11 @@ defmodule Mockery.History do
 
                {_given, called} ->
                  "#{red()}#{inspect(called)}#{white()}"
-             end)
-             |> Enum.join(", ")) <> "]"
+             end)) <> "]"
         else
           "#{red()}#{inspect(call_args)}#{white()}"
         end
       end)
-      |> Enum.join("\n")
     end
   end
 

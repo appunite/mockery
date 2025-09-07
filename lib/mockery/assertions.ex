@@ -221,8 +221,7 @@ defmodule Mockery.Assertions do
     quote do
       unquote(mod)
       |> Utils.get_calls(unquote(fun))
-      |> Enum.filter(&match?({_, unquote(args)}, &1))
-      |> Enum.count()
+      |> Enum.count(&match?({_, unquote(args)}, &1))
       |> (&(&1 == unquote(times))).()
     end
   end
@@ -231,8 +230,7 @@ defmodule Mockery.Assertions do
     quote do
       unquote(mod)
       |> Utils.get_calls(unquote(fun))
-      |> Enum.filter(&match?({_, unquote(args)}, &1))
-      |> Enum.count()
+      |> Enum.count(&match?({_, unquote(args)}, &1))
       |> (&(&1 in unquote(times))).()
     end
   end

@@ -88,6 +88,7 @@ defmodule Mockery.History do
     arity = Enum.count(args)
     args = postwalk_args(args)
 
+    # credo:disable-for-lines:9 Credo.Check.Refactor.Nesting
     quote do
       Utils.get_calls(unquote(mod), unquote(fun))
       |> Enum.reverse()

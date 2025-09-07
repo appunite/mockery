@@ -1,6 +1,22 @@
 defmodule Mockery.Macro do
   @moduledoc """
-  Alternative macro-based way to prepare module for mocking/asserting.
+  Provides macros that enable mocking and assertions.
+
+  This module should be included in your own modules with `use Mockery.Macro`.
+
+  It imports the macros defined here and sets up compilation options to suppress warnings
+  for undefined references to internal **Mockery.Proxy.MacroProxy**.
+
+  ## Example
+
+      defmodule Foo do
+        use Mockery.Macro
+
+        def call_bar do
+          mockable(Bar).bar()
+        end
+      end
+
   """
 
   defmacro __using__(_) do
@@ -43,13 +59,6 @@ defmodule Mockery.Macro do
           mockable(Bar, by: BarGlobalMock).bar()
         end
       end
-
-  ## Mockery.of/2 comparison
-
-    * It's based on macro and process dictionary instead of on tuple calls. (Tuple calls
-    are disabled by default in OTP21+ and require additional compile flag to be reenabled)
-    * It doesn't support passing module names as a string as it don't create unwanted compile-time
-    dependencies between modules
 
   ## Potential issues
 

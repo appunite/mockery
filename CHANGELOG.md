@@ -7,6 +7,7 @@
   Tuple calls used by this function won't be officially supported in Mockery v3.
   Users should migrate to the macro-based alternative in `Mockery.Macro`.
 
+- Added `defmock/2` and `defmock/3` macros
 
 ## 2.3.4 (2025-08-15)
 

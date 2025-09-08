@@ -60,12 +60,16 @@ defmodule Mockery.Macro do
         end
       end
 
-  ## Potential issues
-
-  Output of `mockable/2` macro should not be bind to variable or module attribute.
-  If it happens, you'll see a compilation warning at best, and in the worst case Mockery won't
-  work correctly.
-
+  > #### Potential issues {: .warning}
+  >
+  > Output of `mockable/2` macro should not be bind to variable or module attribute.
+  > If it happens, you'll see a compilation warning at best, and in the worst case Mockery won't
+  > work correctly.
+  >
+  > Examples of invalid usage:
+  >     @var mockable(Foo)
+  >
+  >     var = mockable(Foo)
   """
   @spec mockable(
           mod :: module,

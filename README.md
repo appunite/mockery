@@ -246,10 +246,7 @@ It means that:
 
 ## Advanced examples
 
-For advanced usage examples see
-
-<examples.md>
-</examples.md>
+For advanced usage examples see [EXAMPLES.md](EXAMPLES.md)
 
 ## External resources
 

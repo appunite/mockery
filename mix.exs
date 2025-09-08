@@ -23,7 +23,7 @@ defmodule Mockery.Mixfile do
 
   defp deps do
     [
-      {:beam_inspect, "~> 0.1.1", only: :dev, runtime: false},
+      {:beam_inspect, "~> 0.1.2", only: :dev, runtime: false},
       {:credo, "~> 1.7", only: :dev, runtime: false},
       {:ex_doc, "~> 0.13", only: :dev, runtime: false}
     ]

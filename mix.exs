@@ -1,18 +1,14 @@
 defmodule Mockery.Mixfile do
   use Mix.Project
 
-  @version "2.3.4"
+  @version "2.4.0"
 
   def project do
     [
       app: :mockery,
       deps: deps(),
       description: description(),
-      docs: [
-        extras: ["README.md", "EXAMPLES.md", "CHANGELOG.md"],
-        main: "readme",
-        source_ref: @version
-      ],
+      docs: docs(),
       elixir: "~> 1.3",
       elixirc_paths: elixirc_paths(Mix.env()),
       package: package(),
@@ -37,13 +33,21 @@ defmodule Mockery.Mixfile do
     "Simple mocking library for asynchronous testing."
   end
 
+  defp docs do
+    [
+      extras: ["README.md", "EXAMPLES.md", "CHANGELOG.md"],
+      main: "readme",
+      source_ref: @version
+    ]
+  end
+
   defp elixirc_paths(:test), do: ["lib", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
 
   defp package do
     [
       maintainers: ["Tobiasz Małecki"],
-      licenses: ["Apache 2.0"],
+      licenses: ["Apache-2.0"],
       links: %{
         "GitHub" => "https://github.com/appunite/mockery",
         "Changelog" => "https://hexdocs.pm/mockery/changelog.html"

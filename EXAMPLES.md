@@ -5,12 +5,12 @@
 Let's assume we have a unique resource and function that is fetching it if exist or create new otherwise.
 
 ```elixir
-  @service Mockery.of("Service")
+  use Mockery.Macro
+  defmock :service, Service
 
   def fetch_or_create do
-    with \
-      {:error, :not_found} <- @service.fetch(),
-      {:ok, resource} <- @service.create()
+    with {:error, :not_found} <- service().fetch(),
+         {:ok, resource} <- service().create()
     do
       {:ok, resource}
     else
@@ -27,12 +27,13 @@ Let's assume we have a unique resource and function that is fetching it if exist
 How to cover `{:error, %Changeset{}} -> fetch_or_create()` with tests?
 
 ```elixir
-mock Service, :create, {:error, %Ecto.Changeset{...}}
-mock Service, [fetch: 0], fn ->
-  mock Service, [fetch: 0], &Service.fetch/0
+mock(Service, :create, {:error, %Ecto.Changeset{...}})
+
+mock(Service, [fetch: 0], fn ->
+  mock(Service, [fetch: 0], &Service.fetch/0)
 
   {:error, :not_found}
-end
+end)
 
 assert {:ok, %Resource{}} = fetch_or_create()
 ```
@@ -55,12 +56,13 @@ Run tasks synchronously in test environment for easier testing
 
 ```elixir
   defmodule MyApp.Controller do
-    @task_supervisor Mockery.of("Task.Supervisor")
-    @service Mockery.of("MyApp.Service")
+    use Mockery.Macro
+    defmock :task_supervisor, Task.Supervisor
+    defmock :service, MyApp.Service
 
     def action do
-      @task_supervisor.start_child(MyApp.TaskSupervisor, fn->
-        @service.something()
+      task_supervisor().start_child(MyApp.TaskSupervisor, fn->
+        service().something()
       end)
     end
   end
@@ -72,7 +74,7 @@ Run tasks synchronously in test environment for easier testing
     import Mockery.Assertions
 
     test "something is called" do
-      mock Task.Supervisor, :start_child, fn(_, fun) -> fun.() end
+      mock(Task.Supervisor, :start_child, fn(_, fun) -> fun.() end)
       MyApp.Controller.action()
 
       assert_called MyApp.Service, :something

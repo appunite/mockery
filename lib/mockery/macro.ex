@@ -4,8 +4,8 @@ defmodule Mockery.Macro do
 
   This module should be included in your own modules with `use Mockery.Macro`.
 
-  It imports the macros defined here and sets up compilation options to suppress warnings
-  for undefined references to internal **Mockery.Proxy.MacroProxy**.
+  It imports the macros defined here and sets up compilation option to suppress warnings
+  about **Mockery.Proxy.MacroProxy**.
 
   ## Example
 
@@ -29,9 +29,9 @@ defmodule Mockery.Macro do
   @doc """
   Function used to prepare module for mocking/asserting.
 
-  For Mix.env other than :test it returns the first argument unchanged.
-  If Mix.env equal :test it creates a proxy to the original module.
-  When Mix is missing it assumes that env is :prod.
+  This macro enables mocking and assertions by setting up a proxy to the original module.
+  When mocking is enabled via configuration (`config :mockery, enable: true`), it creates a proxy.
+  Otherwise, it returns the original module unchanged.
 
   ## Examples
   #### Prepare for mocking
@@ -76,8 +76,8 @@ defmodule Mockery.Macro do
           opts :: [by: module]
         ) :: module
   defmacro mockable(mod, opts \\ []) do
-    case opts[:env] || mix_env() do
-      :test ->
+    case Application.get_env(:mockery, :enable) || test_env?(opts, __CALLER__) do
+      true ->
         quote do
           mocked_calls = Process.get(Mockery.MockableModule, [])
           Process.put(Mockery.MockableModule, [{unquote(mod), unquote(opts[:by])} | mocked_calls])
@@ -87,6 +87,25 @@ defmodule Mockery.Macro do
 
       _ ->
         mod
+    end
+  end
+
+  @warn "Mockery.Macro.mockable/2 based on Mix.env/0 is deprecated, " <>
+          "please set `config :mockery, enable: true` in config/test.exs " <>
+          "and recompile your project"
+
+  @doc false
+  def warn, do: @warn
+
+  defp test_env?(opts, caller) do
+    case opts[:env] || mix_env() do
+      :test ->
+        IO.warn(@warn, caller)
+
+        true
+
+      _ ->
+        false
     end
   end
 

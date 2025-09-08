@@ -4,8 +4,12 @@
 
 - Deprecated `Mockery.of/2` function.
 
-  Tuple calls used by this function won't be officially supported in Mockery v3.
-  Users should migrate to the macro-based alternative in `Mockery.Macro`.
+  - Tuple calls used by this function won't be officially supported in Mockery v3.
+    Users should migrate to the macro-based alternative in `Mockery.Macro`.
+
+- `Mockery.Macro.mockable/2` based on `Mix.env/0` is deprecated.
+
+   - Set `config :mockery, enable: true` in `config/test.exs` and recompile your project.
 
 - Added `defmock/2` and `defmock/3` macros
 

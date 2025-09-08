@@ -33,6 +33,16 @@ def deps do
 end
 ```
 
+### Enabling mocking in test environment
+
+Add the following line to your `config/test.exs` file:
+
+```elixir
+config :mockery, enable: true
+```
+
+After adding this setting, make sure to recompile your project.
+
 ### Preparation of the module for mocking
 
 ```elixir

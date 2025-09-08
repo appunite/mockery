@@ -1,42 +1,67 @@
 defmodule Mockery.MacroTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case, async: false
   use Mockery.Macro
 
   describe "mockable/2" do
     test "dev env (atom erlang mod)" do
-      assert mockable(:a, env: :dev) == :a
+      Application.put_env(:mockery, :enable, false)
+      on_exit(fn -> Application.put_env(:mockery, :enable, true) end)
+
+      quoted_call = quote do: mockable(:a, env: :dev)
+      assert Macro.expand_once(quoted_call, __ENV__) == :a
       refute Process.get(Mockery.MockableModule)
 
-      assert mockable(:a, env: :dev, by: X) == :a
+      quoted_call = quote do: mockable(:a, env: :dev, by: X)
+      assert Macro.expand_once(quoted_call, __ENV__) == :a
       refute Process.get(Mockery.MockableModule)
     end
 
-    test "test env (atom erlang mod) without global mock" do
+    test "config enable: true (atom erlang mod) without global mock" do
       assert mockable(:a) == Mockery.Proxy.MacroProxy
       assert Process.get(Mockery.MockableModule) == [{:a, nil}]
     end
 
-    test "test env (atom erlang mod) with global mock" do
+    test "config enable: true (atom erlang mod) with global mock" do
       assert mockable(:a, by: X) == Mockery.Proxy.MacroProxy
       assert Process.get(Mockery.MockableModule) == [{:a, X}]
     end
 
     test "dev env (atom elixir mod)" do
-      assert mockable(A, env: :dev) == A
+      Application.put_env(:mockery, :enable, nil)
+      on_exit(fn -> Application.put_env(:mockery, :enable, true) end)
+
+      quoted_call = quote do: mockable(A, env: :dev)
+      assert Macro.expand(quoted_call, __ENV__) == A
       refute Process.get(Mockery.MockableModule)
 
-      assert mockable(A, env: :dev, by: X) == A
+      quoted_call = quote do: mockable(A, env: :dev, by: X)
+      assert Macro.expand(quoted_call, __ENV__) == A
       refute Process.get(Mockery.MockableModule)
     end
 
-    test "test env (atom elixir mod) without global mock" do
+    test "config enable: true (atom elixir mod) without global mock" do
       assert mockable(A) == Mockery.Proxy.MacroProxy
       assert Process.get(Mockery.MockableModule) == [{A, nil}]
     end
 
-    test "test env (atom elixir mod) with global mock" do
+    test "config enable: true (atom elixir mod) with global mock" do
       assert mockable(A, by: X) == Mockery.Proxy.MacroProxy
       assert Process.get(Mockery.MockableModule) == [{A, X}]
+    end
+
+    import ExUnit.CaptureIO
+
+    test "test env" do
+      Application.put_env(:mockery, :enable, nil)
+      on_exit(fn -> Application.put_env(:mockery, :enable, true) end)
+
+      quoted_call = quote do: mockable(A)
+      {{result, _binding}, io} = with_io(:stderr, fn -> Code.eval_quoted(quoted_call) end)
+      assert result == Mockery.Proxy.MacroProxy
+      assert Process.get(Mockery.MockableModule) == [{A, nil}]
+
+      assert io =~ "warning:"
+      assert io =~ Mockery.Macro.warn()
     end
   end
 

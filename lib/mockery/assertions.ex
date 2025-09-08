@@ -4,9 +4,9 @@ defmodule Mockery.Assertions do
 
   **NOTE:** Mockery doesn't keep track of function calls:
 
-    * on modules that weren't prepared by `Mockery.of/2` or `Mockery.Macro.mockable/2`
+    * on modules that weren't prepared by `Mockery.Macro.mockable/2`
 
-    * for `MIX_ENV` other than `:test`
+    * when `config :mockery, enable: true` isn't set
 
     * for function called outside of test process (in spawned Task, GenServer etc.)
   """

@@ -1,6 +1,6 @@
 # Mockery
 
-[![Build Status](https://github.com/appunite/mockery/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/appunite/mockery/actions) [![Hex.pm](https://img.shields.io/hexpm/v/mockery.svg)](https://hex.pm/packages/mockery) [![Hex.pm](https://img.shields.io/hexpm/dt/mockery.svg)](https://hex.pm/packages/mockery) [![Hex.pm](https://img.shields.io/hexpm/dw/mockery.svg)](https://hex.pm/packages/mockery)
+[![Build Status](https://github.com/appunite/mockery/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/appunite/mockery/actions) [![Hex.pm](https://img.shields.io/hexpm/v/mockery.svg)](https://hex.pm/packages/mockery) [![Hex.pm](https://img.shields.io/hexpm/dt/mockery.svg)](https://hex.pm/packages/mockery) [![Hex.pm](https://img.shields.io/hexpm/dw/mockery.svg)](https://hex.pm/packages/mockery) [![License](https://img.shields.io/hexpm/l/mockery.svg)](https://github.com/appunite/mockery/blob/master/LICENSE)
 
 Simple mocking library for asynchronous testing in Elixir.
 
@@ -191,7 +191,8 @@ end
 
 ### Refute
 
-Every assert_called/x function/macro has its refute_called/x counterpart.<br>
+Every `assert_called/x` function/macro has its `refute_called/x` counterpart.
+
 For more information see [docs](https://hexdocs.pm/mockery/Mockery.Assertions.html)
 
 ### History
@@ -237,7 +238,8 @@ end
 
 ### Restrictions
 
-Global mock module doesn't have to contain every function exported by the original module, but it cannot contain a function which is not exported by the original module.<br>
+Global mock module doesn't have to contain every function exported by the original module, but it cannot contain a function which is not exported by the original module.
+
 It means that:
 
 - when you remove a function from the original module, you have to remove it from global mock module or Mockery will raise exception

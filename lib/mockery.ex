@@ -1,6 +1,46 @@
 defmodule Mockery do
   @moduledoc """
-  Core functionality
+  Provides core mocking functionality for Elixir tests.
+
+  This module offers tools to create and manage mocks within the
+  context of individual test processes. Mocks created here are isolated and
+  will not affect other processes, making them safe for concurrent and
+  asynchronous testing.
+
+  ## Using Mockery in your tests
+
+  By adding `use Mockery` in your test modules, you automatically import several useful modules and functions:
+
+  - Core Mockery function `mock/3`
+  - Assertion helpers from `Mockery.Assertions` ([`assert_called/2`](Mockery.Assertions.html#assert_called/2), [`refute_called/2`](Mockery.Assertions.html#refute_called/2), ...)
+  - History control functions from `Mockery.History` ([`enable_history/0`](Mockery.History.html#enable_history/0), [`disable_history/0`](Mockery.History.html#disable_history/0))
+
+  Example usage:
+
+      defmodule MyApp.User do
+        def greet, do: "Hello, User!"
+      end
+
+      defmodule MyApp.Greeter do
+        use Mockery.Macro
+
+        def greet_user do
+          mockable(MyApp.User).greet()
+        end
+      end
+
+      defmodule MyApp.GreeterTest do
+        use ExUnit.Case, async: true
+        use Mockery
+
+        test "mock greet/0 from MyApp.User" do
+          mock(MyApp.User, [greet: 0], "Hello, Mocked User!")
+
+          assert MyApp.Greeter.greet_user() == "Hello, Mocked User!"
+          assert_called MyApp.User, :greet, [], 1
+        end
+      end
+
   """
   alias Mockery.Utils
 

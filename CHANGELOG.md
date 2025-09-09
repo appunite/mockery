@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.4.0 (2025-09-xx)
+## 2.4.0 (2025-09-09)
 
 - Deprecated `Mockery.of/2` function.
 

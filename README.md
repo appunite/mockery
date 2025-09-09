@@ -28,7 +28,7 @@ Simple mocking library for asynchronous testing in Elixir.
 ```elixir
 def deps do
   [
-    {:mockery, "~> 2.3.0", runtime: false}
+    {:mockery, "~> 2.4", runtime: false}
   ]
 end
 ```
@@ -145,6 +145,39 @@ defmodule OtherTest do
   end
 end
 ```
+
+### Using `defmock`
+
+For cleaner code, you can use the `defmock/2` or `defmock/3` macro to define a private macro
+that expands to `mockable/1` or `mockable/2`. This way, you can call the macro instead of using
+`mockable` directly.
+
+Example:
+
+```elixir
+defmodule Foo do
+  use Mockery.Macro
+
+  defmock :bar, Bar, by: BarGlobalMock
+
+  def call_bar do
+    bar().function_call()
+  end
+end
+```
+
+This is equivalent to:
+
+```elixir
+defmodule Foo do
+  use Mockery.Macro
+
+  def call_bar do
+    mockable(Bar, by: BarGlobalMock).function_call()
+  end
+end
+```
+
 
 ## Checking if function was called
 

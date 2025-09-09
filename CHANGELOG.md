@@ -13,6 +13,8 @@
 
 - Added `defmock/2` and `defmock/3` macros
 
+- Added `assert_called/x` and `refute_called/x` to `locals_without_parens` in `.formatter.exs`
+
 ## 2.3.4 (2025-08-15)
 
 - Fixed warnings (Elixir 1.18)

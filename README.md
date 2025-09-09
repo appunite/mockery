@@ -43,6 +43,17 @@ config :mockery, enable: true
 
 After adding this setting, make sure to recompile your project.
 
+### Formatter Configuration
+
+To help the Elixir formatter recognize Mockery-specific macros (such as `defmock`, `assert_called`, and `refute_called`) without requiring parentheses, you should import the locals without parens configuration from Mockery in your `.formatter.exs` file:
+
+```elixir
+[
+  inputs: ["{mix,.formatter}.exs", "{config,lib,test}/**/*.{ex,exs}"],
+  import_deps: [:mockery]
+]
+```
+
 ### Preparation of the module for mocking
 
 ```elixir

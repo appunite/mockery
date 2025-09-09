@@ -1,14 +1,18 @@
 defmodule Mockery.Assertions do
   @moduledoc """
-  Set of additional assertion functions.
+  Additional assertion helpers for verifying calls made to mocked modules and functions in tests.
 
-  **NOTE:** Mockery doesn't keep track of function calls:
+  This module provides macros and functions to assert whether certain functions have been called,
+  how many times they have been called, and with what arguments.
 
-    * on modules that weren't prepared by `Mockery.Macro.mockable/2`
+  > #### Important Notes {: .warning}
+  >
+  > * Mockery only tracks calls to modules prepared by `Mockery.Macro.mockable/2`.
+  >
+  > * Tracking only works when the configuration `config :mockery, enable: true` is set.
+  >
+  > * Calls made outside the test process (such as those in spawned Tasks, GenServers, etc.) are not tracked.
 
-    * when `config :mockery, enable: true` isn't set
-
-    * for function called outside of test process (in spawned Task, GenServer etc.)
   """
 
   alias Mockery.Error

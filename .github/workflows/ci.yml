@@ -78,3 +78,39 @@ jobs:
 
       - name: Run Tests
         run: mix test
+
+  # OTP <= 24 needs OpenSSL 1.1 — run inside a container image that provides it
+  test-legacy:
+    name: Run Tests (legacy in container)
+    runs-on: ubuntu-latest
+    needs:
+      - format-check
+      - credo-check
+    strategy:
+      matrix:
+        include:
+          - elixir: "1.14"
+            otp: "23"
+            image: "hexpm/elixir:1.14.5-erlang-23.3.4.5-alpine-3.16.0"
+          - elixir: "1.13"
+            otp: "22"
+            image: "hexpm/elixir:1.13.4-erlang-22.1.8.1-debian-bullseye-20250811"
+          - elixir: "1.12"
+            otp: "22"
+            image: "hexpm/elixir:1.12.3-erlang-22.1.8.1-debian-bullseye-20250811-slim"
+    container:
+      image: ${{ matrix.image }}
+    steps:
+      - uses: actions/checkout@v4
+
+      # Elixir/OTP come from the container image, so no setup-beam here
+      - name: Prepare Mix
+        run: |
+          mix local.hex --force
+          mix local.rebar --force
+
+      - name: Fetch Dependencies
+        run: mix deps.get
+
+      - name: Run Tests
+        run: mix test

@@ -56,7 +56,17 @@ defmodule Mockery.MacroTest do
       on_exit(fn -> Application.put_env(:mockery, :enable, true) end)
 
       quoted_call = quote do: mockable(A)
-      {{result, _binding}, io} = with_io(:stderr, fn -> Code.eval_quoted(quoted_call) end)
+
+      # {{result, _binding}, io} = with_io(:stderr, fn -> Code.eval_quoted(quoted_call) end)
+      io =
+        capture_io(:stderr, fn ->
+          Process.put(:mockery_eval, Code.eval_quoted(quoted_call))
+        end)
+
+      {result, _binding} = Process.get(:mockery_eval)
+      Process.delete(:mockery_eval)
+      # with_io replacement ends here
+
       assert result == Mockery.Proxy.MacroProxy
       assert Process.get(Mockery.MockableModule) == [{A, nil}]
 

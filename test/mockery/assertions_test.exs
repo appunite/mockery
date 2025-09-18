@@ -584,7 +584,6 @@ defmodule Mockery.AssertionsTest do
   defp wrap_msg(msg), do: "\n\n#{msg}\n"
 
   describe "assert_called!/3 without opts" do
-    @describetag :x1
     test "succeeds when function was called once (zero arity)" do
       Utils.push_call(A, :fun, 0, [])
 
@@ -612,7 +611,6 @@ defmodule Mockery.AssertionsTest do
   end
 
   describe "assert_called!/3 with :arity in opts" do
-    @describetag :x2
     test "succeeds when function was called once (zero arity)" do
       Utils.push_call(A, :fun, 0, [])
 
@@ -665,7 +663,6 @@ defmodule Mockery.AssertionsTest do
   end
 
   describe "assert_called!/3 with :args in opts" do
-    @describetag :x3
     test "succeeds when function was called once (zero arity)" do
       Utils.push_call(A, :fun, 0, [])
       Utils.push_call(A, :fun, 2, ["a", "b"])
@@ -736,7 +733,6 @@ defmodule Mockery.AssertionsTest do
   end
 
   describe "assert_called!/3 with :times in opts" do
-    @describetag :x4
     @times 2
     test "works correctly when times is non_neg_integer" do
       error_msg = wrap_msg("A.fun/x was not called expected number of times")
@@ -900,7 +896,6 @@ defmodule Mockery.AssertionsTest do
   end
 
   describe "assert_called!/3 with multiple keys in opts" do
-    @describetag :x5
     test "warns when both :arity and :args opts are provided" do
       Utils.push_call(A, :fun, 2, ["a", "b"])
 

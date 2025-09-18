@@ -244,4 +244,14 @@ defmodule Mockery.Assertions do
       raise Error, "args for #{unquote(Utils.print_mod(mod))}.#{unquote(fun)} should be a list"
     end
   end
+
+  defmacro assert_called!(mod, fun, opts \\ []) do
+    _ = mod
+    _ = fun
+    _ = opts
+
+    quote do
+      ExUnit.Assertions.assert(false)
+    end
+  end
 end

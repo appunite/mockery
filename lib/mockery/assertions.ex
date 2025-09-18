@@ -247,6 +247,21 @@ defmodule Mockery.Assertions do
 
   import ExUnit.Assertions
 
+  @type function_name :: atom()
+
+  @type arity_opt :: non_neg_integer()
+  @type args_opt :: [term()]
+  @type times_opt ::
+          non_neg_integer()
+          | {:in, [non_neg_integer()]}
+          | {:in, Range.t()}
+          | {:at_least, non_neg_integer()}
+          | {:at_most, non_neg_integer()}
+
+  @type opts :: [{:arity, arity_opt} | {:args, args_opt} | {:times, times_opt}]
+
+  @doc since: "2.5.0"
+  @spec assert_called!(module(), function_name(), opts) :: true | no_return()
   defmacro assert_called!(mod, fun, opts \\ []) do
     arity_opt = Keyword.get(opts, :arity, :no_arity)
     args_opt = Keyword.get(opts, :args, :no_args)

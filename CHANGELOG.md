@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.4.1 (2025-09-19)
+
+- Fix: Deprecation warning for mockable/2 was crashing for Elixir < 1.14
+
 ## 2.4.0 (2025-09-09)
 
 - Deprecated `Mockery.of/2` function.

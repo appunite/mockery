@@ -281,16 +281,23 @@ defmodule Mockery.Assertions do
         end
 
       true ->
-        warn_ast = Mockery.Assertions.warn_arity_and_args(arity_opt, args_opt)
+        warn_ast = warn_arity_and_args(arity_opt, args_opt)
+
+        match_handler = handle_match(arity_opt, args_opt)
+        times_handler = handle_times(times_opt, __CALLER__)
+
+        mod = Macro.expand(mod, __CALLER__)
+        fun = Macro.expand(fun, __CALLER__)
+        error_msg = error_msg(mod, fun, arity_opt, args_opt, times_opt)
 
         quote do
           unquote(warn_ast)
 
           assert unquote(mod)
                  |> Mockery.Utils.get_calls(unquote(fun))
-                 |> unquote(Mockery.Assertions.handle_match(arity_opt, args_opt))
-                 |> unquote(Mockery.Assertions.handle_times(times_opt, __CALLER__)),
-                 unquote(Mockery.Assertions.error_msg(mod, fun, arity_opt, args_opt, times_opt))
+                 |> unquote(match_handler)
+                 |> unquote(times_handler),
+                 unquote(error_msg)
         end
     end
   end
@@ -309,24 +316,22 @@ defmodule Mockery.Assertions do
     not is_list(args)
   end
 
-  @doc false
-  def handle_match(arity_opt, args_opt)
+  defp handle_match(arity_opt, args_opt)
 
-  def handle_match(:no_arity, :no_args) do
+  defp handle_match(:no_arity, :no_args) do
     quote do: then(& &1)
   end
 
-  def handle_match(arity, :no_args) do
+  defp handle_match(arity, :no_args) do
     quote do: Enum.filter(&match?({unquote(arity), _}, &1))
   end
 
-  def handle_match(_, args) do
+  defp handle_match(_, args) do
     quote do: Enum.filter(&match?({_, unquote(args)}, &1))
   end
 
-  @doc false
   # credo:disable-for-lines:1 Credo.Check.Refactor.CyclomaticComplexity
-  def handle_times(times_opt, caller) do
+  defp handle_times(times_opt, caller) do
     case Macro.expand(times_opt, caller) do
       :no_times ->
         quote do: then(&(not Enum.empty?(&1)))
@@ -356,55 +361,41 @@ defmodule Mockery.Assertions do
     end
   end
 
-  @doc false
-  def error_msg(mod, fun, arity, args, times)
+  defp error_msg(mod, fun, arity, args, times)
 
-  def error_msg(mod, fun, :no_arity, :no_args, :no_times) do
-    quote do
-      "#{inspect(unquote(mod))}.#{unquote(fun)}/x was not called"
-    end
+  defp error_msg(mod, fun, :no_arity, :no_args, :no_times) do
+    "#{inspect(mod)}.#{fun}/x was not called"
   end
 
-  def error_msg(mod, fun, :no_arity, :no_args, _) do
-    quote do
-      "#{inspect(unquote(mod))}.#{unquote(fun)}/x was not called expected number of times"
-    end
+  defp error_msg(mod, fun, :no_arity, :no_args, _) do
+    "#{inspect(mod)}.#{fun}/x was not called expected number of times"
   end
 
-  def error_msg(mod, fun, arity, :no_args, :no_times) do
-    quote do
-      "#{inspect(unquote(mod))}.#{unquote(fun)}/#{unquote(arity)} was not called"
-    end
+  defp error_msg(mod, fun, arity, :no_args, :no_times) do
+    "#{inspect(mod)}.#{fun}/#{arity} was not called"
   end
 
-  def error_msg(mod, fun, arity, :no_args, _times) do
-    quote do
-      "#{inspect(unquote(mod))}.#{unquote(fun)}/#{unquote(arity)} was not called expected number of times"
-    end
+  defp error_msg(mod, fun, arity, :no_args, _times) do
+    "#{inspect(mod)}.#{fun}/#{arity} was not called expected number of times"
   end
 
-  def error_msg(mod, fun, _arity, args, :no_times) when is_list(args) do
+  defp error_msg(mod, fun, _arity, args, :no_times) when is_list(args) do
     arity = Enum.count(args)
 
-    quote do
-      "#{inspect(unquote(mod))}.#{unquote(fun)}/#{unquote(arity)} was not called with given args"
-    end
+    "#{inspect(mod)}.#{fun}/#{arity} was not called with given args"
   end
 
-  def error_msg(mod, fun, _arity, args, _times) when is_list(args) do
+  defp error_msg(mod, fun, _arity, args, _times) when is_list(args) do
     arity = Enum.count(args)
 
-    quote do
-      "#{inspect(unquote(mod))}.#{unquote(fun)}/#{unquote(arity)} was not called with given args expected number of times"
-    end
+    "#{inspect(mod)}.#{fun}/#{arity} was not called with given args expected number of times"
   end
 
-  @doc false
-  def warn_arity_and_args(:no_arity, :no_args), do: :ok
-  def warn_arity_and_args(_arity_opt, :no_args), do: :ok
-  def warn_arity_and_args(:no_arity, _args_opt), do: :ok
+  defp warn_arity_and_args(:no_arity, :no_args), do: :ok
+  defp warn_arity_and_args(_arity_opt, :no_args), do: :ok
+  defp warn_arity_and_args(:no_arity, _args_opt), do: :ok
 
-  def warn_arity_and_args(_arity_opt, _args_opt) do
+  defp warn_arity_and_args(_arity_opt, _args_opt) do
     warn =
       ":arity and :args options are mutually exclusive in assert_called!/3, " <>
         ":arity will be ignored"

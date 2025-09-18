@@ -325,6 +325,7 @@ defmodule Mockery.Assertions do
   end
 
   @doc false
+  # credo:disable-for-lines:1 Credo.Check.Refactor.CyclomaticComplexity
   def handle_times(times_opt, caller) do
     case Macro.expand(times_opt, caller) do
       :no_times ->

@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.5.0 ()
+
+- This release requires Elixir ~> 1.15
+
 ## 2.4.1 (2025-09-19)
 
 - Fix: Deprecation warning for mockable/2 was crashing for Elixir < 1.14

@@ -100,22 +100,12 @@ defmodule Mockery.Macro do
   defp test_env?(opts, caller) do
     case opts[:env] || mix_env() do
       :test ->
-        warn(caller)
+        IO.warn(@warn, caller)
 
         true
 
       _ ->
         false
-    end
-  end
-
-  if Version.match?(System.version(), ">= 1.14.0") do
-    defp warn(caller) do
-      IO.warn(@warn, caller)
-    end
-  else
-    defp warn(_caller) do
-      IO.warn(@warn)
     end
   end
 

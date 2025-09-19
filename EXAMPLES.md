@@ -77,7 +77,7 @@ Run tasks synchronously in test environment for easier testing
       mock(Task.Supervisor, :start_child, fn(_, fun) -> fun.() end)
       MyApp.Controller.action()
 
-      assert_called MyApp.Service, :something
+      assert_called! MyApp.Service, :something
     end
   end
 ```

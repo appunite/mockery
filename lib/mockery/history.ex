@@ -35,7 +35,7 @@ defmodule Mockery.History do
         #...
 
         enable_history()
-        assert_called Foo, :bar, [_, :a]
+        assert_called! Foo, :bar, args: [_, :a]
       end
 
   """
@@ -56,7 +56,7 @@ defmodule Mockery.History do
         #...
 
         disable_history()
-        assert_called Foo, :bar, [_, :a]
+        assert_called! Foo, :bar, args: [_, :a]
       end
 
   """

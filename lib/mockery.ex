@@ -12,7 +12,7 @@ defmodule Mockery do
   By adding `use Mockery` in your test modules, you automatically import several useful modules and functions:
 
   - Core Mockery function `mock/3`
-  - Assertion helpers from `Mockery.Assertions` ([`assert_called/2`](Mockery.Assertions.html#assert_called/2), [`refute_called/2`](Mockery.Assertions.html#refute_called/2), ...)
+  - Assertion helpers from `Mockery.Assertions` ([`assert_called!/3`](Mockery.Assertions.html#assert_called!/3), [`refute_called/2`](Mockery.Assertions.html#refute_called/2), ...)
   - History control functions from `Mockery.History` ([`enable_history/0`](Mockery.History.html#enable_history/0), [`disable_history/0`](Mockery.History.html#disable_history/0))
 
   Example usage:
@@ -37,7 +37,7 @@ defmodule Mockery do
           mock(MyApp.User, [greet: 0], "Hello, Mocked User!")
 
           assert MyApp.Greeter.greet_user() == "Hello, Mocked User!"
-          assert_called MyApp.User, :greet, [], 1
+          assert_called! MyApp.User, :greet, args: [], times: 1
         end
       end
 

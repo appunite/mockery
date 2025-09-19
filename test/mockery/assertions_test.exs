@@ -581,7 +581,11 @@ defmodule Mockery.AssertionsTest do
   import Mockery.Assertions
   alias Mockery.Utils
 
-  defp wrap_msg(msg), do: "\n\n#{msg}\n\n"
+  if Version.match?(System.version(), "~> 1.16") do
+    defp wrap_msg(msg), do: "\n\n#{msg}\n\n"
+  else
+    defp wrap_msg(msg), do: "\n\n#{msg}\n     \n"
+  end
 
   describe "assert_called!/3 without opts" do
     test "succeeds when function was called once (zero arity)" do

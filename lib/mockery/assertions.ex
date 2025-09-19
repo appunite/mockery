@@ -247,10 +247,35 @@ defmodule Mockery.Assertions do
 
   import ExUnit.Assertions
 
+  @typedoc "Function name (an atom identifying the function)."
   @type function_name :: atom()
 
+  @typedoc """
+  Option value for the `:arity` key in `opts`.
+
+  A non-negative integer narrowing the match to a specific function arity.
+  """
   @type arity_opt :: non_neg_integer()
+
+  @typedoc """
+  Option value for the `:args` key in `opts`.
+
+  A list of terms representing the argument pattern to match recorded calls.
+  """
   @type args_opt :: [term()]
+
+  @typedoc """
+  Option value for the `:times` key in `opts`.
+
+  How many times the function is expected to be called.
+
+  Accepts:
+    - a non-negative integer for exact count
+    - `{:in, [integers]}` for specific allowed counts
+    - `{:in, Range.t()}` for a range of allowed counts
+    - `{:at_least, non_neg_integer()}` for a lower bound
+    - `{:at_most, non_neg_integer()}` for an upper bound
+  """
   @type times_opt ::
           non_neg_integer()
           | {:in, [non_neg_integer()]}
@@ -258,6 +283,11 @@ defmodule Mockery.Assertions do
           | {:at_least, non_neg_integer()}
           | {:at_most, non_neg_integer()}
 
+  @typedoc """
+  Keyword options accepted by `assert_called!/3`.
+
+  Supported keys: `:arity`, `:args`, and `:times`.
+  """
   @type opts :: [{:arity, arity_opt} | {:args, args_opt} | {:times, times_opt}]
 
   @doc since: "2.5.0"

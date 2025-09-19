@@ -3,12 +3,13 @@ defmodule Mockery.HistoryTest do
   use Mockery
 
   import IO.ANSI
+  import Mockery.Assertions
 
   test "failure with too few args is marked in red" do
     enable_history()
     Mockery.Utils.push_call(A, :fun, 1, ["a"])
 
-    tested = fn -> Mockery.Assertions.assert_called(A, :fun, ["a", "b"]) end
+    tested = fn -> assert_called! A, :fun, args: ["a", "b"] end
     %{message: message} = assert_raise(ExUnit.AssertionError, tested)
 
     assert message =~ ~s(#{red()}["a"]#{white()})
@@ -18,7 +19,7 @@ defmodule Mockery.HistoryTest do
     enable_history()
     Mockery.Utils.push_call(A, :fun, 3, ["a", "b", "c"])
 
-    tested = fn -> Mockery.Assertions.assert_called(A, :fun, ["a", "b"]) end
+    tested = fn -> assert_called! A, :fun, args: ["a", "b"] end
     %{message: message} = assert_raise(ExUnit.AssertionError, tested)
 
     assert message =~ ~s(#{red()}["a", "b", "c"]#{white()})
@@ -28,7 +29,7 @@ defmodule Mockery.HistoryTest do
     enable_history()
     Mockery.Utils.push_call(A, :fun, 2, ["a", "c"])
 
-    tested = fn -> Mockery.Assertions.assert_called(A, :fun, ["a", "b"]) end
+    tested = fn -> assert_called! A, :fun, args: ["a", "b"] end
     %{message: message} = assert_raise(ExUnit.AssertionError, tested)
 
     assert message =~ ~s(#{white()}[#{green()}"a"#{white()}, #{red()}"c"#{white()}])
@@ -38,7 +39,7 @@ defmodule Mockery.HistoryTest do
     enable_history()
     Mockery.Utils.push_call(A, :fun, 2, ["a", "c"])
 
-    tested = fn -> Mockery.Assertions.assert_called(A, :fun, [_, "b"]) end
+    tested = fn -> assert_called! A, :fun, args: [_, "b"] end
     %{message: message} = assert_raise(ExUnit.AssertionError, tested)
 
     assert message =~ ~s(#{white()}[#{green()}"a"#{white()}, #{red()}"c"#{white()}])
@@ -50,7 +51,7 @@ defmodule Mockery.HistoryTest do
 
     arg1 = "a"
     arg2 = "b"
-    tested = fn -> Mockery.Assertions.assert_called(A, :fun, [^arg1, ^arg2]) end
+    tested = fn -> assert_called! A, :fun, args: [^arg1, ^arg2] end
     %{message: message} = assert_raise(ExUnit.AssertionError, tested)
 
     assert message =~ ~s(#{white()}[#{green()}"a"#{white()}, #{red()}"c"#{white()}])

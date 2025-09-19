@@ -19,22 +19,14 @@ defmodule Mockery.Assertions do
   alias Mockery.History
   alias Mockery.Utils
 
-  @doc """
-  Asserts that function from given module with given name or name and arity
-  was called at least once.
-
-  ## Examples
-
-  Assert Mod.fun/2 was called
-
-      assert_called Mod, fun: 2
-
-  Assert any function named :fun from module Mod was called
-
-      assert_called Mod, :fun
-
-  """
+  @doc deprecated: "Use assert_called!/3 instead"
   def assert_called(mod, [{fun, arity}]) do
+    warn =
+      "assert_called/2 is deprecated, use assert_called!/3 instead: " <>
+        "`assert_called!(#{Macro.to_string(mod)}, #{Macro.to_string(fun)}, arity: #{Macro.to_string(arity)})`"
+
+    IO.warn(warn)
+
     ExUnit.Assertions.assert(
       called?(mod, fun, arity),
       "#{Utils.print_mod(mod)}.#{fun}/#{arity} was not called"
@@ -42,6 +34,12 @@ defmodule Mockery.Assertions do
   end
 
   def assert_called(mod, fun) do
+    warn =
+      "assert_called/2 is deprecated, use assert_called!/3 instead: " <>
+        "`assert_called!(#{Macro.to_string(mod)}, #{Macro.to_string(fun)})`"
+
+    IO.warn(warn)
+
     ExUnit.Assertions.assert(called?(mod, fun), "#{Utils.print_mod(mod)}.#{fun} was not called")
   end
 
@@ -74,24 +72,16 @@ defmodule Mockery.Assertions do
     )
   end
 
-  @doc """
-  Asserts that function from given module with given name was called
-  at least once with arguments matching given pattern.
-
-  ## Examples
-
-  Assert Mod.fun/2 was called with given args list
-
-      assert_called Mod, :fun, ["a", "b"]
-
-  You can also use unbound variables inside args pattern
-
-      assert_called Mod, :fun, ["a", _second]
-
-  """
+  @doc deprecated: "Use assert_called!/3 instead"
   defmacro assert_called(mod, fun, args) do
     mod = Macro.expand(mod, __CALLER__)
     args = Macro.expand(args, __CALLER__)
+
+    warn =
+      "assert_called/3 is deprecated, use assert_called!/3 instead: " <>
+        "`assert_called!(#{Macro.to_string(mod)}, #{Macro.to_string(fun)}, args: #{Macro.to_string(args)})`"
+
+    IO.warn(warn, __CALLER__)
 
     quote do
       ExUnit.Assertions.assert(unquote(called_with?(mod, fun, args)), """
@@ -130,31 +120,37 @@ defmodule Mockery.Assertions do
     end
   end
 
-  @doc """
-  Asserts that function from given module with given name was called
-  given number of times with arguments matching given pattern.
+  defp times_to_warn(times, caller) do
+    case times do
+      {:.., _, _} = ast ->
+        "{:in, #{Macro.to_string(ast)}}"
 
-  Similar to `assert_called/3` but instead of checking if function was called
-  at least once, it checks if function was called specific number of times.
+      ast ->
+        case Macro.expand(ast, caller) do
+          ast when is_integer(ast) ->
+            "#{Macro.to_string(ast)}"
 
-  ## Examples
+          ast ->
+            "{:in, #{Macro.to_string(ast)}}"
+        end
+    end
+  end
 
-  Assert Mod.fun/2 was called with given args 5 times
+  # defp times_to_warn(times_ast) do
+  #   "{:in, #{Macro.to_string(times_ast)}}"
+  # end
 
-      assert_called Mod, :fun, ["a", "b"], 5
-
-  Assert Mod.fun/2 was called with given args from 3 to 5 times
-
-      assert_called Mod, :fun, ["a", "b"], 3..5
-
-  Assert Mod.fun/2 was called with given args 3 or 5 times
-
-      assert_called Mod, :fun, ["a", "b"], [3, 5]
-
-  """
+  @doc deprecated: "Use assert_called!/3 instead"
   defmacro assert_called(mod, fun, args, times) do
     mod = Macro.expand(mod, __CALLER__)
     args = Macro.expand(args, __CALLER__)
+
+    warn =
+      "assert_called/4 is deprecated, use assert_called!/3 instead: " <>
+        "`assert_called!(#{Macro.to_string(mod)}, #{Macro.to_string(fun)}," <>
+        " args: #{Macro.to_string(args)}, times: #{times_to_warn(times, __CALLER__)})`"
+
+    IO.warn(warn, __CALLER__)
 
     quote do
       ExUnit.Assertions.assert(unquote(ncalled_with?(mod, fun, args, times)), """

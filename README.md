@@ -45,7 +45,7 @@ After adding this setting, make sure to recompile your project.
 
 ### Formatter Configuration
 
-To help the Elixir formatter recognize Mockery-specific macros (such as `defmock`, `assert_called`, and `refute_called`) without requiring parentheses, you should import the locals without parens configuration from Mockery in your `.formatter.exs` file:
+To help the Elixir formatter recognize Mockery-specific macros (such as `defmock`, `assert_called!`, and `refute_called`) without requiring parentheses, you should import the locals without parens configuration from Mockery in your `.formatter.exs` file:
 
 ```elixir
 [
@@ -199,46 +199,46 @@ defmodule TestedTest do
 
   test "assert any function bar from module Foo was called" do
     Tested.call(1, %{})
-    assert_called Foo, :bar
+    assert_called! Foo, :bar
   end
 
   test "assert Foo.bar/2 was called" do
     Tested.call(1, %{})
-    assert_called Foo, bar: 2
+    assert_called! Foo, :bar, arity: 2
   end
 
   test "assert Foo.bar/2 was called with given args" do
     Tested.call(1, %{})
-    assert_called Foo, :bar, [1, %{}]
+    assert_called! Foo, :bar, args: [1, %{}]
   end
 
   test "assert Foo.bar/1 was called with given arg (using variable)" do
     params = %{a: 1, b: 2}
 
     Tested.call(params)
-    assert_called Foo, :bar, [^params]
-    # we need to use pinning here since assert_called/3 is a macro
+    assert_called! Foo, :bar, args: [^params]
+    # we need to use pinning here since assert_called!/3 is a macro
     # and not a regular function call and it gets expanded accordingly
   end
 
   test "assert Foo.bar/2 was called with 1 as first arg" do
     Tested.call(1, %{})
-    assert_called Foo, :bar, [1, _]
+    assert_called! Foo, :bar, args: [1, _]
   end
 
   test "assert Foo.bar/2 was called with 1 as first arg 5 times" do
     # ...
-    assert_called Foo, :bar, [1, _], 5
+    assert_called! Foo, :bar, args: [1, _], times: 5
   end
 
   test "assert Foo.bar/2 was called with 1 as first arg from 3 to 5 times" do
     # ...
-    assert_called Foo, :bar, [1, _], 3..5
+    assert_called! Foo, :bar, args: [1, _], times: {:in, 3..5}
   end
 
   test "assert Foo.bar/2 was called with 1 as first arg 3 or 5 times" do
     # ...
-    assert_called Foo, :bar, [1, _], [3, 5]
+    assert_called! Foo, :bar, args: [1, _], times: {:in, [3, 5]}
   end
 end
 ```
@@ -253,7 +253,7 @@ For more information see [docs](https://hexdocs.pm/mockery/Mockery.Assertions.ht
 
 ![history example](https://raw.githubusercontent.com/appunite/mockery/master/history.jpeg)
 
-Mockery.History module provides more descriptive failure messages for assert_called/{3,4} and refute_called/{3,4} that includes a colorized list of arguments passed to a given function in the scope of a single test process.
+Mockery.History module provides more descriptive failure messages for `assert_called!/3` and `refute_called/{3,4}` that includes a colorized list of arguments passed to a given function in the scope of a single test process.
 
 Disabled by default. For more information see [docs](https://hexdocs.pm/mockery/Mockery.History.html)
 

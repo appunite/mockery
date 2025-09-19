@@ -4,9 +4,15 @@
 
 - This release requires Elixir ~> 1.15
 
-- Change: [`use Mockery.Macro`](`Mockery.Macro.__using__/1`) won't inject unnecessary code when `:mockery` isn't enabled in config
+- [`use Mockery.Macro`](`Mockery.Macro.__using__/1`) won't inject unnecessary code when `:mockery` isn't enabled in config
 
 - Added `Mockery.Assertions.assert_called!/3`
+
+- Deprecated `Mockery.Assertions.assert_called/2`, `Mockery.Assertions.assert_called/3` and `Mockery.Assertions.assert_called/4`
+
+  - Use `Mockery.Assertions.assert_called!/3` instead
+  - Deprecation warnings include a suggested replacement showing the expected syntax (the suggestion is generated from the deprecated call). *Note:* the suggestion is best-effort and may not exactly match your current code — verify and adjust as needed.
+
 
 ## 2.4.1 (2025-09-19)
 

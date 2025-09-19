@@ -45,12 +45,31 @@ jobs:
       - name: Run Credo Linter
         run: mix credo --strict --format=flycheck
 
+  docs-check:
+    name: Check Docs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Elixir
+        uses: erlef/setup-elixir@v1
+        with:
+          elixir-version: 1.18
+          otp-version: 28
+
+      - name: Fetch Dependencies
+        run: mix deps.get
+
+      - name: Generate docs
+        run: mix docs --warnings-as-errors
+
   test:
     name: Run Tests
     runs-on: ubuntu-latest
     needs:
       - format-check
       - credo-check
+      - docs-check
     strategy:
       matrix:
         include:

@@ -96,8 +96,8 @@ defmodule Mockery.Assertions do
     quote do
       ExUnit.Assertions.assert(unquote(called_with?(mod, fun, args)), """
       #{unquote(Utils.print_mod(mod))}.#{unquote(fun)} \
-      was not called with given arguments\
-      #{unquote(History.print(mod, fun, args))}
+      was not called with given arguments
+      #{unquote(History.print(mod, fun, args))} \
       """)
     end
   end
@@ -124,8 +124,8 @@ defmodule Mockery.Assertions do
     quote do
       ExUnit.Assertions.refute(unquote(called_with?(mod, fun, args)), """
       #{unquote(Utils.print_mod(mod))}.#{unquote(fun)} \
-      was called with given arguments at least once\
-      #{unquote(History.print(mod, fun, args))}
+      was called with given arguments at least once
+      #{unquote(History.print(mod, fun, args))} \
       """)
     end
   end
@@ -159,8 +159,8 @@ defmodule Mockery.Assertions do
     quote do
       ExUnit.Assertions.assert(unquote(ncalled_with?(mod, fun, args, times)), """
       #{unquote(Utils.print_mod(mod))}.#{unquote(fun)} \
-      was not called with given arguments expected number of times\
-      #{unquote(History.print(mod, fun, args))}
+      was not called with given arguments expected number of times
+      #{unquote(History.print(mod, fun, args))} \
       """)
     end
   end
@@ -194,8 +194,8 @@ defmodule Mockery.Assertions do
     quote do
       ExUnit.Assertions.refute(unquote(ncalled_with?(mod, fun, args, times)), """
       #{unquote(Utils.print_mod(mod))}.#{unquote(fun)} \
-      was called with given arguments unexpected number of times\
-      #{unquote(History.print(mod, fun, args))}
+      was called with given arguments unexpected number of times
+      #{unquote(History.print(mod, fun, args))} \
       """)
     end
   end
@@ -242,6 +242,242 @@ defmodule Mockery.Assertions do
   defp args_should_be_list(mod, fun) do
     quote do
       raise Error, "args for #{unquote(Utils.print_mod(mod))}.#{unquote(fun)} should be a list"
+    end
+  end
+
+  import ExUnit.Assertions
+
+  @typedoc "Function name (an atom identifying the function)."
+  @type function_name :: atom()
+
+  @typedoc """
+  Option value for the `:arity` key in `opts`.
+
+  A non-negative integer narrowing the match to a specific function arity.
+  """
+  @type arity_opt :: non_neg_integer()
+
+  @typedoc """
+  Option value for the `:args` key in `opts`.
+
+  A list of terms representing the argument pattern to match recorded calls.
+  """
+  @type args_opt :: [term()]
+
+  @typedoc """
+  Option value for the `:times` key in `opts`.
+
+  How many times the function is expected to be called.
+
+  Accepts:
+    - a non-negative integer for exact count
+    - `{:in, [integers]}` for specific allowed counts
+    - `{:in, Range.t()}` for a range of allowed counts
+    - `{:at_least, non_neg_integer()}` for a lower bound
+    - `{:at_most, non_neg_integer()}` for an upper bound
+  """
+  @type times_opt ::
+          non_neg_integer()
+          | {:in, [non_neg_integer()]}
+          | {:in, Range.t()}
+          | {:at_least, non_neg_integer()}
+          | {:at_most, non_neg_integer()}
+
+  @typedoc """
+  Keyword options accepted by `assert_called!/3`.
+
+  Supported keys: `:arity`, `:args`, and `:times`.
+  """
+  @type opts :: [{:arity, arity_opt} | {:args, args_opt} | {:times, times_opt}]
+
+  @doc """
+  Asserts that a function on the given `mod` with the given `fun` name was called.
+
+  This macro is a convenience wrapper that allows you to assert calls with
+  additional filtering via options.
+
+  Accepted options:
+    * `:arity` - a non-negative integer narrowing the check to calls with the given arity.
+    * `:args` - a list representing the argument pattern to match recorded calls.
+      Use unbound variables (e.g. `_`, `var`) to create flexible patterns.
+    * `:times` - how many times the function is expected to be called.
+      Supports an integer, `{:in, [integers]}`, `{:in, Range.t()}`, `{:at_least, n}` and
+      `{:at_most, n}`.
+
+  Notes:
+    * `:arity` and `:args` are mutually exclusive. If both are provided, `:arity`
+      will be ignored and a warning will be emitted.
+    * If provided, `:args` must be a list — otherwise a `Mockery.Error` will be raised.
+    * If provided, `:arity` must be a non-negative integer — otherwise a `Mockery.Error` will be raised.
+    * If `:times` has an invalid format a `Mockery.Error` will be raised.
+
+  Returns `true` when the assertion passes. On failure it raises an error
+  with a descriptive message and (when history is enabled) a snippet of the recorded calls.
+
+  ## Examples
+
+      # Assert any function named :fun on Mod was called at least once
+      assert_called! Mod, :fun
+
+      # Assert Mod.fun/2 was called
+      assert_called! Mod, :fun, arity: 2
+
+      # Assert Mod.fun/2 was called with specific args (supports patterns)
+      assert_called! Mod, :fun, args: ["a", _]
+
+      # Assert Mod.fun/2 was called exactly 3 times
+      assert_called! Mod, :fun, times: 3
+
+      # Assert Mod.fun/1 was called at least twice
+      assert_called! Mod, :fun, arity: 1, times: {:at_least, 2}
+
+  """
+  @doc since: "2.5.0"
+  @spec assert_called!(module(), function_name(), opts) :: true | no_return()
+  defmacro assert_called!(mod, fun, opts \\ []) do
+    arity_opt = Keyword.get(opts, :arity, :no_arity)
+    args_opt = Keyword.get(opts, :args, :no_args)
+    times_opt = Keyword.get(opts, :times, :no_times)
+
+    cond do
+      arity_opt_invalid?(arity_opt, __CALLER__) ->
+        quote do
+          raise Mockery.Error,
+                ":arity should be a non_neg_integer, provided: #{inspect(unquote(arity_opt))}"
+        end
+
+      args_opt_invalid?(args_opt) ->
+        quote do
+          raise Mockery.Error,
+                ":args should be a list, provided: #{inspect(unquote(args_opt))}"
+        end
+
+      true ->
+        warn_ast = warn_arity_and_args(arity_opt, args_opt)
+
+        match_handler = handle_match(arity_opt, args_opt)
+        times_handler = handle_times(times_opt, __CALLER__)
+
+        mod = Macro.expand(mod, __CALLER__)
+        fun = Macro.expand(fun, __CALLER__)
+
+        error_msg = error_msg(mod, fun, arity_opt, args_opt, times_opt)
+
+        args_for_history =
+          opts |> Keyword.get(:args) |> Macro.expand(__CALLER__)
+
+        quote do
+          unquote(warn_ast)
+
+          assert unquote(mod)
+                 |> Mockery.Utils.get_calls(unquote(fun))
+                 |> unquote(match_handler)
+                 |> unquote(times_handler),
+                 "#{unquote(error_msg)}\n#{unquote(History.print(mod, fun, args_for_history))}"
+        end
+    end
+  end
+
+  defp arity_opt_invalid?(:no_arity, _caller), do: false
+
+  defp arity_opt_invalid?(arity, caller) do
+    arity = Macro.expand(arity, caller)
+
+    not (is_integer(arity) && arity >= 0)
+  end
+
+  defp args_opt_invalid?(:no_args), do: false
+
+  defp args_opt_invalid?(args) do
+    not is_list(args)
+  end
+
+  defp handle_match(arity_opt, args_opt)
+
+  defp handle_match(:no_arity, :no_args) do
+    quote do: then(& &1)
+  end
+
+  defp handle_match(arity, :no_args) do
+    quote do: Enum.filter(&match?({unquote(arity), _}, &1))
+  end
+
+  defp handle_match(_, args) do
+    quote do: Enum.filter(&match?({_, unquote(args)}, &1))
+  end
+
+  # credo:disable-for-lines:1 Credo.Check.Refactor.CyclomaticComplexity
+  defp handle_times(times_opt, caller) do
+    case Macro.expand(times_opt, caller) do
+      :no_times ->
+        quote do: then(&(not Enum.empty?(&1)))
+
+      times when is_integer(times) and times >= 0 ->
+        quote do: Enum.count() |> Kernel.==(unquote(times))
+
+      {:in, enum} when is_list(enum) ->
+        quote do: Enum.count() |> Kernel.in(unquote(enum))
+
+      {:in, {:%{}, [], [{:__struct__, Range} | _]} = range_ast} ->
+        quote do: Enum.count() |> Kernel.in(unquote(range_ast))
+
+      {:at_least, times} when is_integer(times) and times >= 0 ->
+        quote do: Enum.count() |> Kernel.>=(unquote(times))
+
+      {:at_most, times} when is_integer(times) and times >= 0 ->
+        quote do: Enum.count() |> Kernel.<=(unquote(times))
+
+      _ ->
+        quote do
+          then(fn _ ->
+            raise Mockery.Error,
+                  ":times have invalid format, provided: #{inspect(unquote(times_opt))}"
+          end)
+        end
+    end
+  end
+
+  defp error_msg(mod, fun, arity, args, times)
+
+  defp error_msg(mod, fun, :no_arity, :no_args, :no_times) do
+    "#{inspect(mod)}.#{fun}/x was not called"
+  end
+
+  defp error_msg(mod, fun, :no_arity, :no_args, _) do
+    "#{inspect(mod)}.#{fun}/x was not called expected number of times"
+  end
+
+  defp error_msg(mod, fun, arity, :no_args, :no_times) do
+    "#{inspect(mod)}.#{fun}/#{arity} was not called"
+  end
+
+  defp error_msg(mod, fun, arity, :no_args, _times) do
+    "#{inspect(mod)}.#{fun}/#{arity} was not called expected number of times"
+  end
+
+  defp error_msg(mod, fun, _arity, args, :no_times) when is_list(args) do
+    arity = Enum.count(args)
+
+    "#{inspect(mod)}.#{fun}/#{arity} was not called with given args"
+  end
+
+  defp error_msg(mod, fun, _arity, args, _times) when is_list(args) do
+    arity = Enum.count(args)
+
+    "#{inspect(mod)}.#{fun}/#{arity} was not called with given args expected number of times"
+  end
+
+  defp warn_arity_and_args(:no_arity, :no_args), do: :ok
+  defp warn_arity_and_args(_arity_opt, :no_args), do: :ok
+  defp warn_arity_and_args(:no_arity, _args_opt), do: :ok
+
+  defp warn_arity_and_args(_arity_opt, _args_opt) do
+    warn =
+      ":arity and :args options are mutually exclusive in assert_called!/3, " <>
+        ":arity will be ignored"
+
+    quote do
+      IO.warn(unquote(warn))
     end
   end
 end

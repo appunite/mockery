@@ -19,7 +19,28 @@ defmodule Mockery.Macro do
 
   """
 
-  defmacro __using__(_) do
+  # TODO v3 do nothing when mockery isn't enabled
+  @doc """
+  Injects Mockery helper macros into the calling module.
+
+  When you `use Mockery.Macro` this macro:
+
+  - Imports the macros from `Mockery.Macro` (`mockable/1`, `mockable/2`,
+    and `defmock/2`).
+  - Adds `@compile {:no_warn_undefined, Mockery.Proxy.MacroProxy}` so the compiler
+    does not warn when `Mockery.Proxy.MacroProxy` is referenced.
+
+  ## Example
+
+      defmodule MyApp.Module do
+        use Mockery.Macro
+
+        ...
+      end
+
+  """
+  @doc since: "2.3.3"
+  defmacro __using__(_opts) do
     quote do
       @compile {:no_warn_undefined, Mockery.Proxy.MacroProxy}
       import unquote(__MODULE__)
@@ -71,6 +92,7 @@ defmodule Mockery.Macro do
   >
   >     var = mockable(Foo)
   """
+  @doc since: "2.2.0"
   @spec mockable(
           mod :: module,
           opts :: [by: module]
@@ -117,7 +139,7 @@ defmodule Mockery.Macro do
   @doc """
   Defines a private macro that expands to `mockable/1` or `mockable/2`.
 
-  Usage examples:
+  ## Examples
 
       defmock :foo, Foo
       defmock :bar, Bar, by: GlobalMock
@@ -147,6 +169,7 @@ defmodule Mockery.Macro do
       end
 
   """
+  @doc since: "2.4.0"
   defmacro defmock(name, mod, opts \\ []) do
     quote do
       defmacrop unquote(name)() do

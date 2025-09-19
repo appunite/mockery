@@ -39,6 +39,7 @@ defmodule Mockery.History do
       end
 
   """
+  @doc since: "2.3.0"
   @spec enable_history :: :ok
   def enable_history do
     Process.put(__MODULE__, true)
@@ -59,6 +60,7 @@ defmodule Mockery.History do
       end
 
   """
+  @doc since: "2.3.0"
   @spec disable_history :: :ok
   def disable_history do
     Process.put(__MODULE__, false)

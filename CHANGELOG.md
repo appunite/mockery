@@ -19,9 +19,9 @@
 
    - Set `config :mockery, enable: true` in `config/test.exs` and recompile your project.
 
-- Added `defmock/2` and `defmock/3` macros
+- Added `Mockery.Macro.defmock/2` and `Mockery.Macro.defmock/3` macros
 
-- Added `assert_called/x` and `refute_called/x` to `locals_without_parens` in `.formatter.exs`
+- Added macros and functions from `Mockery.Assertions` to `locals_without_parens` in `.formatter.exs`
 
 ## 2.3.4 (2025-08-15)
 
@@ -29,7 +29,9 @@
 
 ## 2.3.3 (2024-07-04)
 
-- Added `use Mockery.Macro` to solve new Elixir warnings
+- Added `Mockery.Macro.__using__/1` to solve new Elixir warnings
+
+    - Replace `import Mockery.Macro` by `use Mockery.Macro`
 
 ## 2.3.2 (2024-07-03)
 

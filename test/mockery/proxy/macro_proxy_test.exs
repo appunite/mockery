@@ -172,8 +172,8 @@ defmodule Mockery.Proxy.MacroProxyTest do
     mockable(Dummy).fun1()
     |> mockable(Dummy).ar()
 
-    assert_called(Dummy, :fun1, [])
-    assert_called(Dummy, :ar, [:it_worked])
+    assert_called! Dummy, :fun1, args: []
+    assert_called! Dummy, :ar, args: [:it_worked]
   end
 
   test "handles nested calls" do
@@ -183,8 +183,8 @@ defmodule Mockery.Proxy.MacroProxyTest do
 
     mockable(Dummy).ar(mockable(Dummy).fun1())
 
-    assert_called(Dummy, :fun1, [])
-    assert_called(Dummy, :ar, [:it_worked])
+    assert_called! Dummy, :fun1, args: []
+    assert_called! Dummy, :ar, args: [:it_worked]
   end
 
   # TODO remove in v3
@@ -192,6 +192,6 @@ defmodule Mockery.Proxy.MacroProxyTest do
     _ = Process.put(Mockery.MockableModule, {Dummy, nil})
     MacroProxy.fun1()
 
-    assert_called(Dummy, :fun1, [])
+    assert_called! Dummy, :fun1, args: []
   end
 end

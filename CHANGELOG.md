@@ -6,7 +6,7 @@
 
 - Change: [`use Mockery.Macro`](`Mockery.Macro.__using__/1`) won't inject unnecessary code when `:mockery` isn't enabled in config
 
-- Added `Mockery.Assertions.assert_called!/3'
+- Added `Mockery.Assertions.assert_called!/3`
 
 ## 2.4.1 (2025-09-19)
 

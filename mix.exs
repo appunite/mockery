@@ -37,6 +37,7 @@ defmodule Mockery.Mixfile do
     [
       extras: ["README.md", "EXAMPLES.md", "CHANGELOG.md"],
       main: "readme",
+      skip_code_autolink_to: ["Mockery.Proxy.MacroProxy"],
       source_ref: @version
     ]
   end

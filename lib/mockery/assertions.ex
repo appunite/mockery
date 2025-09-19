@@ -96,8 +96,8 @@ defmodule Mockery.Assertions do
     quote do
       ExUnit.Assertions.assert(unquote(called_with?(mod, fun, args)), """
       #{unquote(Utils.print_mod(mod))}.#{unquote(fun)} \
-      was not called with given arguments\
-      #{unquote(History.print(mod, fun, args))}
+      was not called with given arguments
+      #{unquote(History.print(mod, fun, args))} \
       """)
     end
   end
@@ -124,8 +124,8 @@ defmodule Mockery.Assertions do
     quote do
       ExUnit.Assertions.refute(unquote(called_with?(mod, fun, args)), """
       #{unquote(Utils.print_mod(mod))}.#{unquote(fun)} \
-      was called with given arguments at least once\
-      #{unquote(History.print(mod, fun, args))}
+      was called with given arguments at least once
+      #{unquote(History.print(mod, fun, args))} \
       """)
     end
   end
@@ -159,8 +159,8 @@ defmodule Mockery.Assertions do
     quote do
       ExUnit.Assertions.assert(unquote(ncalled_with?(mod, fun, args, times)), """
       #{unquote(Utils.print_mod(mod))}.#{unquote(fun)} \
-      was not called with given arguments expected number of times\
-      #{unquote(History.print(mod, fun, args))}
+      was not called with given arguments expected number of times
+      #{unquote(History.print(mod, fun, args))} \
       """)
     end
   end
@@ -194,8 +194,8 @@ defmodule Mockery.Assertions do
     quote do
       ExUnit.Assertions.refute(unquote(ncalled_with?(mod, fun, args, times)), """
       #{unquote(Utils.print_mod(mod))}.#{unquote(fun)} \
-      was called with given arguments unexpected number of times\
-      #{unquote(History.print(mod, fun, args))}
+      was called with given arguments unexpected number of times
+      #{unquote(History.print(mod, fun, args))} \
       """)
     end
   end
@@ -360,7 +360,11 @@ defmodule Mockery.Assertions do
 
         mod = Macro.expand(mod, __CALLER__)
         fun = Macro.expand(fun, __CALLER__)
+
         error_msg = error_msg(mod, fun, arity_opt, args_opt, times_opt)
+
+        args_for_history =
+          opts |> Keyword.get(:args) |> Macro.expand(__CALLER__)
 
         quote do
           unquote(warn_ast)
@@ -369,7 +373,7 @@ defmodule Mockery.Assertions do
                  |> Mockery.Utils.get_calls(unquote(fun))
                  |> unquote(match_handler)
                  |> unquote(times_handler),
-                 unquote(error_msg)
+                 "#{unquote(error_msg)}\n#{unquote(History.print(mod, fun, args_for_history))}"
         end
     end
   end

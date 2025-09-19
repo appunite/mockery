@@ -581,7 +581,7 @@ defmodule Mockery.AssertionsTest do
   import Mockery.Assertions
   alias Mockery.Utils
 
-  defp wrap_msg(msg), do: "\n\n#{msg}\n"
+  defp wrap_msg(msg), do: "\n\n#{msg}\n\n"
 
   describe "assert_called!/3 without opts" do
     test "succeeds when function was called once (zero arity)" do
@@ -953,6 +953,32 @@ defmodule Mockery.AssertionsTest do
       assert_raise ExUnit.AssertionError, error_msg, fn ->
         assert_called! A, :fun, args: ["a", "z"], times: 1
       end
+    end
+  end
+
+  describe "assert_called!/3 with Mockery.History enabled" do
+    test "displays calls history when assertion fails" do
+      Mockery.History.enable_history()
+
+      error =
+        assert_raise ExUnit.AssertionError, fn ->
+          assert_called! A, :fun, args: ["a", "b"]
+        end
+
+      assert error.message =~ "Given:"
+      assert error.message =~ "History:"
+    end
+
+    test "displays calls history when assertion fails (no args)" do
+      Mockery.History.enable_history()
+
+      error =
+        assert_raise ExUnit.AssertionError, fn ->
+          assert_called! A, :fun
+        end
+
+      refute error.message =~ "Given:"
+      assert error.message =~ "History:"
     end
   end
 end

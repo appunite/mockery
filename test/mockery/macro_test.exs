@@ -2,6 +2,34 @@ defmodule Mockery.MacroTest do
   use ExUnit.Case, async: false
   use Mockery.Macro
 
+  describe "__using__/1" do
+    defp quoted_to_strings(quoted) do
+      quoted
+      |> Macro.expand(__ENV__)
+      |> Macro.to_string()
+      |> String.split("\n")
+    end
+
+    test "injects code when mockery is enabled" do
+      quoted = quote do: Mockery.Macro.__using__([])
+
+      assert [
+               "@compile {:no_warn_undefined, Mockery.Proxy.MacroProxy}",
+               "import Mockery.Macro"
+             ] = quoted_to_strings(quoted)
+    end
+
+    test "injects code when mockery is disabled" do
+      Application.put_env(:mockery, :enable, false)
+      on_exit(fn -> Application.put_env(:mockery, :enable, true) end)
+
+      quoted = quote do: Mockery.Macro.__using__([])
+
+      assert ["import Mockery.Macro"] =
+               quoted_to_strings(quoted)
+    end
+  end
+
   describe "mockable/2" do
     test "dev env (atom erlang mod)" do
       Application.put_env(:mockery, :enable, false)

@@ -3,6 +3,7 @@
 ## 2.5.0 ()
 
 - This release requires Elixir ~> 1.15
+- Change: [`use Mockery.Macro`](`Mockery.Macro.__using__/1`) won't inject unnecessary code when `:mockery` isn't enabled in config
 
 ## 2.4.1 (2025-09-19)
 
@@ -29,7 +30,7 @@
 
 ## 2.3.3 (2024-07-04)
 
-- Added `Mockery.Macro.__using__/1` to solve new Elixir warnings
+- Added [`use Mockery.Macro`](`Mockery.Macro.__using__/1`) to solve new Elixir warnings
 
     - Replace `import Mockery.Macro` by `use Mockery.Macro`
 

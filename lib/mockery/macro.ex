@@ -19,7 +19,6 @@ defmodule Mockery.Macro do
 
   """
 
-  # TODO v3 do nothing when mockery isn't enabled
   @doc """
   Injects Mockery helper macros into the calling module.
 
@@ -27,8 +26,9 @@ defmodule Mockery.Macro do
 
   - Imports the macros from `Mockery.Macro` (`mockable/1`, `mockable/2`,
     and `defmock/2`).
-  - Adds `@compile {:no_warn_undefined, Mockery.Proxy.MacroProxy}` so the compiler
-    does not warn when `Mockery.Proxy.MacroProxy` is referenced.
+  - When mockery is enabled (`config :mockery, :enable, true`),
+    adds `@compile {:no_warn_undefined, Mockery.Proxy.MacroProxy}`
+    so the compiler does not warn when `Mockery.Proxy.MacroProxy` is referenced.
 
   ## Example
 
@@ -41,8 +41,20 @@ defmodule Mockery.Macro do
   """
   @doc since: "2.3.3"
   defmacro __using__(_opts) do
+    if Application.get_env(:mockery, :enable),
+      do: mockery_enabled_ast(),
+      else: mockery_disabled_ast()
+  end
+
+  defp mockery_enabled_ast do
     quote do
       @compile {:no_warn_undefined, Mockery.Proxy.MacroProxy}
+      import unquote(__MODULE__)
+    end
+  end
+
+  defp mockery_disabled_ast do
+    quote do
       import unquote(__MODULE__)
     end
   end

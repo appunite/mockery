@@ -290,6 +290,48 @@ defmodule Mockery.Assertions do
   """
   @type opts :: [{:arity, arity_opt} | {:args, args_opt} | {:times, times_opt}]
 
+  @doc """
+  Asserts that a function on the given `mod` with the given `fun` name was called.
+
+  This macro is a convenience wrapper that allows you to assert calls with
+  additional filtering via options.
+
+  Accepted options:
+    * `:arity` - a non-negative integer narrowing the check to calls with the given arity.
+    * `:args` - a list representing the argument pattern to match recorded calls.
+      Use unbound variables (e.g. `_`, `var`) to create flexible patterns.
+    * `:times` - how many times the function is expected to be called.
+      Supports an integer, `{:in, [integers]}`, `{:in, Range.t()}`, `{:at_least, n}` and
+      `{:at_most, n}`.
+
+  Notes:
+    * `:arity` and `:args` are mutually exclusive. If both are provided, `:arity`
+      will be ignored and a warning will be emitted.
+    * If provided, `:args` must be a list — otherwise a `Mockery.Error` will be raised.
+    * If provided, `:arity` must be a non-negative integer — otherwise a `Mockery.Error` will be raised.
+    * If `:times` has an invalid format a `Mockery.Error` will be raised.
+
+  Returns `true` when the assertion passes. On failure it raises an error
+  with a descriptive message and (when history is enabled) a snippet of the recorded calls.
+
+  ## Examples
+
+      # Assert any function named :fun on Mod was called at least once
+      assert_called! Mod, :fun
+
+      # Assert Mod.fun/2 was called
+      assert_called! Mod, :fun, arity: 2
+
+      # Assert Mod.fun/2 was called with specific args (supports patterns)
+      assert_called! Mod, :fun, args: ["a", _]
+
+      # Assert Mod.fun/2 was called exactly 3 times
+      assert_called! Mod, :fun, times: 3
+
+      # Assert Mod.fun/1 was called at least twice
+      assert_called! Mod, :fun, arity: 1, times: {:at_least, 2}
+
+  """
   @doc since: "2.5.0"
   @spec assert_called!(module(), function_name(), opts) :: true | no_return()
   defmacro assert_called!(mod, fun, opts \\ []) do

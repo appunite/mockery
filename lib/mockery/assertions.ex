@@ -374,6 +374,57 @@ defmodule Mockery.Assertions do
     end
   end
 
+  @doc """
+  Negated version of `assert_called!/3`. Asserts that the given function on the
+  provided `mod` with name `fun` was NOT called according to the provided options.
+
+  Supported options are the same as `assert_called!/3` (`:arity`, `:args`, `:times`).
+  """
+  @spec refute_called!(module(), function_name(), opts) :: true | no_return()
+  defmacro refute_called!(mod, fun, opts \\ []) do
+    arity_opt = Keyword.get(opts, :arity, :no_arity)
+    args_opt = Keyword.get(opts, :args, :no_args)
+    times_opt = Keyword.get(opts, :times, :no_times)
+
+    cond do
+      arity_opt_invalid?(arity_opt, __CALLER__) ->
+        quote do
+          raise Mockery.Error,
+                ":arity should be a non_neg_integer, provided: #{inspect(unquote(arity_opt))}"
+        end
+
+      args_opt_invalid?(args_opt) ->
+        quote do
+          raise Mockery.Error,
+                ":args should be a list, provided: #{inspect(unquote(args_opt))}"
+        end
+
+      true ->
+        warn_ast = warn_arity_and_args(arity_opt, args_opt)
+
+        match_handler = handle_match(arity_opt, args_opt)
+        times_handler = handle_times(times_opt, __CALLER__)
+
+        mod = Macro.expand(mod, __CALLER__)
+        fun = Macro.expand(fun, __CALLER__)
+
+        error_msg = refute_error_msg(mod, fun, arity_opt, args_opt, times_opt)
+
+        args_for_history =
+          opts |> Keyword.get(:args) |> Macro.expand(__CALLER__)
+
+        quote do
+          unquote(warn_ast)
+
+          refute unquote(mod)
+                 |> Mockery.Utils.get_calls(unquote(fun))
+                 |> unquote(match_handler)
+                 |> unquote(times_handler),
+                 "#{unquote(error_msg)}\n#{unquote(History.print(mod, fun, args_for_history))}"
+        end
+    end
+  end
+
   defp arity_opt_invalid?(:no_arity, _caller), do: false
 
   defp arity_opt_invalid?(arity, caller) do
@@ -464,6 +515,36 @@ defmodule Mockery.Assertions do
     arity = Enum.count(args)
 
     "#{inspect(mod)}.#{fun}/#{arity} was not called with given args expected number of times"
+  end
+
+  defp refute_error_msg(mod, fun, arity, args, times)
+
+  defp refute_error_msg(mod, fun, :no_arity, :no_args, :no_times) do
+    "#{inspect(mod)}.#{fun}/x was called"
+  end
+
+  defp refute_error_msg(mod, fun, :no_arity, :no_args, _) do
+    "#{inspect(mod)}.#{fun}/x was called unexpected number of times"
+  end
+
+  defp refute_error_msg(mod, fun, arity, :no_args, :no_times) do
+    "#{inspect(mod)}.#{fun}/#{arity} was called"
+  end
+
+  defp refute_error_msg(mod, fun, arity, :no_args, _times) do
+    "#{inspect(mod)}.#{fun}/#{arity} was called unexpected number of times"
+  end
+
+  defp refute_error_msg(mod, fun, _arity, args, :no_times) when is_list(args) do
+    arity = Enum.count(args)
+
+    "#{inspect(mod)}.#{fun}/#{arity} was called with given args"
+  end
+
+  defp refute_error_msg(mod, fun, _arity, args, _times) when is_list(args) do
+    arity = Enum.count(args)
+
+    "#{inspect(mod)}.#{fun}/#{arity} was called with given args unexpected number of times"
   end
 
   defp warn_arity_and_args(:no_arity, :no_args), do: :ok

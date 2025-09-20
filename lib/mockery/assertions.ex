@@ -489,31 +489,31 @@ defmodule Mockery.Assertions do
   defp refute_error_msg(mod, fun, arity, args, times)
 
   defp refute_error_msg(mod, fun, :no_arity, :no_args, :no_times) do
-    "#{inspect(mod)}.#{fun}/x was called"
+    "#{inspect(mod)}.#{fun}/x was expected not to be called, but was called"
   end
 
   defp refute_error_msg(mod, fun, :no_arity, :no_args, _) do
-    "#{inspect(mod)}.#{fun}/x was called unexpected number of times"
+    "#{inspect(mod)}.#{fun}/x was expected not to be called the given number of times, but was called"
   end
 
   defp refute_error_msg(mod, fun, arity, :no_args, :no_times) do
-    "#{inspect(mod)}.#{fun}/#{arity} was called"
+    "#{inspect(mod)}.#{fun}/#{arity} was expected not to be called, but was called"
   end
 
   defp refute_error_msg(mod, fun, arity, :no_args, _times) do
-    "#{inspect(mod)}.#{fun}/#{arity} was called unexpected number of times"
+    "#{inspect(mod)}.#{fun}/#{arity} was expected not to be called the given number of times, but was called"
   end
 
   defp refute_error_msg(mod, fun, _arity, args, :no_times) when is_list(args) do
     arity = Enum.count(args)
 
-    "#{inspect(mod)}.#{fun}/#{arity} was called with given args"
+    "#{inspect(mod)}.#{fun}/#{arity} was expected not to be called with given args, but was called"
   end
 
   defp refute_error_msg(mod, fun, _arity, args, _times) when is_list(args) do
     arity = Enum.count(args)
 
-    "#{inspect(mod)}.#{fun}/#{arity} was called with given args unexpected number of times"
+    "#{inspect(mod)}.#{fun}/#{arity} was expected not to be called with given args, the given number of times, but was called"
   end
 
   defp warn_arity_and_args(:no_arity, :no_args), do: :ok

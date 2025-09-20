@@ -414,7 +414,10 @@ defmodule Mockery.Assertions do
       {:in, enum} when is_list(enum) ->
         quote do: Enum.count() |> Kernel.in(unquote(enum))
 
-      {:in, {:%{}, [], [{:__struct__, Range} | _]} = range_ast} ->
+      {:in, {:%{}, _, [{:__struct__, Range} | _]} = range_ast} ->
+        quote do: Enum.count() |> Kernel.in(unquote(range_ast))
+
+      {:in, {:.., _, _} = range_ast} ->
         quote do: Enum.count() |> Kernel.in(unquote(range_ast))
 
       {:at_least, times} when is_integer(times) and times >= 0 ->

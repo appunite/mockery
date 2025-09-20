@@ -498,6 +498,12 @@ defmodule Mockery.AssertionsTest do
       assert_raise ExUnit.AssertionError, error_msg, fn ->
         assert_called! A, :fun, times: @times
       end
+
+      # without module attribute
+      Utils.push_call(B, :fun, 3, ["a", "b"])
+      Utils.push_call(B, :fun, 3, ["a", "b"])
+
+      assert_called! B, :fun, times: {:in, 1..3}
     end
 
     @times {:in, [2, 4]}
@@ -537,6 +543,12 @@ defmodule Mockery.AssertionsTest do
       assert_raise ExUnit.AssertionError, error_msg, fn ->
         assert_called! A, :fun, times: @times
       end
+
+      # without module attribute
+      Utils.push_call(B, :fun, 3, ["a", "b"])
+      Utils.push_call(B, :fun, 3, ["a", "b"])
+
+      assert_called! B, :fun, times: {:in, [2, 2137]}
     end
 
     @times {:at_least, 2}

@@ -54,8 +54,8 @@ defmodule Mockery do
 
   # TODO remove in v3
   @deprecated """
-  The `of` function is deprecated. Tuple calls won't be officially supported in Mockery v3.
-  Please migrate to the new macro-based alternative available in `Mockery.Macro`.
+  Tuple calls won't be officially supported in Mockery v3.
+  Please migrate to the new macro-based alternative available in `Mockery.Macro`
   """
   def of(mod, opts \\ [])
       when is_atom(mod)

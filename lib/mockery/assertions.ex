@@ -459,11 +459,11 @@ defmodule Mockery.Assertions do
   defp error_msg(mod, fun, arity, args, times)
 
   defp error_msg(mod, fun, :no_arity, :no_args, :no_times) do
-    "#{inspect(mod)}.#{fun}/x was not called"
+    "#{inspect(mod)}.#{fun}/? was not called"
   end
 
   defp error_msg(mod, fun, :no_arity, :no_args, _) do
-    "#{inspect(mod)}.#{fun}/x was not called expected number of times"
+    "#{inspect(mod)}.#{fun}/? was not called expected number of times"
   end
 
   defp error_msg(mod, fun, arity, :no_args, :no_times) do
@@ -489,11 +489,11 @@ defmodule Mockery.Assertions do
   defp refute_error_msg(mod, fun, arity, args, times)
 
   defp refute_error_msg(mod, fun, :no_arity, :no_args, :no_times) do
-    "#{inspect(mod)}.#{fun}/x was expected not to be called, but was called"
+    "#{inspect(mod)}.#{fun}/? was expected not to be called, but was called"
   end
 
   defp refute_error_msg(mod, fun, :no_arity, :no_args, _) do
-    "#{inspect(mod)}.#{fun}/x was expected not to be called the given number of times, but was called"
+    "#{inspect(mod)}.#{fun}/? was expected not to be called the given number of times, but was called"
   end
 
   defp refute_error_msg(mod, fun, arity, :no_args, :no_times) do

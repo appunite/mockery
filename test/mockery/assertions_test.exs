@@ -310,7 +310,7 @@ defmodule Mockery.AssertionsTest do
     end
 
     test "fails when function was not called" do
-      assert_raise ExUnit.AssertionError, wrap_msg("A.fun/x was not called"), fn ->
+      assert_raise ExUnit.AssertionError, wrap_msg("A.fun/? was not called"), fn ->
         assert_called! A, :fun
       end
     end
@@ -441,7 +441,7 @@ defmodule Mockery.AssertionsTest do
   describe "assert_called!/3 with :times in opts" do
     @times 2
     test "works correctly when times is non_neg_integer" do
-      error_msg = wrap_msg("A.fun/x was not called expected number of times")
+      error_msg = wrap_msg("A.fun/? was not called expected number of times")
 
       # 0
       assert_raise ExUnit.AssertionError, error_msg, fn ->
@@ -470,7 +470,7 @@ defmodule Mockery.AssertionsTest do
 
     @times {:in, 2..3}
     test "works correctly when times is {:in, Range}" do
-      error_msg = wrap_msg("A.fun/x was not called expected number of times")
+      error_msg = wrap_msg("A.fun/? was not called expected number of times")
 
       # 0
       assert_raise ExUnit.AssertionError, error_msg, fn ->
@@ -508,7 +508,7 @@ defmodule Mockery.AssertionsTest do
 
     @times {:in, [2, 4]}
     test "works correctly when times is {:in, List}" do
-      error_msg = wrap_msg("A.fun/x was not called expected number of times")
+      error_msg = wrap_msg("A.fun/? was not called expected number of times")
 
       # 0
       assert_raise ExUnit.AssertionError, error_msg, fn ->
@@ -553,7 +553,7 @@ defmodule Mockery.AssertionsTest do
 
     @times {:at_least, 2}
     test "works correctly when times is {:at_least, non_neg_integer}" do
-      error_msg = wrap_msg("A.fun/x was not called expected number of times")
+      error_msg = wrap_msg("A.fun/? was not called expected number of times")
 
       # 0
       assert_raise ExUnit.AssertionError, error_msg, fn ->
@@ -578,7 +578,7 @@ defmodule Mockery.AssertionsTest do
 
     @times {:at_most, 2}
     test "works correctly when times is {:at_most, non_neg_integer}" do
-      error_msg = wrap_msg("A.fun/x was not called expected number of times")
+      error_msg = wrap_msg("A.fun/? was not called expected number of times")
 
       # 0
       assert_called! A, :fun, times: @times

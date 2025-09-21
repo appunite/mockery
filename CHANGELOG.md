@@ -8,9 +8,9 @@
 
 - Added `Mockery.Assertions.assert_called!/3` and `Mockery.Assertions.refute_called!/3`
 
-- Deprecated `Mockery.Assertions.assert_called/2`, `Mockery.Assertions.assert_called/3` and `Mockery.Assertions.assert_called/4`
+- Deprecated `Mockery.Assertions.assert_called/2`, `Mockery.Assertions.assert_called/3`, `Mockery.Assertions.assert_called/4`, `Mockery.Assertions.refute_called/2`, `Mockery.Assertions.refute_called/3` and `Mockery.Assertions.refute_called/4`
 
-  - Use `Mockery.Assertions.assert_called!/3` instead
+  - Use `Mockery.Assertions.assert_called!/3` and `Mockery.Assertions.refute_called!/3` instead
   - Deprecation warnings include a suggested replacement showing the expected syntax (the suggestion is generated from the deprecated call). *Note:* the suggestion is best-effort and may not exactly match your current code — verify and adjust as needed.
 
 

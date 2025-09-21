@@ -43,22 +43,14 @@ defmodule Mockery.Assertions do
     ExUnit.Assertions.assert(called?(mod, fun), "#{Utils.print_mod(mod)}.#{fun} was not called")
   end
 
-  @doc """
-  Asserts that function from given module with given name or name and arity
-  was NOT called.
-
-  ## Examples
-
-  Assert Mod.fun/2 wasn't called
-
-      refute_called Mod, fun: 2
-
-  Assert any function named :fun from module Mod wasn't called
-
-      refute_called Mod, :fun
-
-  """
+  @doc deprecated: "Use refute_called!/3 instead"
   def refute_called(mod, [{fun, arity}]) do
+    warn =
+      "refute_called/2 is deprecated, use refute_called!/3 instead: " <>
+        "`refute_called!(#{Macro.to_string(mod)}, #{Macro.to_string(fun)}, arity: #{Macro.to_string(arity)})`"
+
+    IO.warn(warn)
+
     ExUnit.Assertions.refute(
       called?(mod, fun, arity),
       "#{Utils.print_mod(mod)}.#{fun}/#{arity} was called at least once"
@@ -66,6 +58,12 @@ defmodule Mockery.Assertions do
   end
 
   def refute_called(mod, fun) do
+    warn =
+      "refute_called/2 is deprecated, use refute_called!/3 instead: " <>
+        "`refute_called!(#{Macro.to_string(mod)}, #{Macro.to_string(fun)})`"
+
+    IO.warn(warn)
+
     ExUnit.Assertions.refute(
       called?(mod, fun),
       "#{Utils.print_mod(mod)}.#{fun} was called at least once"
@@ -92,24 +90,16 @@ defmodule Mockery.Assertions do
     end
   end
 
-  @doc """
-  Asserts that function from given module with given name was NOT called
-  with arguments matching given pattern.
-
-  ## Examples
-
-  Assert Mod.fun/2 wasn't called with given args list
-
-      refute_called Mod, :fun, ["a", "b"]
-
-  You can also use unbound variables inside args pattern
-
-      refute_called Mod, :fun, ["a", _second]
-
-  """
+  @doc deprecated: "Use refute_called!/3 instead"
   defmacro refute_called(mod, fun, args) do
     mod = Macro.expand(mod, __CALLER__)
     args = Macro.expand(args, __CALLER__)
+
+    warn =
+      "refute_called/3 is deprecated, use refute_called!/3 instead: " <>
+        "`refute_called!(#{Macro.to_string(mod)}, #{Macro.to_string(fun)}, args: #{Macro.to_string(args)})`"
+
+    IO.warn(warn, __CALLER__)
 
     quote do
       ExUnit.Assertions.refute(unquote(called_with?(mod, fun, args)), """
@@ -136,10 +126,6 @@ defmodule Mockery.Assertions do
     end
   end
 
-  # defp times_to_warn(times_ast) do
-  #   "{:in, #{Macro.to_string(times_ast)}}"
-  # end
-
   @doc deprecated: "Use assert_called!/3 instead"
   defmacro assert_called(mod, fun, args, times) do
     mod = Macro.expand(mod, __CALLER__)
@@ -161,31 +147,17 @@ defmodule Mockery.Assertions do
     end
   end
 
-  @doc """
-  Asserts that function from given module with given name was NOT called
-  given number of times with arguments matching given pattern.
-
-  Similar to `refute_called/3` but instead of checking if function was called
-  at least once, it checks if function was called specific number of times.
-
-  ## Examples
-
-  Assert Mod.fun/2 was not called with given args 5 times
-
-      refute_called Mod, :fun, ["a", "b"], 5
-
-  Assert Mod.fun/2 was not called with given args from 3 to 5 times
-
-      refute_called Mod, :fun, ["a", "b"], 3..5
-
-  Assert Mod.fun/2 was not called with given args 3 or 5 times
-
-      refute_called Mod, :fun, ["a", "b"], [3, 5]
-
-  """
+  @doc deprecated: "Use refute_called!/3 instead"
   defmacro refute_called(mod, fun, args, times) do
     mod = Macro.expand(mod, __CALLER__)
     args = Macro.expand(args, __CALLER__)
+
+    warn =
+      "refute_called/4 is deprecated, use refute_called!/3 instead: " <>
+        "`refute_called!(#{Macro.to_string(mod)}, #{Macro.to_string(fun)}," <>
+        " args: #{Macro.to_string(args)}, times: #{times_to_warn(times, __CALLER__)})`"
+
+    IO.warn(warn, __CALLER__)
 
     quote do
       ExUnit.Assertions.refute(unquote(ncalled_with?(mod, fun, args, times)), """

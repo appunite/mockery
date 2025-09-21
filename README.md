@@ -45,7 +45,7 @@ After adding this setting, make sure to recompile your project.
 
 ### Formatter Configuration
 
-To help the Elixir formatter recognize Mockery-specific macros (such as `defmock`, `assert_called!`, and `refute_called`) without requiring parentheses, you should import the locals without parens configuration from Mockery in your `.formatter.exs` file:
+To help the Elixir formatter recognize Mockery-specific macros (such as `defmock`, `assert_called!`, and `refute_called!`) without requiring parentheses, you should import the locals without parens configuration from Mockery in your `.formatter.exs` file:
 
 ```elixir
 [
@@ -245,7 +245,7 @@ end
 
 ### Refute
 
-Every `assert_called/x` function/macro has its `refute_called/x` counterpart.
+`Mockery.Assertions.assert_called!/3` macro has its `Mockery.Assertions.refute_called!/3` counterpart.
 
 For more information see [docs](https://hexdocs.pm/mockery/Mockery.Assertions.html)
 
@@ -253,7 +253,7 @@ For more information see [docs](https://hexdocs.pm/mockery/Mockery.Assertions.ht
 
 ![history example](https://raw.githubusercontent.com/appunite/mockery/master/history.jpeg)
 
-Mockery.History module provides more descriptive failure messages for `assert_called!/3` and `refute_called/{3,4}` that includes a colorized list of arguments passed to a given function in the scope of a single test process.
+Mockery.History module provides more descriptive failure messages for `Mockery.Assertions.assert_called!/3` and `Mockery.Assertions.refute_called!/3` that includes a colorized list of arguments passed to a given function.
 
 Disabled by default. For more information see [docs](https://hexdocs.pm/mockery/Mockery.History.html)
 

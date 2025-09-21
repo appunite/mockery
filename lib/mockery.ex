@@ -12,7 +12,7 @@ defmodule Mockery do
   By adding `use Mockery` in your test modules, you automatically import several useful modules and functions:
 
   - Core Mockery function `mock/3`
-  - Assertion helpers from `Mockery.Assertions` ([`assert_called!/3`](Mockery.Assertions.html#assert_called!/3), [`refute_called/2`](Mockery.Assertions.html#refute_called/2), ...)
+  - Assertion helpers from `Mockery.Assertions` ([`assert_called!/3`](Mockery.Assertions.html#assert_called!/3), [`refute_called!/3`](Mockery.Assertions.html#refute_called!/3))
   - History control functions from `Mockery.History` ([`enable_history/0`](Mockery.History.html#enable_history/0), [`disable_history/0`](Mockery.History.html#disable_history/0))
 
   Example usage:

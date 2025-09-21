@@ -284,7 +284,7 @@ defmodule Mockery.Assertions do
               |> Mockery.Utils.get_calls(unquote(fun))
               |> unquote(match_handler)
               |> unquote(times_handler),
-              "#{unquote(error_msg)}\n#{unquote(History.print(mod, fun, args_for_history))}"
+              "#{unquote(error_msg)}\n#{unquote(History.print2(mod, fun, args_for_history))}"
             ])
           end
       end

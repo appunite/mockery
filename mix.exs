@@ -35,7 +35,10 @@ defmodule Mockery.Mixfile do
       extras: ["README.md", "EXAMPLES.md", "CHANGELOG.md"],
       main: "readme",
       skip_code_autolink_to: ["Mockery.Proxy.MacroProxy"],
-      source_ref: @version
+      source_ref: @version,
+      default_group_for_doc: fn meta ->
+        if is_binary(meta[:deprecated]), do: "Deprecated"
+      end
     ]
   end
 

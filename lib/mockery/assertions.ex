@@ -85,7 +85,7 @@ defmodule Mockery.Assertions do
       ExUnit.Assertions.assert(unquote(called_with?(mod, fun, args)), """
       #{unquote(Utils.print_mod(mod))}.#{unquote(fun)} \
       was not called with given arguments\
-      #{unquote(History.print(mod, fun, args))}
+      #{unquote(History.old_print(mod, fun, args))}
       """)
     end
   end
@@ -105,7 +105,7 @@ defmodule Mockery.Assertions do
       ExUnit.Assertions.refute(unquote(called_with?(mod, fun, args)), """
       #{unquote(Utils.print_mod(mod))}.#{unquote(fun)} \
       was called with given arguments at least once\
-      #{unquote(History.print(mod, fun, args))}
+      #{unquote(History.old_print(mod, fun, args))}
       """)
     end
   end
@@ -142,7 +142,7 @@ defmodule Mockery.Assertions do
       ExUnit.Assertions.assert(unquote(ncalled_with?(mod, fun, args, times)), """
       #{unquote(Utils.print_mod(mod))}.#{unquote(fun)} \
       was not called with given arguments expected number of times\
-      #{unquote(History.print(mod, fun, args))}
+      #{unquote(History.old_print(mod, fun, args))}
       """)
     end
   end
@@ -163,7 +163,7 @@ defmodule Mockery.Assertions do
       ExUnit.Assertions.refute(unquote(ncalled_with?(mod, fun, args, times)), """
       #{unquote(Utils.print_mod(mod))}.#{unquote(fun)} \
       was called with given arguments unexpected number of times\
-      #{unquote(History.print(mod, fun, args))}
+      #{unquote(History.old_print(mod, fun, args))}
       """)
     end
   end
@@ -245,22 +245,61 @@ defmodule Mockery.Assertions do
 
           error_msg = error_msg_fun.(mod, fun, arity_opt, args_opt, times_opt)
 
-          args_for_history =
-            opts |> Keyword.get(:args) |> Macro.expand(__CALLER__)
+          expanded_args = args_opt |> Macro.prewalk(&Macro.expand(&1, __CALLER__))
+
+          flunk_ast =
+            quote do
+              print_params =
+                %{
+                  mod: unquote(mod),
+                  fun: unquote(fun),
+                  arity: unquote(arity_opt),
+                  args: unquote(Macro.escape(args_opt)),
+                  expanded_args: unquote(Macro.escape(expanded_args)),
+                  history_enabled: Mockery.Utils.history_enabled?(),
+                  binding: binding(),
+                  module_attr_map: unquote(compile_module_attr_map(args_opt, __CALLER__))
+                }
+
+              ExUnit.Assertions.flunk(
+                "#{IO.ANSI.red()}#{unquote(error_msg)}#{History.print(print_params)}"
+              )
+            end
 
           quote do
             unquote(warn_ast)
 
-            apply(ExUnit.Assertions, unquote(assert_fun), [
+            val =
               unquote(mod)
               |> Mockery.Utils.get_calls(unquote(fun))
               |> unquote(match_handler)
-              |> unquote(times_handler),
-              "#{unquote(error_msg)}\n#{unquote(History.print2(mod, fun, args_for_history))}"
-            ])
+              |> unquote(times_handler)
+
+            case Mockery.Assertions.flunk?(unquote(assert_fun), val) do
+              false -> val
+              true -> unquote(flunk_ast)
+            end
           end
       end
     end
+  end
+
+  @doc false
+  def flunk?(:assert, true), do: false
+  def flunk?(:refute, false), do: false
+  def flunk?(_, _), do: true
+
+  defp compile_module_attr_map(args, caller) do
+    {_ast, acc} =
+      Macro.prewalk(args, %{}, fn
+        {:@, _, [{attr_name, _, _}]} = ast, acc ->
+          {ast, Map.put(acc, attr_name, Macro.expand(ast, caller))}
+
+        ast, acc ->
+          {ast, acc}
+      end)
+
+    Macro.escape(acc)
   end
 
   @typedoc "Function name (an atom identifying the function)."

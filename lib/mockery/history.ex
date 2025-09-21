@@ -69,42 +69,20 @@ defmodule Mockery.History do
   end
 
   @doc false
-  def print(mod, fun, args) when is_list(args) do
+  def print(_mod, _fun, args) when not is_list(args), do: nil
+
+  def print(mod, fun, args) do
     quote do
       if Mockery.Utils.history_enabled?() do
         """
-
+        \n
         #{yellow()}Given:#{white()}
         #{unquote(Macro.to_string(args))}
 
         #{yellow()}History:#{white()}
-        #{unquote(colorize(mod, fun, args))}
+        #{unquote(colorize(mod, fun, args))}\
         """
       end
-    end
-  end
-
-  def print(mod, fun, nil) do
-    quote do
-      if Mockery.Utils.history_enabled?() do
-        """
-
-        #{yellow()}History:#{white()}
-        #{unquote(get(mod, fun))}
-        """
-      end
-    end
-  end
-
-  def print(_mod, _fun, _args), do: nil
-
-  defp get(mod, fun) do
-    quote do
-      Utils.get_calls(unquote(mod), unquote(fun))
-      |> Enum.reverse()
-      |> Enum.map_join("\n", fn {_call_arity, call_args} ->
-        inspect(call_args)
-      end)
     end
   end
 
@@ -166,5 +144,46 @@ defmodule Mockery.History do
       node ->
         node
     end)
+  end
+
+  # assert_called!/3 refute_called!/3
+  @doc false
+  def print2(mod, fun, args) when is_list(args) do
+    quote do
+      if Mockery.Utils.history_enabled?() do
+        """
+
+        #{yellow()}Given:#{white()}
+        #{unquote(Macro.to_string(args))}
+
+        #{yellow()}History:#{white()}
+        #{unquote(colorize(mod, fun, args))}
+        """
+      end
+    end
+  end
+
+  def print2(mod, fun, nil) do
+    quote do
+      if Mockery.Utils.history_enabled?() do
+        """
+
+        #{yellow()}History:#{white()}
+        #{unquote(get(mod, fun))}
+        """
+      end
+    end
+  end
+
+  def print2(_mod, _fun, _args), do: nil
+
+  defp get(mod, fun) do
+    quote do
+      Utils.get_calls(unquote(mod), unquote(fun))
+      |> Enum.reverse()
+      |> Enum.map_join("\n", fn {_call_arity, call_args} ->
+        inspect(call_args)
+      end)
+    end
   end
 end

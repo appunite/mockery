@@ -86,8 +86,8 @@ defmodule Mockery.Assertions do
     quote do
       ExUnit.Assertions.assert(unquote(called_with?(mod, fun, args)), """
       #{unquote(Utils.print_mod(mod))}.#{unquote(fun)} \
-      was not called with given arguments
-      #{unquote(History.print(mod, fun, args))} \
+      was not called with given arguments\
+      #{unquote(History.print(mod, fun, args))}
       """)
     end
   end
@@ -114,8 +114,8 @@ defmodule Mockery.Assertions do
     quote do
       ExUnit.Assertions.refute(unquote(called_with?(mod, fun, args)), """
       #{unquote(Utils.print_mod(mod))}.#{unquote(fun)} \
-      was called with given arguments at least once
-      #{unquote(History.print(mod, fun, args))} \
+      was called with given arguments at least once\
+      #{unquote(History.print(mod, fun, args))}
       """)
     end
   end
@@ -155,8 +155,8 @@ defmodule Mockery.Assertions do
     quote do
       ExUnit.Assertions.assert(unquote(ncalled_with?(mod, fun, args, times)), """
       #{unquote(Utils.print_mod(mod))}.#{unquote(fun)} \
-      was not called with given arguments expected number of times
-      #{unquote(History.print(mod, fun, args))} \
+      was not called with given arguments expected number of times\
+      #{unquote(History.print(mod, fun, args))}
       """)
     end
   end
@@ -190,8 +190,8 @@ defmodule Mockery.Assertions do
     quote do
       ExUnit.Assertions.refute(unquote(ncalled_with?(mod, fun, args, times)), """
       #{unquote(Utils.print_mod(mod))}.#{unquote(fun)} \
-      was called with given arguments unexpected number of times
-      #{unquote(History.print(mod, fun, args))} \
+      was called with given arguments unexpected number of times\
+      #{unquote(History.print(mod, fun, args))}
       """)
     end
   end

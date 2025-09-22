@@ -6,11 +6,7 @@ defmodule Mockery.AssertionsTest do
 
   alias Mockery.Utils
 
-  if Version.match?(System.version(), "~> 1.16") do
-    defp wrap_msg(msg), do: "\n\n#{IO.ANSI.red()}#{msg}\n"
-  else
-    defp wrap_msg(msg), do: "\n\n#{IO.ANSI.red()}#{msg}     \n"
-  end
+  defp wrap_msg(msg), do: "\n\n#{IO.ANSI.red()}#{msg}\n"
 
   describe "assert_called!/3 without opts" do
     test "succeeds when function was called once (zero arity)" do

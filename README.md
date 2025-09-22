@@ -19,7 +19,7 @@ Simple mocking library for asynchronous testing in Elixir.
 ## Disadvantages
 
 - Mockery is not designed for libraries as it would force end user to download Mockery as dependency of dependency
-- Mockery can cause issues with dialyzer if you are using dialyzer with `MIX_ENV=test`
+- Mockery can interfere with Dialyzer when run with Mockery enabled (warnings can be suppressed via `:suppress_dialyzer_warnings` — see the [docs](https://hexdocs.pm/mockery/Mockery.Macro.html#__using__/1))
 
 ## Getting started
 

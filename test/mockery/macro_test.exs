@@ -1,3 +1,4 @@
+# credo:disable-for-this-file Credo.Check.Design.DuplicatedCode
 defmodule Mockery.MacroTest do
   use ExUnit.Case, async: false
   use Mockery.Macro

@@ -30,10 +30,10 @@ defmodule Mockery.MacroTest do
     end
   end
 
-  describe "__using__/1 :supress_dialyzer_warnings" do
+  describe "__using__/1 :suppress_dialyzer_warnings" do
     @describetag :dialyzer
 
-    test "module without `:supress_dialyzer_warnings` produces a Dialyzer warning" do
+    test "module without `:suppress_dialyzer_warnings` produces a Dialyzer warning" do
       id = System.unique_integer([:positive])
       mod_name = "DialyzerIntegration#{id}"
       file_path = "lib/#{Macro.underscore(mod_name)}.ex"
@@ -73,14 +73,14 @@ defmodule Mockery.MacroTest do
       end
     end
 
-    test "module with `supress_dialyzer_warnings: true` doesn't produce a Dialyzer warning" do
+    test "module with `suppress_dialyzer_warnings: true` doesn't produce a Dialyzer warning" do
       id = System.unique_integer([:positive])
       mod_name = "DialyzerIntegration#{id}"
       file_path = "lib/#{Macro.underscore(mod_name)}.ex"
 
       contents = """
       defmodule #{mod_name} do
-        use Mockery.Macro, supress_dialyzer_warnings: true
+        use Mockery.Macro, suppress_dialyzer_warnings: true
 
         # introduce a mockable call so the on_definition hook will consider this function
         def fun(), do: mockable(Enum).count([1, 2, 3])
@@ -113,13 +113,13 @@ defmodule Mockery.MacroTest do
       end
     end
 
-    test "module doesn't produce a Dialyzer warning when `:supress_dialyzer_warnings` is enabled globally" do
+    test "module doesn't produce a Dialyzer warning when `:suppress_dialyzer_warnings` is enabled globally" do
       id = System.unique_integer([:positive])
       mod_name = "DialyzerIntegration#{id}"
       file_path = "lib/#{Macro.underscore(mod_name)}.ex"
 
       contents = """
-      Application.put_env(:mockery, Mockery.Macro, supress_dialyzer_warnings: true)
+      Application.put_env(:mockery, Mockery.Macro, suppress_dialyzer_warnings: true)
 
       defmodule #{mod_name} do
         use Mockery.Macro

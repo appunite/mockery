@@ -53,7 +53,7 @@ defmodule Mockery.Macro do
       end
 
     on_definition =
-      if Application.get_env(:mockery, Mockery.Macro, opts)[:supress_dialyzer_warnings] do
+      if Application.get_env(:mockery, Mockery.Macro, opts)[:suppress_dialyzer_warnings] do
         [quoted_on_definition]
       else
         []

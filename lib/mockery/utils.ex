@@ -1,7 +1,7 @@
 defmodule Mockery.Utils do
   @moduledoc false
 
-  use Mockery.Macro, supress_dialyzer_warnings: true
+  use Mockery.Macro, suppress_dialyzer_warnings: true
 
   alias Mockery.Error
 

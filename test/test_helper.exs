@@ -1,1 +1,1 @@
-ExUnit.start(exclude: :screenshot)
+ExUnit.start(exclude: [:dialyzer, :screenshot])

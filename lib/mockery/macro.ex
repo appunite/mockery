@@ -47,14 +47,14 @@ defmodule Mockery.Macro do
   end
 
   defp mockery_enabled_ast(opts) do
-    on_definition_ast =
+    quoted_on_definition =
       quote do
         @on_definition unquote(__MODULE__)
       end
 
     on_definition =
       if Application.get_env(:mockery, Mockery.Macro, opts)[:supress_dialyzer_warnings] do
-        [on_definition_ast]
+        [quoted_on_definition]
       else
         []
       end

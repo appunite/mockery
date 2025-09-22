@@ -22,13 +22,19 @@ defmodule Mockery.Macro do
   @doc """
   Injects Mockery helper macros into the calling module.
 
-  When you `use Mockery.Macro` this macro:
+  When you `use Mockery.Macro`, this macro:
 
   - Imports the macros from `Mockery.Macro` (`mockable/1`, `mockable/2`,
     and `defmock/2`).
   - When mockery is enabled (`config :mockery, :enable, true`),
     adds `@compile {:no_warn_undefined, Mockery.Proxy.MacroProxy}`
     so the compiler does not warn when `Mockery.Proxy.MacroProxy` is referenced.
+
+  ## Options
+
+  - `suppress_dialyzer_warnings: true | false` (default: `false`)
+
+    See the ["Dialyzer"](#__using__/1-dialyzer) section for more information
 
   ## Example
 
@@ -37,6 +43,22 @@ defmodule Mockery.Macro do
 
         ...
       end
+
+  ## Dialyzer
+
+  We recommend running Dialyzer in an environment where Mockery is not enabled
+  (for example, `:dev`) so Dialyzer analyzes the original modules rather than the injected
+  proxy module.
+
+  If it is not possible to run Dialyzer in an environment with Mockery disabled, setting
+  `use Mockery.Macro, suppress_dialyzer_warnings: true` will silence Dialyzer warnings that
+  are caused by functions that use `mockable/2`. This works by adding per-function
+  `@dialyzer {:nowarn_function, ...}` entries for functions that reference `mockable/2`.
+
+  `:suppress_dialyzer_warnings` can also be enabled globally:
+
+      # config/test.exs
+      config :mockery, Mockery.Macro, suppress_dialyzer_warnings: true
 
   """
   @doc since: "2.3.3"

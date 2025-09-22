@@ -33,10 +33,16 @@ defmodule Mockery.Mixfile do
   end
 
   defp dialyzer do
-    [
+    config = [
       plt_add_apps: [:mix, :ex_unit],
       ignore_warnings: ".dialyzer_ignore.exs"
     ]
+
+    if System.get_env("CI") do
+      Keyword.put(config, :plt_file, {:no_warn, "priv/plts/project.plt"})
+    else
+      config
+    end
   end
 
   defp docs do

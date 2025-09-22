@@ -251,7 +251,7 @@ For more information see [docs](https://hexdocs.pm/mockery/Mockery.Assertions.ht
 
 ### History
 
-![history example](https://raw.githubusercontent.com/appunite/mockery/master/history.jpeg)
+![history example](https://raw.githubusercontent.com/appunite/mockery/master/history.png)
 
 Mockery.History module provides more descriptive failure messages for `Mockery.Assertions.assert_called!/3` and `Mockery.Assertions.refute_called!/3` that includes a colorized list of arguments passed to a given function.
 

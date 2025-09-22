@@ -430,4 +430,32 @@ defmodule Mockery.HistoryTest do
       assert error.message == error_msg
     end
   end
+
+  describe "Mockery.History output example" do
+    @describetag :screenshot
+
+    setup do
+      Mockery.History.enable_history()
+    end
+
+    test "1" do
+      Utils.push_call(Foo, :bar, 3, [1, 2, 4])
+
+      assert_called! Foo, :bar, args: [1, 2, 3]
+    end
+
+    test "2" do
+      Utils.push_call(Foo, :bar, 3, [1, 2, 3])
+
+      assert_called! Foo, :bar, args: [1, 1]
+    end
+
+    @mod_attr 2
+    test "3" do
+      Utils.push_call(Foo, :bar, 2, [1, 2])
+
+      my_variable = 1
+      assert_called! Foo, :bar, args: [@mod_attr, ^my_variable], times: 2
+    end
+  end
 end

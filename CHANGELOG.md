@@ -6,7 +6,11 @@
 
 - [`use Mockery.Macro`](`Mockery.Macro.__using__/1`) won't inject unnecessary code when `:mockery` isn't enabled in config
 
+- Added `:supress_dialyzer_warnings` option to [`use Mockery.Macro`](`Mockery.Macro.__using__/1`), see documentation for details
+
 - Added `Mockery.Assertions.assert_called!/3` and `Mockery.Assertions.refute_called!/3`
+
+  - New macros produce improved failure output.
 
 - Deprecated `Mockery.Assertions.assert_called/2`, `Mockery.Assertions.assert_called/3`, `Mockery.Assertions.assert_called/4`, `Mockery.Assertions.refute_called/2`, `Mockery.Assertions.refute_called/3` and `Mockery.Assertions.refute_called/4`
 

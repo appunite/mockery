@@ -69,9 +69,9 @@ defmodule Mockery.History do
   end
 
   @doc false
-  def print(_mod, _fun, args) when not is_list(args), do: nil
+  def old_print(_mod, _fun, args) when not is_list(args), do: nil
 
-  def print(mod, fun, args) do
+  def old_print(mod, fun, args) do
     quote do
       if Mockery.Utils.history_enabled?() do
         """
@@ -148,42 +148,137 @@ defmodule Mockery.History do
 
   # assert_called!/3 refute_called!/3
   @doc false
-  def print2(mod, fun, args) when is_list(args) do
-    quote do
-      if Mockery.Utils.history_enabled?() do
-        """
+  def print(%{args: args, history_enabled: true} = params) when is_list(args) do
+    %{mod: mod, fun: fun, binding: binding, expanded_args: expanded_args} = params
 
-        #{yellow()}Given:#{white()}
-        #{unquote(Macro.to_string(args))}
+    formatted_module_attrs = format_module_attrs(params.module_attr_map)
 
-        #{yellow()}History:#{white()}
-        #{unquote(colorize(mod, fun, args))}
-        """
-      end
+    pins = collect_pins(args)
+    formatted_pins = format_pins(pins, binding)
+
+    formatted_different_arity_calls = format_different_arity_calls(mod, fun, Enum.count(args))
+
+    """
+
+
+    #{yellow()}Given:#{reset()}
+    #{Macro.to_string(args)}#{if formatted_module_attrs || formatted_pins, do: "\n"}#{formatted_module_attrs}#{formatted_pins}
+
+    #{yellow()}History:#{reset()}
+    #{print_call_diffs(mod, fun, expanded_args, pins, binding)}#{formatted_different_arity_calls}
+    """
+  end
+
+  def print(%{history_enabled: true} = params) do
+    %{mod: mod, fun: fun, arity: arity} = params
+
+    formatted_different_arity_calls = format_different_arity_calls(mod, fun, arity)
+
+    """
+
+
+    #{yellow()}History:#{reset()}
+    #{print_calls(mod, fun, arity)}#{formatted_different_arity_calls}
+    """
+  end
+
+  def print(_params), do: ""
+
+  defp print_call_diffs(mod, fun, args, pins, binding) do
+    arity = Enum.count(args)
+
+    Utils.get_calls(mod, fun)
+    |> Enum.reverse()
+    |> Enum.reject(fn {call_arity, _call_args} -> call_arity != arity end)
+    |> Enum.map_join("\n", fn {_call_arity, call_args} ->
+      Mockery.History.Formatter.format(args, call_args, pins, binding)
+    end)
+    |> case do
+      "" ->
+        no_calls_msg()
+
+      other ->
+        String.trim_trailing(other)
     end
   end
 
-  def print2(mod, fun, nil) do
-    quote do
-      if Mockery.Utils.history_enabled?() do
-        """
+  defp print_calls(mod, fun, arity) do
+    Utils.get_calls(mod, fun)
+    |> filter_calls_by_arity(arity)
+    |> Enum.reverse()
+    |> Enum.map_join("\n", fn {_call_arity, call_args} ->
+      inspect(call_args)
+    end)
+    |> case do
+      "" ->
+        no_calls_msg()
 
-        #{yellow()}History:#{white()}
-        #{unquote(get(mod, fun))}
-        """
-      end
+      other ->
+        other
     end
   end
 
-  def print2(_mod, _fun, _args), do: nil
+  defp filter_calls_by_arity(calls, :no_arity), do: calls
 
-  defp get(mod, fun) do
-    quote do
-      Utils.get_calls(unquote(mod), unquote(fun))
-      |> Enum.reverse()
-      |> Enum.map_join("\n", fn {_call_arity, call_args} ->
-        inspect(call_args)
-      end)
+  defp filter_calls_by_arity(calls, arity) do
+    Enum.reject(calls, fn {call_arity, _call_args} -> call_arity != arity end)
+  end
+
+  defp format_different_arity_calls(_mod, _fun, :no_arity), do: nil
+
+  defp format_different_arity_calls(mod, fun, arity) do
+    Utils.get_calls(mod, fun)
+    |> Enum.reverse()
+    |> Enum.reject(fn {call_arity, _call_args} -> call_arity == arity end)
+    |> Enum.reduce("", fn {_call_arity, call_args}, acc ->
+      acc <> "#{inspect(call_args)}\n"
+    end)
+    |> case do
+      "" ->
+        nil
+
+      calls ->
+        header = "\n\n#{yellow()}History (same function name, different arity):#{reset()}\n"
+        String.trim_trailing(header <> calls)
     end
+  end
+
+  defp collect_pins(args) do
+    args
+    |> Macro.prewalk([], fn
+      {:^, _, [{var_name, _, _} = _var_ast]} = ast, acc ->
+        {ast, [var_name | acc]}
+
+      ast, acc ->
+        {ast, acc}
+    end)
+    |> then(fn {_ast, acc} -> acc end)
+    |> Enum.reverse()
+    |> Enum.uniq()
+  end
+
+  defp format_pins([], _binding), do: nil
+
+  defp format_pins(pins, binding) do
+    pins
+    |> Enum.sort()
+    |> Enum.reduce("\n", fn pin, acc ->
+      acc <> "#{pin} = #{inspect(binding[pin])}\n"
+    end)
+    |> String.trim_trailing()
+  end
+
+  defp format_module_attrs(attrs_map) when map_size(attrs_map) == 0, do: nil
+
+  defp format_module_attrs(attrs_map) do
+    attrs_map
+    |> Enum.reduce("\n", fn {key, value}, acc ->
+      acc <> "@#{key} #{value}\n"
+    end)
+    |> String.trim_trailing()
+  end
+
+  defp no_calls_msg do
+    "(#{light_yellow()}#{underline()}empty - no function calls were registered#{reset()})"
   end
 end

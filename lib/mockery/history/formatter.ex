@@ -12,7 +12,7 @@ defmodule Mockery.History.Formatter do
       doctest: ExUnit.AssertionError.no_value()
     }
 
-    parts = ExUnit.Formatter.format_assertion_diff(error, 0, :infinity, &formatter_callback/2)
+    parts = ExUnit.Formatter.format_assertion_diff(error, 6, 300, &formatter_callback/2)
 
     """
     args: #{parts[:left]}

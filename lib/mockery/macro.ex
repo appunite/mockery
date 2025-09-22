@@ -22,13 +22,19 @@ defmodule Mockery.Macro do
   @doc """
   Injects Mockery helper macros into the calling module.
 
-  When you `use Mockery.Macro` this macro:
+  When you `use Mockery.Macro`, this macro:
 
   - Imports the macros from `Mockery.Macro` (`mockable/1`, `mockable/2`,
     and `defmock/2`).
   - When mockery is enabled (`config :mockery, :enable, true`),
     adds `@compile {:no_warn_undefined, Mockery.Proxy.MacroProxy}`
     so the compiler does not warn when `Mockery.Proxy.MacroProxy` is referenced.
+
+  ## Options
+
+  - `suppress_dialyzer_warnings: true | false` (default: `false`)
+
+    See the ["Dialyzer"](#__using__/1-dialyzer) section for more information
 
   ## Example
 
@@ -38,17 +44,46 @@ defmodule Mockery.Macro do
         ...
       end
 
+  ## Dialyzer
+
+  We recommend running Dialyzer in an environment where Mockery is not enabled
+  (for example, `:dev`) so Dialyzer analyzes the original modules rather than the injected
+  proxy module.
+
+  If it is not possible to run Dialyzer in an environment with Mockery disabled, setting
+  `use Mockery.Macro, suppress_dialyzer_warnings: true` will silence Dialyzer warnings that
+  are caused by functions that use `mockable/2`. This works by adding per-function
+  `@dialyzer {:nowarn_function, ...}` entries for functions that reference `mockable/2`.
+
+  `:suppress_dialyzer_warnings` can also be enabled globally:
+
+      # config/test.exs
+      config :mockery, Mockery.Macro, suppress_dialyzer_warnings: true
+
   """
   @doc since: "2.3.3"
-  defmacro __using__(_opts) do
+  defmacro __using__(opts \\ []) do
     if Application.get_env(:mockery, :enable),
-      do: mockery_enabled_ast(),
+      do: mockery_enabled_ast(opts),
       else: mockery_disabled_ast()
   end
 
-  defp mockery_enabled_ast do
+  defp mockery_enabled_ast(opts) do
+    quoted_on_definition =
+      quote do
+        @on_definition unquote(__MODULE__)
+      end
+
+    on_definition =
+      if Application.get_env(:mockery, Mockery.Macro, opts)[:suppress_dialyzer_warnings] do
+        [quoted_on_definition]
+      else
+        []
+      end
+
     quote do
       @compile {:no_warn_undefined, Mockery.Proxy.MacroProxy}
+      unquote_splicing(on_definition)
       import unquote(__MODULE__)
     end
   end
@@ -57,6 +92,35 @@ defmodule Mockery.Macro do
     quote do
       import unquote(__MODULE__)
     end
+  end
+
+  def __on_definition__(env, kind, name, args, _guards, body) when kind in [:def, :defp] do
+    body
+    # expand once to handle defmocks and defmacrop
+    |> Macro.postwalk(fn
+      {:mockable, _, _} = ast -> ast
+      ast -> Macro.expand_once(ast, env)
+    end)
+    # change acc to true if mockable is present in function
+    |> Macro.postwalk(false, fn
+      {:mockable, _, _} = ast, false -> {ast, true}
+      ast, acc -> {ast, acc}
+    end)
+    |> case do
+      {_ast, true} ->
+        # tell dialyzer to shut up
+        # @dialyzer {:nowarn_function, name: arity}
+        Module.put_attribute(env.module, :dialyzer, {:nowarn_function, [{name, length(args)}]})
+
+        :ok
+
+      {_ast, false} ->
+        :ok
+    end
+  end
+
+  def __on_definition__(_env, _kind, _name, _args, _guards, _body) do
+    :ok
   end
 
   @doc """

@@ -1,3 +1,4 @@
+# credo:disable-for-this-file Credo.Check.Design.DuplicatedCode
 defmodule Mockery.MacroTest do
   use ExUnit.Case, async: false
   use Mockery.Macro
@@ -19,6 +20,16 @@ defmodule Mockery.MacroTest do
              ] = quoted_to_strings(quoted)
     end
 
+    test "injects code when mockery is enabled (with :suppress_dialyzer_warnings)" do
+      quoted = quote do: Mockery.Macro.__using__(suppress_dialyzer_warnings: true)
+
+      assert [
+               "@compile {:no_warn_undefined, Mockery.Proxy.MacroProxy}",
+               "@on_definition Mockery.Macro",
+               "import Mockery.Macro"
+             ] = quoted_to_strings(quoted)
+    end
+
     test "injects code when mockery is disabled" do
       Application.put_env(:mockery, :enable, false)
       on_exit(fn -> Application.put_env(:mockery, :enable, true) end)
@@ -27,6 +38,142 @@ defmodule Mockery.MacroTest do
 
       assert ["import Mockery.Macro"] =
                quoted_to_strings(quoted)
+    end
+
+    test "injects code when mockery is disabled (with :suppress_dialyzer_warnings)" do
+      Application.put_env(:mockery, :enable, false)
+      on_exit(fn -> Application.put_env(:mockery, :enable, true) end)
+
+      quoted = quote do: Mockery.Macro.__using__(suppress_dialyzer_warnings: true)
+
+      assert ["import Mockery.Macro"] =
+               quoted_to_strings(quoted)
+    end
+  end
+
+  describe "__using__/1 :suppress_dialyzer_warnings" do
+    @describetag :dialyzer
+
+    test "module without `:suppress_dialyzer_warnings` produces a Dialyzer warning" do
+      id = System.unique_integer([:positive])
+      mod_name = "DialyzerIntegration#{id}"
+      file_path = "lib/#{Macro.underscore(mod_name)}.ex"
+
+      contents = """
+      defmodule #{mod_name} do
+        use Mockery.Macro
+
+        # introduce a mockable call so the on_definition hook will consider this function
+        def fun(), do: mockable(Enum).count([1, 2, 3])
+      end
+      """
+
+      File.write!(file_path, contents)
+
+      try do
+        assert {_out, 0} =
+                 System.cmd("mix", ["compile"],
+                   stderr_to_stdout: true,
+                   env: [{"MIX_ENV", "test"}]
+                 )
+
+        assert {out, 2} =
+                 System.cmd("mix", ["dialyzer"],
+                   stderr_to_stdout: true,
+                   env: [{"MIX_ENV", "test"}]
+                 )
+
+        warning_msg =
+          "lib/dialyzer_integration#{id}.ex:5:call_to_missing\n" <>
+            "Call to missing or private function Mockery.Proxy.MacroProxy.count/1."
+
+        assert out =~ warning_msg
+      after
+        File.rm_rf!(file_path)
+        System.cmd("mix", ["compile"], stderr_to_stdout: true, env: [{"MIX_ENV", "test"}])
+      end
+    end
+
+    test "module with `suppress_dialyzer_warnings: true` doesn't produce a Dialyzer warning" do
+      id = System.unique_integer([:positive])
+      mod_name = "DialyzerIntegration#{id}"
+      file_path = "lib/#{Macro.underscore(mod_name)}.ex"
+
+      contents = """
+      defmodule #{mod_name} do
+        use Mockery.Macro, suppress_dialyzer_warnings: true
+
+        # introduce a mockable call so the on_definition hook will consider this function
+        def fun(), do: mockable(Enum).count([1, 2, 3])
+      end
+      """
+
+      File.write!(file_path, contents)
+
+      try do
+        assert {_out, 0} =
+                 System.cmd("mix", ["compile"],
+                   stderr_to_stdout: true,
+                   env: [{"MIX_ENV", "test"}]
+                 )
+
+        assert {out, 0} =
+                 System.cmd("mix", ["dialyzer"],
+                   stderr_to_stdout: true,
+                   env: [{"MIX_ENV", "test"}]
+                 )
+
+        warning_msg =
+          "lib/dialyzer_integration#{id}.ex:5:call_to_missing\n" <>
+            "Call to missing or private function Mockery.Proxy.MacroProxy.count/1."
+
+        refute out =~ warning_msg
+      after
+        File.rm_rf!(file_path)
+        System.cmd("mix", ["compile"], stderr_to_stdout: true, env: [{"MIX_ENV", "test"}])
+      end
+    end
+
+    test "module doesn't produce a Dialyzer warning when `:suppress_dialyzer_warnings` is enabled globally" do
+      id = System.unique_integer([:positive])
+      mod_name = "DialyzerIntegration#{id}"
+      file_path = "lib/#{Macro.underscore(mod_name)}.ex"
+
+      contents = """
+      Application.put_env(:mockery, Mockery.Macro, suppress_dialyzer_warnings: true)
+
+      defmodule #{mod_name} do
+        use Mockery.Macro
+
+        # introduce a mockable call so the on_definition hook will consider this function
+        def fun(), do: mockable(Enum).count([1, 2, 3])
+      end
+      """
+
+      File.write!(file_path, contents)
+
+      try do
+        assert {_out, 0} =
+                 System.cmd("mix", ["compile"],
+                   stderr_to_stdout: true,
+                   env: [{"MIX_ENV", "test"}]
+                 )
+
+        assert {out, 0} =
+                 System.cmd("mix", ["dialyzer"],
+                   stderr_to_stdout: true,
+                   env: [{"MIX_ENV", "test"}]
+                 )
+
+        warning_msg =
+          "lib/dialyzer_integration#{id}.ex:5:call_to_missing\n" <>
+            "Call to missing or private function Mockery.Proxy.MacroProxy.count/1."
+
+        refute out =~ warning_msg
+      after
+        File.rm_rf!(file_path)
+        System.cmd("mix", ["compile"], stderr_to_stdout: true, env: [{"MIX_ENV", "test"}])
+      end
     end
   end
 

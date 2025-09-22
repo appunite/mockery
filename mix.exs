@@ -9,6 +9,7 @@ defmodule Mockery.Mixfile do
       app: :mockery,
       deps: deps(),
       description: @description,
+      dialyzer: dialyzer(),
       docs: docs(),
       elixir: "~> 1.15",
       elixirc_paths: elixirc_paths(Mix.env()),
@@ -26,8 +27,22 @@ defmodule Mockery.Mixfile do
     [
       {:beam_inspect, "~> 0.1.2", only: :dev, runtime: false},
       {:credo, "~> 1.7", only: :dev, runtime: false},
+      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.13", only: :dev, runtime: false}
     ]
+  end
+
+  defp dialyzer do
+    config = [
+      plt_add_apps: [:mix, :ex_unit],
+      ignore_warnings: ".dialyzer_ignore.exs"
+    ]
+
+    if System.get_env("CI") do
+      Keyword.put(config, :plt_file, {:no_warn, "priv/plts/project.plt"})
+    else
+      config
+    end
   end
 
   defp docs do

@@ -19,11 +19,31 @@ defmodule Mockery.MacroTest do
              ] = quoted_to_strings(quoted)
     end
 
+    test "injects code when mockery is enabled (with :suppress_dialyzer_warnings)" do
+      quoted = quote do: Mockery.Macro.__using__(suppress_dialyzer_warnings: true)
+
+      assert [
+               "@compile {:no_warn_undefined, Mockery.Proxy.MacroProxy}",
+               "@on_definition Mockery.Macro",
+               "import Mockery.Macro"
+             ] = quoted_to_strings(quoted)
+    end
+
     test "injects code when mockery is disabled" do
       Application.put_env(:mockery, :enable, false)
       on_exit(fn -> Application.put_env(:mockery, :enable, true) end)
 
       quoted = quote do: Mockery.Macro.__using__([])
+
+      assert ["import Mockery.Macro"] =
+               quoted_to_strings(quoted)
+    end
+
+    test "injects code when mockery is disabled (with :suppress_dialyzer_warnings)" do
+      Application.put_env(:mockery, :enable, false)
+      on_exit(fn -> Application.put_env(:mockery, :enable, true) end)
+
+      quoted = quote do: Mockery.Macro.__using__(suppress_dialyzer_warnings: true)
 
       assert ["import Mockery.Macro"] =
                quoted_to_strings(quoted)

@@ -62,7 +62,7 @@ defmodule Mockery.Macro do
 
   """
   @doc since: "2.3.3"
-  defmacro __using__(opts \\ nil) do
+  defmacro __using__(opts \\ []) do
     if Application.get_env(:mockery, :enable),
       do: mockery_enabled_ast(opts),
       else: mockery_disabled_ast()

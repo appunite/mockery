@@ -322,6 +322,141 @@ defmodule Mockery.HistoryTest do
 
       assert error.message == error_msg
     end
+
+    test "very big pattern" do
+      error_msg = """
+      #{red()}Redix.pipeline/2 was not called with given args
+
+      #{yellow()}Given:#{reset()}
+      [
+        :redix,
+        [
+          ["HSET", ^access_token_namespace, ^id, ^access_token],
+          ["EXPIRE", ^access_token_namespace, ^id, _],
+          ["HSET", ^refresh_token_namespace, ^id, ^refresh_token],
+          ["EXPIRE", ^refresh_token_namespace, ^id, _],
+          ["HSET", ^session_metadata_namespace, ^id, ^client_ip],
+          ["EXPIRE", ^session_metadata_namespace, ^id, _],
+          ["SADD", ^active_users_set, ^id]
+        ]
+      ]
+
+      access_token = "access_abc123"
+      access_token_namespace = "access_tokens"
+      active_users_set = "active_users"
+      client_ip = "192.0.2.1"
+      id = "user:123"
+      refresh_token = "refresh_def456"
+      refresh_token_namespace = "refresh_tokens"
+      session_metadata_namespace = "session_meta"
+
+      #{yellow()}History:#{reset()}
+      args: [
+              :redix,
+              [
+                ["HSET", ^access_token_namespace, ^id, ^access_token],
+                ["EXPIRE", ^access_token_namespace, ^id, _],
+                ["HSET", ^refresh_token_namespace, ^id, #{green()}^refresh_token#{reset()}],
+                ["EXPIRE", ^refresh_token_namespace, ^id, _],
+                ["HSET", ^session_metadata_namespace, ^id, ^client_ip],
+                ["EXPIRE", ^session_metadata_namespace, ^id, _],
+                ["SADD", ^active_users_set, ^id]
+              ]
+            ]
+      call: [
+              :redix,
+              [
+                ["HSET", "access_tokens", "user:123", "access_abc123"],
+                ["EXPIRE", "access_tokens", "user:123", 1000],
+                ["HSET", "refresh_tokens", "user:123", "#{red()}access_abc123#{reset()}"],
+                ["EXPIRE", "refresh_tokens", "user:123", 1000],
+                ["HSET", "session_meta", "user:123", "192.0.2.1"],
+                ["EXPIRE", "session_meta", "user:123", 1000],
+                ["SADD", "active_users", "user:123"]
+              ]
+            ]
+
+      args: [
+              :redix,
+              [
+                ["HSET", ^access_token_namespace, ^id, #{green()}^access_token#{reset()}],
+                ["EXPIRE", ^access_token_namespace, ^id, _],
+                ["HSET", ^refresh_token_namespace, ^id, ^refresh_token],
+                ["EXPIRE", ^refresh_token_namespace, ^id, _],
+                ["HSET", ^session_metadata_namespace, ^id, ^client_ip],
+                ["EXPIRE", ^session_metadata_namespace, ^id, _],
+                ["SADD", ^active_users_set, ^id]
+              ]
+            ]
+      call: [
+              :redix,
+              [
+                ["HSET", "access_tokens", "user:123", "#{red()}refresh_def456#{reset()}"],
+                ["EXPIRE", "access_tokens", "user:123", 1000],
+                ["HSET", "refresh_tokens", "user:123", "refresh_def456"],
+                ["EXPIRE", "refresh_tokens", "user:123", 1000],
+                ["HSET", "session_meta", "user:123", "192.0.2.1"],
+                ["EXPIRE", "session_meta", "user:123", 1000],
+                ["SADD", "active_users", "user:123"]
+              ]
+            ]
+      """
+
+      access_token_namespace = "access_tokens"
+      refresh_token_namespace = "refresh_tokens"
+      session_metadata_namespace = "session_meta"
+      active_users_set = "active_users"
+
+      access_token = "access_abc123"
+      refresh_token = "refresh_def456"
+      client_ip = "192.0.2.1"
+      id = "user:123"
+
+      Utils.push_call(Redix, :pipeline, 2, [
+        :redix,
+        [
+          ["HSET", access_token_namespace, id, access_token],
+          ["EXPIRE", access_token_namespace, id, 1000],
+          ["HSET", refresh_token_namespace, id, access_token],
+          ["EXPIRE", refresh_token_namespace, id, 1000],
+          ["HSET", session_metadata_namespace, id, client_ip],
+          ["EXPIRE", session_metadata_namespace, id, 1000],
+          ["SADD", active_users_set, id]
+        ]
+      ])
+
+      Utils.push_call(Redix, :pipeline, 2, [
+        :redix,
+        [
+          ["HSET", access_token_namespace, id, refresh_token],
+          ["EXPIRE", access_token_namespace, id, 1000],
+          ["HSET", refresh_token_namespace, id, refresh_token],
+          ["EXPIRE", refresh_token_namespace, id, 1000],
+          ["HSET", session_metadata_namespace, id, client_ip],
+          ["EXPIRE", session_metadata_namespace, id, 1000],
+          ["SADD", active_users_set, id]
+        ]
+      ])
+
+      error =
+        assert_raise ExUnit.AssertionError, fn ->
+          assert_called! Redix, :pipeline,
+            args: [
+              :redix,
+              [
+                ["HSET", ^access_token_namespace, ^id, ^access_token],
+                ["EXPIRE", ^access_token_namespace, ^id, _],
+                ["HSET", ^refresh_token_namespace, ^id, ^refresh_token],
+                ["EXPIRE", ^refresh_token_namespace, ^id, _],
+                ["HSET", ^session_metadata_namespace, ^id, ^client_ip],
+                ["EXPIRE", ^session_metadata_namespace, ^id, _],
+                ["SADD", ^active_users_set, ^id]
+              ]
+            ]
+        end
+
+      assert error.message == error_msg
+    end
   end
 
   describe "print/1 when history is enabled (arity provided)" do

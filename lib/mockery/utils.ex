@@ -33,11 +33,9 @@ defmodule Mockery.Utils do
   # Removes unnecessary `Elixir.` prefix from module names
   def print_mod(mod), do: mod |> to_string |> remove_elixir_prefix()
 
-  defmock :application, Application
-
   # Helper for Mockery.History
   def history_enabled? do
-    Process.get(Mockery.History, application().get_env(:mockery, :history, false))
+    Process.get(Mockery.History, Application.get_env(:mockery, :history, false))
   end
 
   # Helper for global mock

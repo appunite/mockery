@@ -121,4 +121,4 @@ jobs:
             priv/plts
 
       - name: Run Tests
-        run: mix test --include dialyzer
+        run: mix test --include dialyzer --warnings-as-errors

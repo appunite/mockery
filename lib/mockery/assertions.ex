@@ -458,13 +458,33 @@ defmodule Mockery.Assertions do
         quote do: Enum.count() |> Kernel.<=(unquote(times))
 
       _ ->
-        quote do
-          then(fn _ ->
-            raise Mockery.Error,
-                  ":times have invalid format, provided: #{inspect(unquote(times_opt))}"
-          end)
-        end
+        type_system_is_annoying? = Version.match?(System.version(), ">= 1.19.0-rc.0")
+
+        handle_times_error(times_opt, type_system_is_annoying?)
     end
+  end
+
+  defp handle_times_error(times_opt, true) do
+    quote do
+      then(fn arg ->
+        if Process.get(:mockery_blind_the_type_system, true),
+          do: raise(Mockery.Error, unquote(handle_times_error_msg(times_opt)))
+
+        arg
+      end)
+    end
+  end
+
+  defp handle_times_error(times_opt, false) do
+    quote do
+      then(fn _ ->
+        raise Mockery.Error, unquote(handle_times_error_msg(times_opt))
+      end)
+    end
+  end
+
+  defp handle_times_error_msg(times_opt) do
+    ":times have invalid format, provided: #{inspect(times_opt)}"
   end
 
   defp error_msg(mod, fun, arity, args, times)

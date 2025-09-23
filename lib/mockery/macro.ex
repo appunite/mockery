@@ -69,6 +69,11 @@ defmodule Mockery.Macro do
   end
 
   defp mockery_enabled_ast(opts) do
+    quoted_defmocks_attr =
+      quote do
+        Module.register_attribute(__MODULE__, :defmocks, accumulate: true)
+      end
+
     quoted_on_definition =
       quote do
         @on_definition unquote(__MODULE__)
@@ -76,7 +81,7 @@ defmodule Mockery.Macro do
 
     on_definition =
       if Application.get_env(:mockery, Mockery.Macro, opts)[:suppress_dialyzer_warnings] do
-        [quoted_on_definition]
+        [quoted_defmocks_attr, quoted_on_definition]
       else
         []
       end
@@ -94,29 +99,37 @@ defmodule Mockery.Macro do
     end
   end
 
+  def __on_definition__(env, :defmacrop, name, _args, _guards, body) do
+    Macro.prewalk(body, fn
+      {:mockable, _, args} when is_list(args) -> throw(:mockery)
+      ast -> ast
+    end)
+  catch
+    :mockery ->
+      Module.put_attribute(env.module, :defmocks, name)
+  end
+
   def __on_definition__(env, kind, name, args, _guards, body) when kind in [:def, :defp] do
-    body
-    # expand once to handle defmocks and defmacrop
-    |> Macro.postwalk(fn
-      {:mockable, _, _} = ast -> ast
-      ast -> Macro.expand_once(ast, env)
-    end)
-    # change acc to true if mockable is present in function
-    |> Macro.postwalk(false, fn
-      {:mockable, _, _} = ast, false -> {ast, true}
-      ast, acc -> {ast, acc}
-    end)
-    |> case do
-      {_ast, true} ->
-        # tell dialyzer to shut up
-        # @dialyzer {:nowarn_function, name: arity}
-        Module.put_attribute(env.module, :dialyzer, {:nowarn_function, [{name, length(args)}]})
+    defmocks = Module.get_attribute(env.module, :defmocks)
 
-        :ok
+    # change acc to true if mockable or defmock is present in function
+    Macro.prewalk(body, fn
+      {:mockable, _, args} when is_list(args) ->
+        throw(:mockery)
 
-      {_ast, false} ->
-        :ok
-    end
+      {name, _, args} = ast when is_atom(name) and is_list(args) ->
+        if name in defmocks, do: throw(:mockery)
+
+        ast
+
+      ast ->
+        ast
+    end)
+  catch
+    :mockery ->
+      # tell dialyzer to shut up
+      # @dialyzer {:nowarn_function, name: arity}
+      Module.put_attribute(env.module, :dialyzer, {:nowarn_function, [{name, length(args)}]})
   end
 
   def __on_definition__(_env, _kind, _name, _args, _guards, _body) do

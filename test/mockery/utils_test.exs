@@ -1,5 +1,5 @@
 defmodule Mockery.UtilsTest do
-  use ExUnit.Case, async: true
+  use ExUnit.Case, async: false
   use Mockery
 
   alias Mockery.Utils
@@ -14,21 +14,21 @@ defmodule Mockery.UtilsTest do
 
   test "history_enabled?/0 returns false by default" do
     refute Utils.history_enabled?()
-    assert_called! Application, :get_env, args: [:mockery, :history, _], times: 1
   end
 
   test "history_enabled?/0 changed by global config" do
-    mock(Application, :get_env, true)
+    Application.put_env(:mockery, :history, true)
+    on_exit(fn -> Application.delete_env(:mockery, :history) end)
 
     assert Utils.history_enabled?()
-    assert_called! Application, :get_env, args: [:mockery, :history, _], times: 1
   end
 
   test "history_enabled?/0 global config ignored when process config present" do
-    mock(Application, :get_env, true)
+    Application.put_env(:mockery, :history, true)
+    on_exit(fn -> Application.delete_env(:mockery, :history) end)
+
     disable_history()
 
     refute Utils.history_enabled?()
-    assert_called! Application, :get_env, args: [:mockery, :history, _], times: 1
   end
 end

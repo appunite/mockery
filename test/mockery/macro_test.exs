@@ -25,6 +25,7 @@ defmodule Mockery.MacroTest do
 
       assert [
                "@compile {:no_warn_undefined, Mockery.Proxy.MacroProxy}",
+               "Module.register_attribute(__MODULE__, :defmocks, accumulate: true)",
                "@on_definition Mockery.Macro",
                "import Mockery.Macro"
              ] = quoted_to_strings(quoted)
@@ -51,10 +52,10 @@ defmodule Mockery.MacroTest do
     end
   end
 
-  describe "__using__/1 :suppress_dialyzer_warnings" do
+  describe "__using__/1 :suppress_dialyzer_warnings," do
     @describetag :dialyzer
 
-    test "module without `:suppress_dialyzer_warnings` produces a Dialyzer warning" do
+    test "module without `:suppress_dialyzer_warnings` produces a Dialyzer warning (mockable)" do
       id = System.unique_integer([:positive])
       mod_name = "DialyzerIntegration#{id}"
       file_path = "lib/#{Macro.underscore(mod_name)}.ex"
@@ -94,7 +95,7 @@ defmodule Mockery.MacroTest do
       end
     end
 
-    test "module with `suppress_dialyzer_warnings: true` doesn't produce a Dialyzer warning" do
+    test "module with `suppress_dialyzer_warnings: true` doesn't produce a Dialyzer warning (mockable)" do
       id = System.unique_integer([:positive])
       mod_name = "DialyzerIntegration#{id}"
       file_path = "lib/#{Macro.underscore(mod_name)}.ex"
@@ -134,7 +135,7 @@ defmodule Mockery.MacroTest do
       end
     end
 
-    test "module doesn't produce a Dialyzer warning when `:suppress_dialyzer_warnings` is enabled globally" do
+    test "module doesn't produce a Dialyzer warning when `:suppress_dialyzer_warnings` is enabled globally (mockable)" do
       id = System.unique_integer([:positive])
       mod_name = "DialyzerIntegration#{id}"
       file_path = "lib/#{Macro.underscore(mod_name)}.ex"
@@ -167,6 +168,134 @@ defmodule Mockery.MacroTest do
 
         warning_msg =
           "lib/dialyzer_integration#{id}.ex:5:call_to_missing\n" <>
+            "Call to missing or private function Mockery.Proxy.MacroProxy.count/1."
+
+        refute out =~ warning_msg
+      after
+        File.rm_rf!(file_path)
+        System.cmd("mix", ["compile"], stderr_to_stdout: true, env: [{"MIX_ENV", "test"}])
+      end
+    end
+
+    test "module without `:suppress_dialyzer_warnings` produces a Dialyzer warning (defmock)" do
+      id = System.unique_integer([:positive])
+      mod_name = "DialyzerIntegration#{id}"
+      file_path = "lib/#{Macro.underscore(mod_name)}.ex"
+
+      contents = """
+      defmodule #{mod_name} do
+        use Mockery.Macro
+
+        defmock :enum, Enum
+
+        # introduce a mockable call so the on_definition hook will consider this function
+        def fun(), do: enum().count([1, 2, 3])
+      end
+      """
+
+      File.write!(file_path, contents)
+
+      try do
+        assert {_out, 0} =
+                 System.cmd("mix", ["compile"],
+                   stderr_to_stdout: true,
+                   env: [{"MIX_ENV", "test"}]
+                 )
+
+        assert {out, 2} =
+                 System.cmd("mix", ["dialyzer"],
+                   stderr_to_stdout: true,
+                   env: [{"MIX_ENV", "test"}]
+                 )
+
+        warning_msg =
+          "lib/dialyzer_integration#{id}.ex:7:call_to_missing\n" <>
+            "Call to missing or private function Mockery.Proxy.MacroProxy.count/1."
+
+        assert out =~ warning_msg
+      after
+        File.rm_rf!(file_path)
+        System.cmd("mix", ["compile"], stderr_to_stdout: true, env: [{"MIX_ENV", "test"}])
+      end
+    end
+
+    test "module with `suppress_dialyzer_warnings: true` doesn't produce a Dialyzer warning (defmock)" do
+      id = System.unique_integer([:positive])
+      mod_name = "DialyzerIntegration#{id}"
+      file_path = "lib/#{Macro.underscore(mod_name)}.ex"
+
+      contents = """
+      defmodule #{mod_name} do
+        use Mockery.Macro, suppress_dialyzer_warnings: true
+
+        defmock :enum, Enum
+
+        # introduce a mockable call so the on_definition hook will consider this function
+        def fun(), do: enum().count([1, 2, 3])
+      end
+      """
+
+      File.write!(file_path, contents)
+
+      try do
+        assert {_out, 0} =
+                 System.cmd("mix", ["compile"],
+                   stderr_to_stdout: true,
+                   env: [{"MIX_ENV", "test"}]
+                 )
+
+        assert {out, 0} =
+                 System.cmd("mix", ["dialyzer"],
+                   stderr_to_stdout: true,
+                   env: [{"MIX_ENV", "test"}]
+                 )
+
+        warning_msg =
+          "lib/dialyzer_integration#{id}.ex:7:call_to_missing\n" <>
+            "Call to missing or private function Mockery.Proxy.MacroProxy.count/1."
+
+        refute out =~ warning_msg
+      after
+        File.rm_rf!(file_path)
+        System.cmd("mix", ["compile"], stderr_to_stdout: true, env: [{"MIX_ENV", "test"}])
+      end
+    end
+
+    test "module doesn't produce a Dialyzer warning when `:suppress_dialyzer_warnings` is enabled globally (defmock)" do
+      id = System.unique_integer([:positive])
+      mod_name = "DialyzerIntegration#{id}"
+      file_path = "lib/#{Macro.underscore(mod_name)}.ex"
+
+      contents = """
+      Application.put_env(:mockery, Mockery.Macro, suppress_dialyzer_warnings: true)
+
+      defmodule #{mod_name} do
+        use Mockery.Macro
+
+        defmock :enum, Enum
+
+        # introduce a mockable call so the on_definition hook will consider this function
+        def fun(), do: enum().count([1, 2, 3])
+      end
+      """
+
+      File.write!(file_path, contents)
+
+      try do
+        assert {_out, 0} =
+                 System.cmd("mix", ["compile"],
+                   stderr_to_stdout: true,
+                   env: [{"MIX_ENV", "test"}]
+                 )
+
+        assert {out, 0} =
+                 System.cmd("mix", ["dialyzer"],
+                   stderr_to_stdout: true,
+                   env: [{"MIX_ENV", "test"}]
+                 )
+
+        warning_msg =
+          "lib/dialyzer_integration#{id}.ex:7:call_to_missing\n" <>
             "Call to missing or private function Mockery.Proxy.MacroProxy.count/1."
 
         refute out =~ warning_msg

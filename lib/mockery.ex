@@ -144,9 +144,12 @@ defmodule Mockery do
       |> mock([fun2: 1], &string/1)
 
   """
-  @spec mock(module(), function_name(), static_mock_value()) :: module()
-  @spec mock(module(), [{function_name(), arity()}], static_mock_value()) :: module()
-  @spec mock(module(), [{function_name(), arity()}], dynamic_mock()) :: module()
+  # because older version had issue with overlapping @spec
+  if Version.match?(System.version(), "~> 1.17") do
+    @spec mock(module(), function_name(), static_mock_value()) :: module()
+    @spec mock(module(), [{function_name(), arity()}], static_mock_value()) :: module()
+    @spec mock(module(), [{function_name(), arity()}], dynamic_mock()) :: module()
+  end
 
   def mock(mod, fun, value \\ :mocked)
 

@@ -190,9 +190,6 @@ defmodule Mockery do
     do_mock(mod, fun, value)
   end
 
-  defp do_mock(mod, fun, nil), do: do_mock(mod, fun, Mockery.Nil)
-  defp do_mock(mod, fun, false), do: do_mock(mod, fun, Mockery.False)
-
   defp do_mock(mod, fun, value) do
     Utils.put_mock(mod, fun, value)
 

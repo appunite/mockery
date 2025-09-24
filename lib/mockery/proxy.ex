@@ -9,24 +9,17 @@ defmodule Mockery.Proxy do
     Utils.push_call(mod, name, arity, args)
 
     if {name, arity} in mod.module_info()[:exports] do
-      # We need Mockery.Nil and Mockery.False for || in bellow mock lookup
       case Utils.get_mock(mod, [{name, arity}]) || Utils.get_mock(mod, name) do
         nil ->
           fallback_to_global_mock(mod, name, args, arity, by)
 
-        Mockery.Nil ->
-          nil
-
-        Mockery.False ->
-          false
-
-        fun when is_function(fun, arity) ->
+        {fun, _meta} when is_function(fun, arity) ->
           apply(fun, args)
 
-        fun when is_function(fun) ->
+        {fun, _meta} when is_function(fun) ->
           raise Mockery.Error, "function used for mock should have same arity as original"
 
-        value ->
+        {value, _meta} ->
           value
       end
     else

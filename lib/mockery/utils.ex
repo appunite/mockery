@@ -10,14 +10,10 @@ defmodule Mockery.Utils do
     |> Process.get()
   end
 
-  # see Mockery.Proxy for explaination about Mockery.Nil and Mockery.False
-  def put_mock(mod, fun, nil), do: put_mock(mod, fun, Mockery.Nil)
-  def put_mock(mod, fun, false), do: put_mock(mod, fun, Mockery.False)
-
   def put_mock(mod, fun, value) do
     mod
     |> dict_mock_key(fun)
-    |> Process.put(value)
+    |> Process.put({value, []})
   end
 
   def get_calls(mod, fun) do

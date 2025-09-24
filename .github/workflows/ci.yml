@@ -54,7 +54,7 @@ jobs:
       - name: Setup Elixir
         uses: erlef/setup-elixir@v1
         with:
-          elixir-version: 1.18
+          elixir-version: 1.19
           otp-version: 28
 
       - name: Fetch Dependencies

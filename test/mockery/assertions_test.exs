@@ -33,6 +33,12 @@ defmodule Mockery.AssertionsTest do
         assert_called! A, :fun
       end
     end
+
+    test "raises error when function name is not an atom" do
+      assert_raise Mockery.Error, "function name should be an atom, provided: [fun: 0]", fn ->
+        assert_called! A, fun: 0
+      end
+    end
   end
 
   describe "assert_called!/3 with :arity in opts" do

@@ -17,15 +17,6 @@ defmodule Mockery.History do
   import IO.ANSI
   alias Mockery.Utils
 
-  # TODO remove in v3
-  @deprecated "Use enable_history/0 or disable_history/0 instead"
-  @spec enable_history(enabled :: boolean) :: :ok
-  def enable_history(enabled) do
-    Process.put(__MODULE__, enabled)
-
-    :ok
-  end
-
   @doc """
   Enables history in scope of single test process
 
@@ -66,84 +57,6 @@ defmodule Mockery.History do
     Process.put(__MODULE__, false)
 
     :ok
-  end
-
-  @doc false
-  def old_print(_mod, _fun, args) when not is_list(args), do: nil
-
-  def old_print(mod, fun, args) do
-    quote do
-      if Mockery.Utils.history_enabled?() do
-        """
-        \n
-        #{yellow()}Given:#{white()}
-        #{unquote(Macro.to_string(args))}
-
-        #{yellow()}History:#{white()}
-        #{unquote(colorize(mod, fun, args))}\
-        """
-      end
-    end
-  end
-
-  defp colorize(mod, fun, args) do
-    arity = Enum.count(args)
-    args = postwalk_args(args)
-
-    # credo:disable-for-lines:9 Credo.Check.Refactor.Nesting
-    quote do
-      Utils.get_calls(unquote(mod), unquote(fun))
-      |> Enum.reverse()
-      |> Enum.map_join("\n", fn {call_arity, call_args} ->
-        if unquote(arity) == call_arity do
-          "#{white()}[" <>
-            ([unquote(args), call_args]
-             |> Enum.zip()
-             |> Enum.map_join(", ", fn
-               {Mockery.History.UnboundVar, called} ->
-                 "#{green()}#{inspect(called)}#{white()}"
-
-               {called, called} ->
-                 "#{green()}#{inspect(called)}#{white()}"
-
-               {_given, called} ->
-                 "#{red()}#{inspect(called)}#{white()}"
-             end)) <> "]"
-        else
-          "#{red()}#{inspect(call_args)}#{white()}"
-        end
-      end)
-    end
-  end
-
-  defp postwalk_args(args) do
-    args
-    |> Macro.postwalk(fn
-      {name, _, context} = node when is_atom(name) and is_atom(context) ->
-        {Mockery.History.Var, node}
-
-      {:^, _, [{Mockery.History.Var, node}]} ->
-        {Mockery.History.PinnedVar, node}
-
-      {:@, meta, [{Mockery.History.Var, node}]} ->
-        {Mockery.History.ModuleAttr, {meta, node}}
-
-      node ->
-        node
-    end)
-    |> Macro.postwalk(fn
-      {Mockery.History.PinnedVar, node} ->
-        node
-
-      {Mockery.History.ModuleAttr, {meta, node}} ->
-        Macro.escape({:@, meta, node})
-
-      {Mockery.History.Var, _node} ->
-        Mockery.History.UnboundVar
-
-      node ->
-        node
-    end)
   end
 
   # assert_called!/3 refute_called!/3

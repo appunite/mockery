@@ -2,6 +2,18 @@
 
 ## 3.0.0 ()
 
+- Removed deprecated functions:
+
+  - `Mockery.of/2`
+  - `Mockery.new/2`
+  - `Mockery.History.enable_history/1`
+  - `Mockery.Assertions.assert_called/2`
+  - `Mockery.Assertions.assert_called/3`
+  - `Mockery.Assertions.assert_called/4`
+  - `Mockery.Assertions.refute_called/2`
+  - `Mockery.Assertions.refute_called/3`
+  - `Mockery.Assertions.refute_called/4`
+
 ## 2.5.0 (2025-09-24)
 
 - This release requires Elixir ~> 1.15

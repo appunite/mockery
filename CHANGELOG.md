@@ -2,6 +2,12 @@
 
 ## 3.0.0 ()
 
+- Mockery no longer relies on `Mix.env()`. To enable Mockery in tests, add this config to your project:
+  ```ex
+  # config/test.exs
+  config :mockery, enable: true
+  ```
+
 - Removed deprecated functions:
 
   - `Mockery.of/2`

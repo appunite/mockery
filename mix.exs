@@ -35,7 +35,7 @@ defmodule Mockery.Mixfile do
 
   defp dialyzer do
     config = [
-      plt_add_apps: [:mix, :ex_unit],
+      plt_add_apps: [:ex_unit],
       ignore_warnings: ".dialyzer_ignore.exs"
     ]
 

@@ -1,8 +1,6 @@
 defmodule Mockery.Utils do
   @moduledoc false
 
-  use Mockery.Macro, suppress_dialyzer_warnings: true
-
   alias Mockery.Error
 
   # Helpers for manipulating process dict

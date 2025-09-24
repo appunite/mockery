@@ -4,7 +4,7 @@ defmodule MockeryTest do
   test "mock/3 with name (static mock)" do
     Mockery.mock(Dummy, :fun1, "value1")
 
-    assert Process.get({Mockery, {Dummy, :fun1}}) == "value1"
+    assert {"value1", _meta} = Process.get({Mockery, {Dummy, :fun1}})
   end
 
   test "mock/3 with name (dynamic mock)" do
@@ -21,13 +21,14 @@ defmodule MockeryTest do
   test "mock/3 with name and arity (static mock)" do
     Mockery.mock(Dummy, [fun1: 0], "value2")
 
-    assert Process.get({Mockery, {Dummy, {:fun1, 0}}}) == "value2"
+    assert {"value2", _meta} = Process.get({Mockery, {Dummy, {:fun1, 0}}})
   end
 
   test "mock/3 with name and arity (dynamic mock)" do
     Mockery.mock(Dummy, [fun1: 0], fn -> :mock end)
 
-    assert is_function(Process.get({Mockery, {Dummy, {:fun1, 0}}}))
+    {fun, _meta} = Process.get({Mockery, {Dummy, {:fun1, 0}}})
+    assert is_function(fun)
   end
 
   test "mock/3 with name and arity (dynamic mock with invalid arity)" do
@@ -46,13 +47,13 @@ defmodule MockeryTest do
   test "mock/2 with name" do
     Mockery.mock(Dummy, :fun1)
 
-    assert Process.get({Mockery, {Dummy, :fun1}}) == :mocked
+    assert {:mocked, _meta} = Process.get({Mockery, {Dummy, :fun1}})
   end
 
   test "mock/2 with name and arity" do
     Mockery.mock(Dummy, fun1: 0)
 
-    assert Process.get({Mockery, {Dummy, {:fun1, 0}}}) == :mocked
+    assert {:mocked, _meta} = Process.get({Mockery, {Dummy, {:fun1, 0}}})
   end
 
   test "chainable mock/2 and mock/3" do
@@ -60,8 +61,8 @@ defmodule MockeryTest do
     |> Mockery.mock(fun1: 0)
     |> Mockery.mock([ar: 1], "value")
 
-    assert Process.get({Mockery, {Dummy, {:fun1, 0}}}) == :mocked
-    assert Process.get({Mockery, {Dummy, {:ar, 1}}}) == "value"
+    assert {:mocked, _meta} = Process.get({Mockery, {Dummy, {:fun1, 0}}})
+    assert {"value", _meta} = Process.get({Mockery, {Dummy, {:ar, 1}}})
   end
 
   test "mock/2 with name raises error for non-existent function" do

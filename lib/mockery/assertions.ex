@@ -213,9 +213,9 @@ defmodule Mockery.Assertions do
     end
   end
 
-  defmacrop assert_called_core!(xyz) do
+  defmacrop assert_called_core!(arg) do
     quote do
-      {mod, fun, opts, assert_fun, error_msg_fun} = unquote(xyz)
+      {mod, fun, opts, assert_fun, error_msg_fun} = unquote(arg)
 
       arity_opt = Keyword.get(opts, :arity, :no_arity)
       args_opt = Keyword.get(opts, :args, :no_args)

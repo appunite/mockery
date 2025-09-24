@@ -352,23 +352,6 @@ defmodule Mockery.MacroTest do
       assert mockable(A, by: X) == Mockery.Proxy.MacroProxy
       assert Process.get(Mockery.MockableModule) == [{A, X}]
     end
-
-    import ExUnit.CaptureIO
-
-    test "test env" do
-      Application.put_env(:mockery, :enable, nil)
-      on_exit(fn -> Application.put_env(:mockery, :enable, true) end)
-
-      quoted_call = quote do: mockable(A)
-
-      {{result, _binding}, io} = with_io(:stderr, fn -> Code.eval_quoted(quoted_call) end)
-
-      assert result == Mockery.Proxy.MacroProxy
-      assert Process.get(Mockery.MockableModule) == [{A, nil}]
-
-      assert io =~ "warning:"
-      assert io =~ Mockery.Macro.warn()
-    end
   end
 
   describe "defmock/2" do

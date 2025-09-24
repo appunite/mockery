@@ -187,7 +187,7 @@ defmodule Mockery.Macro do
           opts :: [by: module]
         ) :: module
   defmacro mockable(mod, opts \\ []) do
-    case Application.get_env(:mockery, :enable) || test_env?(opts, __CALLER__) do
+    case Application.get_env(:mockery, :enable) do
       true ->
         quote do
           mocked_calls = Process.get(Mockery.MockableModule, [])
@@ -199,30 +199,6 @@ defmodule Mockery.Macro do
       _ ->
         mod
     end
-  end
-
-  @warn "Mockery.Macro.mockable/2 based on Mix.env/0 is deprecated, " <>
-          "please set `config :mockery, enable: true` in config/test.exs " <>
-          "and recompile your project"
-
-  @doc false
-  def warn, do: @warn
-
-  defp test_env?(opts, caller) do
-    case opts[:env] || mix_env() do
-      :test ->
-        IO.warn(@warn, caller)
-
-        true
-
-      _ ->
-        false
-    end
-  end
-
-  @compile {:inline, mix_env: 0}
-  defp mix_env do
-    if function_exported?(Mix, :env, 0), do: Mix.env(), else: :prod
   end
 
   @doc """

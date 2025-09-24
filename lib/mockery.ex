@@ -48,46 +48,9 @@ defmodule Mockery do
     quote do
       import Mockery
       import Mockery.Assertions
-      import Mockery.History, only: [enable_history: 0, enable_history: 1, disable_history: 0]
+      import Mockery.History, only: [enable_history: 0, disable_history: 0]
     end
   end
-
-  # TODO remove in v3
-  @deprecated """
-  Tuple calls won't be officially supported in Mockery v3.
-  Please migrate to the new macro-based alternative available in `Mockery.Macro`
-  """
-  def of(mod, opts \\ [])
-      when is_atom(mod)
-      when is_binary(mod) do
-    case opts[:env] || mix_env() do
-      :test ->
-        do_proxy_tuple(mod, opts)
-
-      _ ->
-        to_mod(mod)
-    end
-  end
-
-  # TODO remove in v3
-  @deprecated """
-  Mockery was not designed as solution for other libraries.
-  It was a bad decision to try to workaround this.
-  This approach was also extremely ugly and lacking all the advantages of Mockery
-  """
-  def new(mod, opts \\ [])
-      when is_atom(mod)
-      when is_binary(mod) do
-    do_proxy_tuple(mod, opts)
-  end
-
-  defp do_proxy_tuple(mod, opts) do
-    {Mockery.Proxy, to_mod(mod), to_mod(opts[:by])}
-  end
-
-  defp to_mod(nil), do: nil
-  defp to_mod(mod) when is_atom(mod), do: mod
-  defp to_mod(mod) when is_binary(mod), do: Module.concat([mod])
 
   @typedoc "Function name (an atom identifying the function)."
   @type function_name :: atom()
@@ -218,10 +181,5 @@ defmodule Mockery do
     Code.ensure_loaded(mod)
 
     function_exported?(mod, :module_info, 0)
-  end
-
-  @compile {:inline, mix_env: 0}
-  defp mix_env do
-    if function_exported?(Mix, :env, 0), do: Mix.env(), else: :prod
   end
 end

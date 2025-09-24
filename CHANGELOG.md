@@ -17,6 +17,10 @@
   - Use `Mockery.Assertions.assert_called!/3` and `Mockery.Assertions.refute_called!/3` instead
   - Deprecation warnings include a suggested replacement showing the expected syntax (the suggestion is generated from the deprecated call). *Note:* the suggestion is best-effort and may not exactly match your current code — verify and adjust as needed.
 
+- Improved `Mockery.mock/3`
+
+  - Added typespecs.
+  - The function will now raise immediately if a dynamic mock has an invalid arity. Previously, `Mockery.Error` was raised from the `Mockery.Proxy` module.
 
 ## 2.4.1 (2025-09-19)
 

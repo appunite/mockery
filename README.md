@@ -310,7 +310,7 @@ For advanced usage examples see [EXAMPLES.md](EXAMPLES.md)
 
 ## License
 
-Copyright 2017-2024 Tobiasz Małecki [tobiasz.malecki@appunite.com](mailto:tobiasz.malecki@appunite.com)
+Copyright 2017-2025 Tobiasz Małecki [tobiasz.malecki@appunite.com](mailto:tobiasz.malecki@appunite.com)
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
 

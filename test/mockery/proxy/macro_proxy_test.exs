@@ -58,7 +58,9 @@ defmodule Mockery.Proxy.MacroProxyTest do
   end
 
   test "raise when mocking with function of different arity" do
-    mock(Dummy, [ar: 2], &to_string/1)
+    # mock/3 doesn't allow this any longer
+    # check if we can remove check from proxy
+    Utils.put_mock(Dummy, [ar: 2], &to_string/1)
 
     assert_raise Mockery.Error,
                  "function used for mock should have same arity as original",

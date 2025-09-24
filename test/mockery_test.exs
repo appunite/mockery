@@ -8,11 +8,14 @@ defmodule MockeryTest do
   end
 
   test "mock/3 with name (dynamic mock)" do
-    assert_raise Mockery.Error,
-                 ~r/mock\(Dummy,\ \[fun1:\ 0\],\ fn\(\.\.\.\)\ \->\ \.\.\.\ end\)/,
-                 fn ->
-                   Mockery.mock(Dummy, :fun1, fn -> :mock end)
-                 end
+    error_msg = """
+    Dynamic mock requires [function: arity] syntax.
+
+    Please use:
+        mock(Dummy, [fun1: 0], fn(...) -> ... end)
+    """
+
+    assert_raise Mockery.Error, error_msg, fn -> Mockery.mock(Dummy, :fun1, fn -> :mock end) end
   end
 
   test "mock/3 with name and arity (static mock)" do
@@ -25,6 +28,19 @@ defmodule MockeryTest do
     Mockery.mock(Dummy, [fun1: 0], fn -> :mock end)
 
     assert is_function(Process.get({Mockery, {Dummy, {:fun1, 0}}}))
+  end
+
+  test "mock/3 with name and arity (dynamic mock with invalid arity)" do
+    error_msg = """
+    Dynamic mock must have the same arity as the original function
+
+    Original arity: 0
+    Mock arity: 1
+    """
+
+    assert_raise Mockery.Error, error_msg, fn ->
+      Mockery.mock(Dummy, [fun1: 0], fn _ -> :mock end)
+    end
   end
 
   test "mock/2 with name" do

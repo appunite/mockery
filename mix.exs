@@ -13,6 +13,7 @@ defmodule Mockery.Mixfile do
       docs: docs(),
       elixir: "~> 1.15",
       elixirc_paths: elixirc_paths(Mix.env()),
+      name: "Mockery",
       package: package(),
       source_url: "https://github.com/appunite/mockery",
       version: @version

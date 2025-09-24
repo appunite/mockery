@@ -1,7 +1,7 @@
 defmodule Mockery.Mixfile do
   use Mix.Project
 
-  @version "2.5.0"
+  @version "3.0.0"
   @description "Simple mocking library for asynchronous testing."
 
   def project do

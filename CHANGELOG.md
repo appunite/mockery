@@ -1,5 +1,7 @@
 # Changelog
 
+## 3.0.0 ()
+
 ## 2.5.0 (2025-09-24)
 
 - This release requires Elixir ~> 1.15

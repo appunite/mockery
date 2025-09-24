@@ -160,7 +160,7 @@ defmodule Mockery do
     Dynamic mock requires [function: arity] syntax.
 
     Please use:
-        mock(#{Utils.print_mod(mod)}, [#{fun}: #{arity}], fn(...) -> ... end)
+        mock(#{inspect(mod)}, [#{fun}: #{arity}], fn(...) -> ... end)
     """
   end
 
@@ -190,13 +190,34 @@ defmodule Mockery do
     do_mock(mod, fun, value)
   end
 
-  defp do_mock(mod, fun, nil), do: do_mock(mod, fun, Mockery.Nil)
-  defp do_mock(mod, fun, false), do: do_mock(mod, fun, Mockery.False)
-
   defp do_mock(mod, fun, value) do
+    validate_function_existence!(mod, fun)
+
     Utils.put_mock(mod, fun, value)
 
     mod
+  end
+
+  defp validate_function_existence!(mod, [{name, arity}]) do
+    if module?(mod) && {name, arity} in mod.module_info()[:exports] do
+      :ok
+    else
+      Utils.raise_undefined(mod, name, arity)
+    end
+  end
+
+  defp validate_function_existence!(mod, name) do
+    if module?(mod) && name in Enum.map(mod.module_info()[:exports], &elem(&1, 0)) do
+      :ok
+    else
+      Utils.raise_undefined(mod, name, "?")
+    end
+  end
+
+  defp module?(mod) do
+    Code.ensure_loaded(mod)
+
+    function_exported?(mod, :module_info, 0)
   end
 
   @compile {:inline, mix_env: 0}

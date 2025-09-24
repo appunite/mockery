@@ -20,7 +20,8 @@
 - Improved `Mockery.mock/3`
 
   - Added typespecs.
-  - The function will now raise immediately if a dynamic mock has an invalid arity. Previously, `Mockery.Error` was raised from the `Mockery.Proxy` module.
+  - It will now raise immediately if the mocked function does not exist. Previously, `Mockery.Error` was raised from the proxy module.
+  - It will now raise immediately if a dynamic mock has an invalid arity. Previously, `Mockery.Error` was raised from the proxy module.
 
 ## 2.4.1 (2025-09-19)
 

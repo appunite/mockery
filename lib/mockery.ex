@@ -89,6 +89,25 @@ defmodule Mockery do
   defp to_mod(mod) when is_atom(mod), do: mod
   defp to_mod(mod) when is_binary(mod), do: Module.concat([mod])
 
+  @typedoc "Function name (an atom identifying the function)."
+  @type function_name :: atom()
+
+  @typedoc """
+  A static mock return value
+
+  Any Elixir term except functions.
+  """
+  @type static_mock_value :: term()
+
+  @typedoc """
+  A dynamic mock function.
+
+  This is a function invoked when the mocked function is called.
+  The dynamic mock must accept the same arity as the original function
+  being mocked and its return value is used as the mock result.
+  """
+  @type dynamic_mock :: fun()
+
   @doc """
   Function used to create mock in context of single test process.
 
@@ -125,6 +144,10 @@ defmodule Mockery do
       |> mock([fun2: 1], &string/1)
 
   """
+  @spec mock(module(), function_name(), static_mock_value()) :: module()
+  @spec mock(module(), [{function_name(), arity()}], static_mock_value()) :: module()
+  @spec mock(module(), [{function_name(), arity()}], dynamic_mock()) :: module()
+
   def mock(mod, fun, value \\ :mocked)
 
   def mock(mod, fun, value) when is_atom(fun) and is_function(value) do

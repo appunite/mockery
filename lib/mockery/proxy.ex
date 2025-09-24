@@ -1,7 +1,6 @@
 defmodule Mockery.Proxy do
   @moduledoc false
 
-  alias Mockery.Error
   alias Mockery.Utils
 
   def unquote(:"$handle_undefined_function")(name, args) do
@@ -31,7 +30,7 @@ defmodule Mockery.Proxy do
           apply(fun, args)
 
         fun when is_function(fun) ->
-          raise Error, "function used for mock should have same arity as original"
+          raise Mockery.Error, "function used for mock should have same arity as original"
 
         value ->
           value

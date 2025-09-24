@@ -222,6 +222,12 @@ defmodule Mockery.Assertions do
       times_opt = Keyword.get(opts, :times, :no_times)
 
       cond do
+        not is_atom(fun) ->
+          quote do
+            raise Mockery.Error,
+                  "function name should be an atom, provided: #{inspect(unquote(fun))}"
+          end
+
         arity_opt_invalid?(arity_opt, __CALLER__) ->
           quote do
             raise Mockery.Error,

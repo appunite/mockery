@@ -100,9 +100,9 @@ jobs:
         uses: actions/cache/restore@v3
         with:
           key: |
-            plt-${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ hashFiles('**/mix.lock') }}
+            plt-test-${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ hashFiles('**/mix.lock') }}
           restore-keys: |
-            plt-${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-
+            plt-test-${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-
           path: |
             priv/plts
 
@@ -116,9 +116,61 @@ jobs:
         if: steps.plt_cache.outputs.cache-hit != 'true'
         with:
           key: |
-            plt-${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ hashFiles('**/mix.lock') }}
+            plt-test-${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ hashFiles('**/mix.lock') }}
           path: |
             priv/plts
 
       - name: Run Tests
         run: mix test --include dialyzer --warnings-as-errors
+
+  dialyzer:
+    name: Run Dialyzer
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - elixir: 1.19
+            otp: 28
+    needs:
+      - format-check
+      - credo-check
+      - docs-check
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Elixir
+        uses: erlef/setup-elixir@v1
+        with:
+          elixir-version: ${{ matrix.elixir }}
+          otp-version: ${{ matrix.otp }}
+
+      - name: Fetch Dependencies
+        run: mix deps.get
+
+      - name: Restore PLT cache
+        id: plt_cache
+        uses: actions/cache/restore@v3
+        with:
+          key: |
+            plt-dev-${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            plt-dev-${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-
+          path: |
+            priv/plts
+
+      - name: Create PLTs
+        if: steps.plt_cache.outputs.cache-hit != 'true'
+        run: mix dialyzer --plt
+
+      - name: Save PLT cache
+        id: plt_cache_save
+        uses: actions/cache/save@v3
+        if: steps.plt_cache.outputs.cache-hit != 'true'
+        with:
+          key: |
+            plt-dev-${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ hashFiles('**/mix.lock') }}
+          path: |
+            priv/plts
+
+      - name: Run Dialyzer
+        run: mix dialyzer

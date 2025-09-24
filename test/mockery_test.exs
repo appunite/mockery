@@ -58,9 +58,41 @@ defmodule MockeryTest do
   test "chainable mock/2 and mock/3" do
     Dummy
     |> Mockery.mock(fun1: 0)
-    |> Mockery.mock([fun2: 1], "value")
+    |> Mockery.mock([ar: 1], "value")
 
     assert Process.get({Mockery, {Dummy, {:fun1, 0}}}) == :mocked
-    assert Process.get({Mockery, {Dummy, {:fun2, 1}}}) == "value"
+    assert Process.get({Mockery, {Dummy, {:ar, 1}}}) == "value"
+  end
+
+  test "mock/2 with name raises error for non-existent function" do
+    error_msg = "function Dummy.invalid/? is undefined or private"
+
+    assert_raise Mockery.Error, error_msg, fn ->
+      Mockery.mock(Dummy, :invalid)
+    end
+  end
+
+  test "mock/2 with name and arity raises error for non-existent function" do
+    error_msg = "function Dummy.fun1/1 is undefined or private"
+
+    assert_raise Mockery.Error, error_msg, fn ->
+      Mockery.mock(Dummy, fun1: 1)
+    end
+  end
+
+  test "mock/2 with name raises error for non-existent module" do
+    error_msg = "function Invalid.fun1/? is undefined or private"
+
+    assert_raise Mockery.Error, error_msg, fn ->
+      Mockery.mock(Invalid, :fun1)
+    end
+  end
+
+  test "mock/2 with name and arity raises error for non-existent module" do
+    error_msg = "function Invalid.fun1/1 is undefined or private"
+
+    assert_raise Mockery.Error, error_msg, fn ->
+      Mockery.mock(Invalid, fun1: 1)
+    end
   end
 end

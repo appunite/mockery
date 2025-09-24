@@ -41,6 +41,13 @@ defmodule Mockery.Utils do
     Process.get(Mockery.History, Application.get_env(:mockery, :history, false))
   end
 
+  def raise_undefined(mod, fun, arity) do
+    raise Error, """
+    function #{print_mod(mod)}.#{fun}/#{arity} \
+    is undefined or private\
+    """
+  end
+
   # Helper for global mock
   # Global mock cannot export function that the original module
   # does not export

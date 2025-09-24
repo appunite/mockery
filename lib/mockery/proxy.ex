@@ -37,10 +37,11 @@ defmodule Mockery.Proxy do
           value
       end
     else
-      raise Error, """
-      function #{Utils.print_mod(mod)}.#{name}/#{arity} \
-      is undefined or private\
-      """
+      # raise Error, """
+      # function #{Utils.print_mod(mod)}.#{name}/#{arity} \
+      # is undefined or private\
+      # """
+      Utils.raise_undefined(mod, name, arity)
     end
   end
 

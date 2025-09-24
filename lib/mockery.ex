@@ -161,9 +161,34 @@ defmodule Mockery do
     """
   end
 
-  def mock(mod, fun, nil), do: do_mock(mod, fun, Mockery.Nil)
-  def mock(mod, fun, false), do: do_mock(mod, fun, Mockery.False)
-  def mock(mod, fun, value), do: do_mock(mod, fun, value)
+  def mock(mod, [{fun, arity}], value)
+      when is_atom(fun) and is_integer(arity) and is_function(value, arity) do
+    do_mock(mod, [{fun, arity}], value)
+  end
+
+  def mock(_mod, [{fun, arity}], value)
+      when is_atom(fun) and is_integer(arity) and is_function(value) do
+    {:arity, mock_arity} = :erlang.fun_info(value, :arity)
+
+    raise Mockery.Error, """
+    Dynamic mock must have the same arity as the original function
+
+    Original arity: #{arity}
+    Mock arity: #{mock_arity}
+    """
+  end
+
+  def mock(mod, [{fun, arity}], value)
+      when is_atom(fun) and is_integer(arity) and not is_function(value) do
+    do_mock(mod, [{fun, arity}], value)
+  end
+
+  def mock(mod, fun, value) when is_atom(fun) do
+    do_mock(mod, fun, value)
+  end
+
+  defp do_mock(mod, fun, nil), do: do_mock(mod, fun, Mockery.Nil)
+  defp do_mock(mod, fun, false), do: do_mock(mod, fun, Mockery.False)
 
   defp do_mock(mod, fun, value) do
     Utils.put_mock(mod, fun, value)

@@ -160,7 +160,7 @@ defmodule Mockery do
     Dynamic mock requires [function: arity] syntax.
 
     Please use:
-        mock(#{Utils.print_mod(mod)}, [#{fun}: #{arity}], fn(...) -> ... end)
+        mock(#{inspect(mod)}, [#{fun}: #{arity}], fn(...) -> ... end)
     """
   end
 

@@ -29,7 +29,7 @@ defmodule Mockery.Assertions do
 
     ExUnit.Assertions.assert(
       called?(mod, fun, arity),
-      "#{Utils.print_mod(mod)}.#{fun}/#{arity} was not called"
+      "#{inspect(mod)}.#{fun}/#{arity} was not called"
     )
   end
 
@@ -40,7 +40,7 @@ defmodule Mockery.Assertions do
 
     IO.warn(warn)
 
-    ExUnit.Assertions.assert(called?(mod, fun), "#{Utils.print_mod(mod)}.#{fun} was not called")
+    ExUnit.Assertions.assert(called?(mod, fun), "#{inspect(mod)}.#{fun} was not called")
   end
 
   @doc deprecated: "Use refute_called!/3 instead"
@@ -53,7 +53,7 @@ defmodule Mockery.Assertions do
 
     ExUnit.Assertions.refute(
       called?(mod, fun, arity),
-      "#{Utils.print_mod(mod)}.#{fun}/#{arity} was called at least once"
+      "#{inspect(mod)}.#{fun}/#{arity} was called at least once"
     )
   end
 
@@ -66,7 +66,7 @@ defmodule Mockery.Assertions do
 
     ExUnit.Assertions.refute(
       called?(mod, fun),
-      "#{Utils.print_mod(mod)}.#{fun} was called at least once"
+      "#{inspect(mod)}.#{fun} was called at least once"
     )
   end
 
@@ -83,7 +83,7 @@ defmodule Mockery.Assertions do
 
     quote do
       ExUnit.Assertions.assert(unquote(called_with?(mod, fun, args)), """
-      #{unquote(Utils.print_mod(mod))}.#{unquote(fun)} \
+      #{unquote(inspect(mod))}.#{unquote(fun)} \
       was not called with given arguments\
       #{unquote(History.old_print(mod, fun, args))}
       """)
@@ -103,7 +103,7 @@ defmodule Mockery.Assertions do
 
     quote do
       ExUnit.Assertions.refute(unquote(called_with?(mod, fun, args)), """
-      #{unquote(Utils.print_mod(mod))}.#{unquote(fun)} \
+      #{unquote(inspect(mod))}.#{unquote(fun)} \
       was called with given arguments at least once\
       #{unquote(History.old_print(mod, fun, args))}
       """)
@@ -140,7 +140,7 @@ defmodule Mockery.Assertions do
 
     quote do
       ExUnit.Assertions.assert(unquote(ncalled_with?(mod, fun, args, times)), """
-      #{unquote(Utils.print_mod(mod))}.#{unquote(fun)} \
+      #{unquote(inspect(mod))}.#{unquote(fun)} \
       was not called with given arguments expected number of times\
       #{unquote(History.old_print(mod, fun, args))}
       """)
@@ -161,7 +161,7 @@ defmodule Mockery.Assertions do
 
     quote do
       ExUnit.Assertions.refute(unquote(ncalled_with?(mod, fun, args, times)), """
-      #{unquote(Utils.print_mod(mod))}.#{unquote(fun)} \
+      #{unquote(inspect(mod))}.#{unquote(fun)} \
       was called with given arguments unexpected number of times\
       #{unquote(History.old_print(mod, fun, args))}
       """)
@@ -209,7 +209,7 @@ defmodule Mockery.Assertions do
 
   defp args_should_be_list(mod, fun) do
     quote do
-      raise Error, "args for #{unquote(Utils.print_mod(mod))}.#{unquote(fun)} should be a list"
+      raise Error, "args for #{unquote(inspect(mod))}.#{unquote(fun)} should be a list"
     end
   end
 

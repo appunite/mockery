@@ -33,16 +33,13 @@ defmodule Mockery.Utils do
     |> Process.put([{arity, args} | get_calls(mod, fun)])
   end
 
-  # Removes unnecessary `Elixir.` prefix from module names
-  def print_mod(mod), do: mod |> to_string |> remove_elixir_prefix()
-
   # Helper for Mockery.History
   def history_enabled? do
     Process.get(Mockery.History, Application.get_env(:mockery, :history, false))
   end
 
   def raise_undefined(mod, fun, arity) do
-    raise Error, "function #{print_mod(mod)}.#{fun}/#{arity} is undefined or private"
+    raise Error, "function #{inspect(mod)}.#{fun}/#{arity} is undefined or private"
   end
 
   # Helper for global mock
@@ -58,8 +55,8 @@ defmodule Mockery.Utils do
 
       unknown ->
         raise Error, """
-        Global mock "#{print_mod(mock)}" exports functions unknown to \
-        "#{print_mod(original)}" module:
+        Global mock "#{inspect(mock)}" exports functions unknown to \
+        "#{inspect(original)}" module:
 
             #{inspect(unknown)}
 
@@ -67,9 +64,6 @@ defmodule Mockery.Utils do
         """
     end
   end
-
-  defp remove_elixir_prefix("Elixir." <> rest), do: rest
-  defp remove_elixir_prefix(erlang_mod), do: ":#{erlang_mod}"
 
   # KEYS
   # note to myself: dont use three element tuples

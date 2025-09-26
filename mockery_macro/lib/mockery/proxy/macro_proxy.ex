@@ -25,6 +25,7 @@ defmodule Mockery.Proxy.MacroProxy do
           current
       end
 
+    # credo:disable-for-lines:1 Credo.Check.Refactor.Apply
     apply(Mockery.Proxy, :do_proxy, [mod, name, args, by])
   end
 end

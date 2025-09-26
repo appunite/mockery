@@ -5,7 +5,7 @@ defmodule Mockery.Proxy.MacroProxy do
     {mod, by} =
       case Process.get(Mockery.MockableModule, []) do
         [] ->
-          raise Mockery.Error, """
+          raise Mockery.Macro.Error, """
           Mockery.Macro.mockable/2 needs to be invoked directly in other function.
 
           You can't use it in module attribute:

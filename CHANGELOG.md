@@ -1,6 +1,17 @@
 # Changelog
 
-## 3.0.0 ()
+## 3.0.0 (unreleased)
+
+- Extracted `Mockery.Macro` to separate library. For compatibility with Mockery v2, update your `mix.exs` dependencies:
+
+  ```ex
+  def deps do
+    [
+      {:mockery_macro, "~> 1.0", runtime: false},
+      {:mockery, "~> 3.0", only: :test}
+    ]
+  end
+  ```
 
 - Mockery no longer relies on `Mix.env()`. To enable Mockery in tests, add this config to your project:
   ```ex

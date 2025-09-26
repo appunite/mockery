@@ -158,7 +158,7 @@ defmodule Mockery.Proxy.MacroProxyTest do
 
   test "raise if mockable/2 macro wasn't used directly in code" do
     assert_raise(
-      Mockery.Error,
+      Mockery.Macro.Error,
       ~r"Mockery.Macro.mockable/2 needs to be invoked directly in other function.",
       fn -> Macro.InvalidUsage.invalid() end
     )

@@ -10,8 +10,16 @@ on:
 
 jobs:
   format-check:
-    name: Check Mix Format
+    name: "Check Mix Format (dir: ${{ matrix.dir }})"
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dir:
+          - "."
+          - "mockery_macro"
+    defaults:
+      run:
+        working-directory: ${{ matrix.dir }}
     steps:
       - uses: actions/checkout@v3
 
@@ -28,8 +36,16 @@ jobs:
         run: mix format --check-formatted
 
   credo-check:
-    name: Check Mix Credo Lint
+    name: "Check Mix Credo Lint (dir: ${{ matrix.dir }})"
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dir:
+          - "."
+          - "mockery_macro"
+    defaults:
+      run:
+        working-directory: ${{ matrix.dir }}
     steps:
       - uses: actions/checkout@v3
 
@@ -46,8 +62,16 @@ jobs:
         run: mix credo --strict --format=flycheck
 
   docs-check:
-    name: Check Docs
+    name: "Check Docs (dir: ${{ matrix.dir }})"
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dir:
+          - "."
+          - "mockery_macro"
+    defaults:
+      run:
+        working-directory: ${{ matrix.dir }}
     steps:
       - uses: actions/checkout@v3
 
@@ -124,13 +148,18 @@ jobs:
         run: mix test --include dialyzer --warnings-as-errors
 
   dialyzer:
-    name: Run Dialyzer
+    name: "Run Dialyzer (dir: ${{ matrix.dir }})"
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        include:
-          - elixir: 1.19
-            otp: 28
+        elixir: [1.19]
+        otp: [28]
+        dir:
+          - "."
+          - "mockery_macro"
+    defaults:
+      run:
+        working-directory: ${{ matrix.dir }}
     needs:
       - format-check
       - credo-check
@@ -152,11 +181,11 @@ jobs:
         uses: actions/cache/restore@v3
         with:
           key: |
-            plt-dev-${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ hashFiles('**/mix.lock') }}
+            plt-dev-${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ matrix.dir == '.' && 'root' || matrix.dir }}-${{ hashFiles('**/mix.lock') }}
           restore-keys: |
-            plt-dev-${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-
+            plt-dev-${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ matrix.dir == '.' && 'root' || matrix.dir }}-
           path: |
-            priv/plts
+            ${{ matrix.dir }}/priv/plts
 
       - name: Create PLTs
         if: steps.plt_cache.outputs.cache-hit != 'true'
@@ -168,9 +197,9 @@ jobs:
         if: steps.plt_cache.outputs.cache-hit != 'true'
         with:
           key: |
-            plt-dev-${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ hashFiles('**/mix.lock') }}
+            plt-dev-${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ matrix.dir == '.' && 'root' || matrix.dir }}-${{ hashFiles('**/mix.lock') }}
           path: |
-            priv/plts
+            ${{ matrix.dir }}/priv/plts
 
       - name: Run Dialyzer
         run: mix dialyzer

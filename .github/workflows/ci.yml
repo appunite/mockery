@@ -185,7 +185,7 @@ jobs:
           restore-keys: |
             plt-dev-${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ matrix.dir == '.' && 'root' || matrix.dir }}-
           path: |
-            priv/plts
+            ${{ matrix.dir }}/priv/plts
 
       - name: Create PLTs
         if: steps.plt_cache.outputs.cache-hit != 'true'
@@ -199,7 +199,7 @@ jobs:
           key: |
             plt-dev-${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ matrix.dir == '.' && 'root' || matrix.dir }}-${{ hashFiles('**/mix.lock') }}
           path: |
-            priv/plts
+            ${{ matrix.dir }}/priv/plts
 
       - name: Run Dialyzer
         run: mix dialyzer

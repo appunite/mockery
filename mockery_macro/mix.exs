@@ -12,7 +12,7 @@ defmodule Mockery.Macro.Mixfile do
       dialyzer: dialyzer(),
       docs: docs(),
       elixir: "~> 1.15",
-      name: "Mockery",
+      name: "Mockery.Macro",
       package: package(),
       source_url: "https://github.com/appunite/mockery",
       version: @version

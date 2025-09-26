@@ -1,5 +1,7 @@
 # Mockery.Macro
 
+[![Build Status](https://github.com/appunite/mockery/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/appunite/mockery/actions) [![Hex.pm](https://img.shields.io/hexpm/v/mockery_macro.svg)](https://hex.pm/packages/mockery_macro) [![Hex.pm](https://img.shields.io/hexpm/dt/mockery_macro.svg)](https://hex.pm/packages/mockery_macro) [![Hex.pm](https://img.shields.io/hexpm/dw/mockery_macro.svg)](https://hex.pm/packages/mockery_macro) [![License](https://img.shields.io/hexpm/l/mockery_macro.svg)](https://github.com/appunite/mockery/blob/master/mockery_macro/LICENSE)
+
 ## License
 
 Copyright 2025 Tobiasz Małecki [tobiasz.malecki@appunite.com](mailto:tobiasz.malecki@appunite.com)

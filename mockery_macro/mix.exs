@@ -48,6 +48,7 @@ defmodule Mockery.Macro.Mixfile do
     [
       extras: ["README.md", "CHANGELOG.md"],
       main: "readme",
+      skip_code_autolink_to: ["Mockery.Proxy.MacroProxy"],
       skip_undefined_reference_warnings_on: ["CHANGELOG.md"],
       source_ref: "macro-#{@version}",
       source_url_pattern:

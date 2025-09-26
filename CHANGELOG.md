@@ -12,8 +12,16 @@
     ]
   end
   ```
+  and your `.formatter.exs`:
 
-- Mockery no longer relies on `Mix.env()`. To enable Mockery in tests, add this config to your project:
+  ```ex
+  [
+    inputs: ["mix.exs", "{config,lib,test}/**/*.{ex,exs}"],
+    import_deps: [:mockery, :mockery_macro]
+  ]
+  ```
+
+- Mockery no longer relies on `Mix.env()`. To enable Mockery in tests, update config in your project:
   ```ex
   # config/test.exs
   config :mockery, enable: true

@@ -26,7 +26,8 @@ defmodule Mockery.Mixfile do
 
   defp deps do
     [
-      {:mockery_macro, path: "./mockery_macro", optional: true},
+      {:mockery_macro,
+       github: "amatalai/mockery", branch: "split", sparse: "mockery_macro", optional: true},
 
       # development
       {:beam_inspect, "~> 0.1.2", only: :dev, runtime: false},

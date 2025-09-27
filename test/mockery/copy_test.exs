@@ -38,6 +38,14 @@ defmodule Mockery.CopyTest do
       assert_called! Dummy, :fun1
     end
 
+    test "allow to be used with erlang modules" do
+      copy = Mockery.Copy.of(:crypto)
+
+      refute_called! :crypto, :strong_rand_bytes
+      assert copy.strong_rand_bytes(1)
+      assert_called! :crypto, :strong_rand_bytes
+    end
+
     defmodule ModuleAttributeTest do
       @dummy Mockery.Copy.of(Dummy)
 
@@ -48,6 +56,19 @@ defmodule Mockery.CopyTest do
       refute_called! Dummy, :fun1
       assert ModuleAttributeTest.x() == 1
       assert_called! Dummy, :fun1
+    end
+
+    defmodule DummyGlobalMock do
+      def fun1, do: 2137
+    end
+
+    test "supports global mocks" do
+      copy1 = Mockery.Copy.of(Dummy)
+      copy2 = Mockery.Copy.of(Dummy, by: DummyGlobalMock)
+
+      assert Dummy.fun1() == 1
+      assert copy1.fun1() == 1
+      assert copy2.fun1() == 2137
     end
   end
 end

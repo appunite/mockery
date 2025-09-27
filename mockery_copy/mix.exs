@@ -1,7 +1,7 @@
 defmodule Mockery.Copy.Mixfile do
   use Mix.Project
 
-  @version "0.0.1-alpha.0"
+  @version "0.1.0-alpha.0"
   @description "Support package for :mockery"
 
   def project do

@@ -10,7 +10,10 @@ defmodule Mockery.Copy do
   end
 
   defp compile_copy(mod, opts) do
-    copy_name = opts[:name] || Module.concat([mod, "Copy#{System.unique_integer([:positive])}"])
+    copy_name =
+      opts[:name] ||
+        Module.concat([mod, "Mockery", "Mockable#{System.unique_integer([:positive])}"])
+
     by = opts[:by]
 
     funs = mod.module_info()[:exports] -- [module_info: 0, module_info: 1, __info__: 1]

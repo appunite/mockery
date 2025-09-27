@@ -1,5 +1,43 @@
 defmodule Mockery.Copy do
-  def new(mod, opts \\ []) do
+  @moduledoc """
+  Helper to produce a runtime copy of a module that delegates through Mockery.
+
+  Use `of/2` to obtain either the original module (when Mockery is disabled)
+  or a generated module that forwards calls through `Mockery.Proxy`.
+  """
+
+  @doc """
+  Prepare `mod` for use with Mockery and return either the original module
+  or a generated proxy module.
+
+  ## Behavior
+  - If the application environment `:mockery, :enable` is `true`, this function
+    dynamically creates a new module which defines the same exported functions
+    as `mod`. Each function delegates to `Mockery.Proxy`
+    allowing Mockery to intercept, record, or reroute calls.
+  - If `:mockery, :enable` is not `true`, the original `mod` is returned
+    unchanged.
+
+  ## Options
+  - `:name` - an explicit atom to use as the generated module name. If not
+    provided, a unique module name is generated automatically.
+  - `:by` - an optional module used as a global mock provider.
+
+  ## Notes
+  - The generated module exports the same functions as the original module,
+    excluding `module_info/0`, `module_info/1` and `__info__/1`.
+
+  ## Examples
+
+      # Create a copy with an automatically generated name
+      copy = Mockery.Copy.of(MyApp.Foo)
+
+      # Create a copy with explicit name and a global mock
+      copy = Mockery.Copy.of(MyApp.Foo, name: MyApp.FooMock, by: MyApp.FooGlobalMock)
+
+  """
+  @spec of(module, keyword()) :: module
+  def of(mod, opts \\ []) do
     case Application.get_env(:mockery, :enable) do
       true ->
         compile_copy(mod, opts)

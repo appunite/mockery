@@ -7,17 +7,17 @@ defmodule Mockery.CopyTest do
       Application.put_env(:mockery, :enable, false)
       on_exit(fn -> Application.put_env(:mockery, :enable, true) end)
 
-      Dummy = Mockery.Copy.new(Dummy)
+      Dummy = Mockery.Copy.of(Dummy)
     end
 
     test "creates copy of original module" do
-      copy = Mockery.Copy.new(Dummy)
+      copy = Mockery.Copy.of(Dummy)
 
       assert Enum.all?(Dummy.module_info()[:exports], &(&1 in copy.module_info()[:exports]))
     end
 
     test "prepares copy to be used by :mockery" do
-      copy = Mockery.Copy.new(Dummy)
+      copy = Mockery.Copy.of(Dummy)
 
       assert Dummy.fun1() == 1
       refute_called! Dummy, :fun1
@@ -27,7 +27,7 @@ defmodule Mockery.CopyTest do
     end
 
     test "allows to explicitely name copy" do
-      Mockery.Copy.new(Dummy, name: DummyMock)
+      Mockery.Copy.of(Dummy, name: DummyMock)
       Application.put_env(:mockery, :dummy, DummyMock)
 
       assert Dummy.fun1() == 1
@@ -40,7 +40,7 @@ defmodule Mockery.CopyTest do
   end
 
   defmodule ModuleAttributeTest do
-    @dummy Mockery.Copy.new(Dummy)
+    @dummy Mockery.Copy.of(Dummy)
 
     def x, do: @dummy.fun1()
   end

@@ -1,3 +1,3 @@
 # Tests
 
-All tests for Mockery.Macro are in main test dir of `:mockery`
+All tests for `Mockery.Macro` are in main test dir of `:mockery`

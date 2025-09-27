@@ -27,9 +27,10 @@ defmodule Mockery.Mixfile do
   defp deps do
     [
       {:mockery_macro, "~> 1.0.0-alpha.0", optional: true},
+      {:mockery_copy, "~> 0.0.1-alpha.0", path: "./mockery_copy", optional: true},
 
       # development
-      {:beam_inspect, "~> 0.1.2", only: :dev, runtime: false},
+      {:beam_inspect, "~> 0.1.2", only: [:dev, :test], runtime: false},
       {:credo, "~> 1.7", only: :dev, runtime: false},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.13", only: :dev, runtime: false}

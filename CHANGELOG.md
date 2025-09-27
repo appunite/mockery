@@ -2,13 +2,15 @@
 
 ## 3.0.0 (unreleased)
 
+**This release removes numerous deprecated APIs. We recommend to upgrade to `~> 2.5` first and resolve any deprecation warnings before updating to v3.**
+
 - Extracted `Mockery.Macro` to separate library. For compatibility with Mockery v2, update your `mix.exs` dependencies:
 
   ```ex
   def deps do
     [
       {:mockery_macro, "~> 1.0", runtime: false},
-      {:mockery, "~> 3.0", only: :test}
+      {:mockery, "~> 3.0", only: [:dev, :test]}
     ]
   end
   ```

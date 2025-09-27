@@ -2,7 +2,7 @@ defmodule Mockery.CopyTest do
   use ExUnit.Case, async: false
   import Mockery.Assertions
 
-  describe "new/2" do
+  describe "of/2" do
     test "returns original module when mockery isn't enabled" do
       Application.put_env(:mockery, :enable, false)
       on_exit(fn -> Application.put_env(:mockery, :enable, true) end)
@@ -37,17 +37,17 @@ defmodule Mockery.CopyTest do
       assert copy.fun1() == 1
       assert_called! Dummy, :fun1
     end
-  end
 
-  defmodule ModuleAttributeTest do
-    @dummy Mockery.Copy.of(Dummy)
+    defmodule ModuleAttributeTest do
+      @dummy Mockery.Copy.of(Dummy)
 
-    def x, do: @dummy.fun1()
-  end
+      def x, do: @dummy.fun1()
+    end
 
-  test "allows to be used in module attribute" do
-    refute_called! Dummy, :fun1
-    assert ModuleAttributeTest.x() == 1
-    assert_called! Dummy, :fun1
+    test "allows to be used in module attribute" do
+      refute_called! Dummy, :fun1
+      assert ModuleAttributeTest.x() == 1
+      assert_called! Dummy, :fun1
+    end
   end
 end

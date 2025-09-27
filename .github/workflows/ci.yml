@@ -17,6 +17,7 @@ jobs:
         dir:
           - "."
           - "mockery_macro"
+          - "mockery_copy"
     defaults:
       run:
         working-directory: ${{ matrix.dir }}
@@ -43,6 +44,7 @@ jobs:
         dir:
           - "."
           - "mockery_macro"
+          - "mockery_copy"
     defaults:
       run:
         working-directory: ${{ matrix.dir }}
@@ -69,6 +71,7 @@ jobs:
         dir:
           - "."
           - "mockery_macro"
+          - "mockery_copy"
     defaults:
       run:
         working-directory: ${{ matrix.dir }}
@@ -157,6 +160,7 @@ jobs:
         dir:
           - "."
           - "mockery_macro"
+          - "mockery_copy"
     defaults:
       run:
         working-directory: ${{ matrix.dir }}

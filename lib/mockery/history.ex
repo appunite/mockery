@@ -59,6 +59,11 @@ defmodule Mockery.History do
     :ok
   end
 
+  @doc false
+  def enabled? do
+    Process.get(Mockery.History, Application.get_env(:mockery, :history, false))
+  end
+
   # assert_called!/3 refute_called!/3
   @doc false
   def print(%{args: args, history_enabled: true} = params) when is_list(args) do

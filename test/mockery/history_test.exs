@@ -18,6 +18,28 @@ defmodule Mockery.HistoryTest do
     refute Process.get(Mockery.History)
   end
 
+  describe "enabled?/0" do
+    test "returns false by default" do
+      refute Mockery.History.enabled?()
+    end
+
+    test "can be changed by global config" do
+      Application.put_env(:mockery, :history, true)
+      on_exit(fn -> Application.delete_env(:mockery, :history) end)
+
+      assert Mockery.History.enabled?()
+    end
+
+    test "ignores global config when process config present" do
+      Application.put_env(:mockery, :history, true)
+      on_exit(fn -> Application.delete_env(:mockery, :history) end)
+
+      disable_history()
+
+      refute Mockery.History.enabled?()
+    end
+  end
+
   describe "print/1 when history is disabled" do
     test "error message doesn't include calls history" do
       error_msg = "#{red()}Foo.bar/2 was not called with given args"

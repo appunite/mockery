@@ -19,29 +19,31 @@ defmodule Mockery.HistoryTest do
   end
 
   describe "enabled?/0" do
-    test "returns false by default" do
-      refute Mockery.History.enabled?()
-    end
-
-    test "can be changed by global config" do
-      Application.put_env(:mockery, :history, true)
-      on_exit(fn -> Application.delete_env(:mockery, :history) end)
-
+    test "returns true by default" do
       assert Mockery.History.enabled?()
     end
 
-    test "ignores global config when process config present" do
-      Application.put_env(:mockery, :history, true)
+    test "can be changed by global config" do
+      Application.put_env(:mockery, :history, false)
       on_exit(fn -> Application.delete_env(:mockery, :history) end)
 
-      disable_history()
-
       refute Mockery.History.enabled?()
+    end
+
+    test "ignores global config when process config present" do
+      Application.put_env(:mockery, :history, false)
+      on_exit(fn -> Application.delete_env(:mockery, :history) end)
+
+      Mockery.History.enable_history()
+
+      assert Mockery.History.enabled?()
     end
   end
 
   describe "print/1 when history is disabled" do
     test "error message doesn't include calls history" do
+      Mockery.History.disable_history()
+
       error_msg = "#{red()}Foo.bar/2 was not called with given args"
 
       Utils.push_call(Foo, :bar, 1, [1])
@@ -57,10 +59,6 @@ defmodule Mockery.HistoryTest do
   end
 
   describe "print/1 when history is enabled (args provided)" do
-    setup do
-      Mockery.History.enable_history()
-    end
-
     test "single call not matching args" do
       error_msg = """
       #{red()}Foo.bar/2 was not called with given args
@@ -482,10 +480,6 @@ defmodule Mockery.HistoryTest do
   end
 
   describe "print/1 when history is enabled (arity provided)" do
-    setup do
-      Mockery.History.enable_history()
-    end
-
     test "single call, expected 2" do
       error_msg = """
       #{red()}Foo.bar/2 was not called expected number of times
@@ -549,10 +543,6 @@ defmodule Mockery.HistoryTest do
   end
 
   describe "print/1 when history is enabled (no args or arity provided)" do
-    setup do
-      Mockery.History.enable_history()
-    end
-
     test "single call, expected 2" do
       error_msg = """
       #{red()}Foo.bar/? was not called expected number of times
@@ -590,10 +580,6 @@ defmodule Mockery.HistoryTest do
 
   describe "Mockery.History output example" do
     @describetag :screenshot
-
-    setup do
-      Mockery.History.enable_history()
-    end
 
     test "1" do
       Utils.push_call(Foo, :bar, 3, [1, 2, 4])

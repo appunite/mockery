@@ -8,6 +8,10 @@ defmodule Mockery.AssertionsTest do
 
   defp wrap_msg(msg), do: "\n\n#{IO.ANSI.red()}#{msg}\n"
 
+  setup do
+    Mockery.History.disable_history()
+  end
+
   describe "assert_called!/3 without opts" do
     test "succeeds when function was called once (zero arity)" do
       Utils.push_call(A, :fun, 0, [])

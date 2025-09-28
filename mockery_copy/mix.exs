@@ -1,19 +1,18 @@
-defmodule Mockery.Mixfile do
+defmodule Mockery.Copy.Mixfile do
   use Mix.Project
 
-  @version "3.0.0-alpha.0"
-  @description "Simple mocking library for asynchronous testing."
+  @version "0.1.0-alpha.0"
+  @description "Support package for :mockery"
 
   def project do
     [
-      app: :mockery,
+      app: :mockery_copy,
       deps: deps(),
       description: @description,
       dialyzer: dialyzer(),
       docs: docs(),
       elixir: "~> 1.15",
-      elixirc_paths: elixirc_paths(Mix.env()),
-      name: "Mockery",
+      name: "Mockery.Copy",
       package: package(),
       source_url: "https://github.com/appunite/mockery",
       version: @version
@@ -26,11 +25,7 @@ defmodule Mockery.Mixfile do
 
   defp deps do
     [
-      {:mockery_macro, "~> 1.0.0-alpha.0", optional: true},
-      {:mockery_copy, "~> 0.1.0-alpha.0", path: "./mockery_copy", optional: true},
-
-      # development
-      {:beam_inspect, "~> 0.1.2", only: [:dev, :test], runtime: false},
+      {:beam_inspect, "~> 0.1.2", only: :dev, runtime: false},
       {:credo, "~> 1.7", only: :dev, runtime: false},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.13", only: :dev, runtime: false}
@@ -39,8 +34,7 @@ defmodule Mockery.Mixfile do
 
   defp dialyzer do
     config = [
-      plt_add_apps: [:ex_unit],
-      ignore_warnings: ".dialyzer_ignore.exs"
+      plt_add_apps: []
     ]
 
     if System.get_env("CI") do
@@ -52,28 +46,25 @@ defmodule Mockery.Mixfile do
 
   defp docs do
     [
-      extras: ["README.md", "EXAMPLES.md", "CHANGELOG.md"],
+      extras: ["README.md", "CHANGELOG.md"],
       main: "readme",
-      skip_code_autolink_to: ["Mockery.Proxy"],
+      skip_code_autolink_to: [],
       skip_undefined_reference_warnings_on: ["CHANGELOG.md"],
-      source_ref: @version,
-      default_group_for_doc: fn meta ->
-        if is_binary(meta[:deprecated]), do: "Deprecated"
-      end
+      source_ref: "copy-#{@version}",
+      source_url_pattern:
+        "https://github.com/appunite/mockery/blob/copy-#{@version}/mockery_copy/%{path}#L%{line}"
     ]
   end
-
-  defp elixirc_paths(:test), do: ["lib", "test/support"]
-  defp elixirc_paths(_), do: ["lib"]
 
   defp package do
     [
       maintainers: ["Tobiasz Małecki"],
       licenses: ["Apache-2.0"],
-      files: ["lib", "mix.exs", ".formatter.exs", "README*", "LICENSE", "CHANGELOG*"],
+      files: ["lib", "mix.exs", ".formatter.exs", "README*", "LICENSE"],
       links: %{
         "GitHub" => "https://github.com/appunite/mockery",
-        "Changelog" => "https://hexdocs.pm/mockery/changelog.html"
+        "Changelog" => "https://hexdocs.pm/mockery_copy/changelog.html",
+        "Mockery" => "https://hex.pm/packages/mockery"
       }
     ]
   end

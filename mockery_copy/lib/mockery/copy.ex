@@ -11,11 +11,11 @@ defmodule Mockery.Copy do
   or a generated proxy module.
 
   ## Behavior
-  - If the application environment `:mockery, :enable` is `true`, this function
+  - When mockery is enabled (`config :mockery, enable: true`), this function
     dynamically creates a new module which defines the same exported functions
     as `mod`. Each function delegates to `Mockery.Proxy`
     allowing Mockery to intercept, record, or reroute calls.
-  - If `:mockery, :enable` is not `true`, the original `mod` is returned
+  - If `:mockery, :enable` config is not `true`, the original `mod` is returned
     unchanged.
 
   ## Options
@@ -36,7 +36,10 @@ defmodule Mockery.Copy do
       copy = Mockery.Copy.of(MyApp.Foo, name: MyApp.FooMock, by: MyApp.FooGlobalMock)
 
   """
-  @spec of(module, keyword()) :: module
+  @spec of(
+          mod :: module,
+          opts :: [name: module, by: module]
+        ) :: module
   def of(mod, opts \\ []) do
     case Application.get_env(:mockery, :enable) do
       true ->

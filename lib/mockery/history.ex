@@ -61,7 +61,7 @@ defmodule Mockery.History do
 
   @doc false
   def enabled? do
-    Process.get(Mockery.History, Application.get_env(:mockery, :history, false))
+    Process.get(Mockery.History, Application.get_env(:mockery, :history, true))
   end
 
   # assert_called!/3 refute_called!/3

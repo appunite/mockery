@@ -28,11 +28,6 @@ defmodule Mockery.Utils do
     |> Process.put([{arity, args} | get_calls(mod, fun)])
   end
 
-  # Helper for Mockery.History
-  def history_enabled? do
-    Process.get(Mockery.History, Application.get_env(:mockery, :history, false))
-  end
-
   def raise_undefined(mod, fun, arity) do
     raise Error, "function #{inspect(mod)}.#{fun}/#{arity} is undefined or private"
   end

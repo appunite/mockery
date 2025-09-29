@@ -29,6 +29,13 @@
   config :mockery, enable: true
   ```
 
+- `Mockery.History` (extended failure output for macros from `Mockery.Assertions`) is now enabled by default. To disable it, update config in your project:
+  ```ex
+  # config/test.exs
+  config :mockery, history: false
+  ```
+
+
 - Removed deprecated functions:
 
   - `Mockery.of/2`

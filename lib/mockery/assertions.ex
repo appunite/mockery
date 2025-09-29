@@ -64,7 +64,7 @@ defmodule Mockery.Assertions do
                   arity: unquote(arity_opt),
                   args: unquote(Macro.escape(args_opt)),
                   expanded_args: unquote(Macro.escape(expanded_args)),
-                  history_enabled: Mockery.Utils.history_enabled?(),
+                  history_enabled: Mockery.History.enabled?(),
                   binding: binding(),
                   module_attr_map: unquote(compile_module_attr_map(args_opt, __CALLER__))
                 }
